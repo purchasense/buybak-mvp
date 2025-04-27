@@ -54,7 +54,7 @@ export const MobileIndexQuery = () => {
           console.log('Query: ' + e.target.value);
           console.log(e);
           dispatch(setBuybakMobileMessage(Date.now(), 'sameer', e.target.value));
-          queryIndex(e.currentTarget.value).then((response) => {
+          queryIndex(e.target.value).then((response) => {
             setLoading(false);
             setResponseText(response.text);
             dispatch(setBuybakMobileMessage(Date.now(), 'GPT', response.text));
