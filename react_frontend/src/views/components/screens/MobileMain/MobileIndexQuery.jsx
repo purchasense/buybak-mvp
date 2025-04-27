@@ -51,8 +51,9 @@ export const MobileIndexQuery = () => {
     const handleQuery = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key == 'Enter') {
           setLoading(true);
-          console.log('Query: ' + e.currentTarget.value);
-          dispatch(setBuybakMobileMessage(Date.now(), 'sameer', e.currentTarget.value));
+          console.log('Query: ' + e.target.value);
+          console.log(e);
+          dispatch(setBuybakMobileMessage(Date.now(), 'sameer', e.target.value));
           queryIndex(e.currentTarget.value).then((response) => {
             setLoading(false);
             setResponseText(response.text);
@@ -120,7 +121,7 @@ export const MobileIndexQuery = () => {
         ></TextField>
       </Grid>
 
-         <TableContainer sx={{ width: '100%', height: '550px' }}>
+         <TableContainer sx={{ width: '100%', height: '450px' }}>
             <MobileWineCard index={tabsValue} />
             {
                 list_messages.map(message => (
