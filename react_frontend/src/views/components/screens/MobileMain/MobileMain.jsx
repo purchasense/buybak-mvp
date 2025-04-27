@@ -179,29 +179,31 @@ export const MobileMain = () => {
                     {'BuyBak'}
                 </Typography>
             </Grid>
-            <Grid item xs="8" />
+            <Grid item align="right" xs="3" />
+            <Grid item align="right" xs="5" >
+                <Tabs
+                    value = {tabsValue}
+                    onChange={handleChangeTab}
+                    aria-label="ant example"
+                    sx={{width:'400px'}}
+                  >
+                        <Tab
+                            sx={{color: 'white', background: '#888800'}}
+                            label={'Stocks'}
+                        />
+                        <Tab
+                            sx={{color: 'white', background: '#888800'}}
+                            label={'Portfolio'}
+                        />
+                        <Tab
+                            sx={{color: 'white', background: '#888800'}}
+                            label={'Query'}
+                        />
+                </Tabs>
+            </Grid>
         </Grid>
     </ColorSubCard>
 
-        <Tabs
-            value = {tabsValue}
-            onChange={handleChangeTab}
-            aria-label="ant example"
-            sx={{width:'400px'}}
-          >
-                <Tab
-                    sx={{background: 'white'}}
-                    label={'Stocks'}
-                />
-                <Tab
-                    sx={{background: 'white'}}
-                    label={'Portfolio'}
-                />
-                <Tab
-                    sx={{background: 'white'}}
-                    label={'Query'}
-                />
-        </Tabs>
         {tabsValue === 0 && <MobileStocks />}
         {tabsValue === 1 && <MobilePortfolio />}
         {tabsValue === 2 && <MobileIndexQuery />}

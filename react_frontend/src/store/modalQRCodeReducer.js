@@ -172,9 +172,9 @@ const initialState = {
   }),
   map_store_to_wines: new I.Map({
         0: new WineSelection( 0, '/images/clubdvin_image1.jpg', 'Italy', 'Filippo Magnani', 'Discover Italian wines in Oslavia, ', 'Italian wine expert and educator Filippo Magnani will be your guide on this journey to Oslavia, a small hamlet in Collio close to the Slovenian border. '),
-        1: new WineSelection( 1, '/images/clubdvin_image2.png', 'France', 'Garth Hodgdon', 'Come drink the stars in Champagne, ', 'A late night beer with Olivier Krug, a private dinner with Peter Liem or a hot air balloon ride with Alexandre Salmon: nothing is off-limits in our spectacular journey to Champagne with Garth Hodgon.'),
-        2: new WineSelection( 2, '/images/clubdvin_image3.png', 'Argentina', 'Valentina Litman', 'Explore the Majestic Mendoza, ', 'One of Argentina’s brightest wine talents Valentina Litman and the co-founder of The Vines of Mendoza and Club dVin David Garrett will take you on a one-of-a-kind weekend to Mendoza wine country.'),
-        3: new WineSelection( 3, '/images/clubdvin_image4.png', 'Germany', 'David Forer', 'Embark on a sail down the Mosel, ', 'Explore a breathtaking wine country aboard a boat with the Master of Wine David Forer. The Mosel (aka Moselle) river begins in France and flows into Germany, and its winding river gorge is home to the best Riesling producers')
+        1: new WineSelection( 1, '/images/clubdvin_image2.png', 'France', 'Garth Hodgdon', 'Drink the stars in Champagne, ', 'A late night beer with Olivier Krug, or a private dinner with Peter Liem: nothing is off-limits in our spectacular journey to Champagne with Garth Hodgon.'),
+        2: new WineSelection( 2, '/images/clubdvin_image3.png', 'Argentina', 'Valentina Litman', 'Explore the exotic Mendoza, ', 'One of Argentina’s brightest wine talents Valentina Litman and David Garrett will take you on a one-of-a-kind weekend to Mendoza wine country.'),
+        3: new WineSelection( 3, '/images/clubdvin_image4.png', 'Germany', 'David Forer', 'Embark down the Mosel, ', 'Explore a breathtaking wine country aboard a boat with the Master of Wine David Forer. Mosel\'s winding river gorge is home to the best Riesling producers')
   }),
   total_stats: Number(0),
   total_trans: Number(0),
