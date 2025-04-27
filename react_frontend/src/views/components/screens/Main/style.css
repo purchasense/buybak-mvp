@@ -1,0 +1,554 @@
+.index {
+  background-color: #f9fafc;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.index .div {
+  background-color: #f9fafc;
+  height: 708px;
+  position: relative;
+  width: 394px;
+}
+
+.index .overlap {
+  background-color: #e37627;
+  border-radius: 50px 50px 0px 0px;
+  height: 262px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 394px;
+}
+
+.index .iphone-x-status-bars {
+  height: 25px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 394px;
+}
+
+.index .iphone-x-status-bars-2 {
+  height: 25px;
+  position: relative;
+}
+
+.index .battery {
+  height: 6px;
+  left: 353px;
+  position: absolute;
+  top: 10px;
+  width: 26px;
+}
+
+.index .overlap-group {
+  border: 1px solid;
+  border-color: #ffffff59;
+  border-radius: 2.67px;
+  height: 6px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 23px;
+}
+
+.index .capacity {
+  background-color: #ffffff;
+  border-radius: 1.33px;
+  height: 4px;
+  left: 1px;
+  position: relative;
+  width: 19px;
+}
+
+.index .cap {
+  height: 2px;
+  left: 24px;
+  position: absolute;
+  top: 2px;
+  width: 1px;
+}
+
+.index .wifi {
+  height: 6px;
+  left: 332px;
+  position: absolute;
+  top: 10px;
+  width: 16px;
+}
+
+.index .cellular-connection {
+  height: 6px;
+  left: 309px;
+  position: absolute;
+  top: 10px;
+  width: 18px;
+}
+
+.index .time-style {
+  height: 12px;
+  left: 21px;
+  position: absolute;
+  top: 7px;
+  width: 54px;
+}
+
+.index .time {
+  color: #ffffff;
+  font-family: "Abel", Helvetica;
+  font-size: 14px;
+  font-weight: 400;
+  left: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: -3px;
+  width: 54px;
+}
+
+.index .text-wrapper {
+  letter-spacing: -0.04px;
+}
+
+.index .span {
+  letter-spacing: 0;
+}
+
+.index .overlap-2 {
+  height: 106px;
+  left: 23px;
+  position: absolute;
+  top: 130px;
+  width: 328px;
+}
+
+.index .overlap-3 {
+  height: 97px;
+  left: 0;
+  position: absolute;
+  top: 9px;
+  width: 328px;
+}
+
+.index .group {
+  height: 80px;
+  left: 2px;
+  position: absolute;
+  top: 0;
+  width: 158px;
+}
+
+.index .text-wrapper-2 {
+  color: #ffffff;
+  font-family: "Abhaya Libre ExtraBold-Regular", Helvetica;
+  font-size: 18px;
+  font-weight: 400;
+  left: 0;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  width: 142px;
+}
+
+.index .element {
+  color: #ffffff;
+  font-family: "Abhaya Libre", Helvetica;
+  font-size: 34px;
+  font-weight: 700;
+  left: 0;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 27px;
+  width: 154px;
+}
+
+.index .line {
+  height: 1px;
+  left: 1px;
+  object-fit: cover;
+  position: absolute;
+  top: 52px;
+  width: 327px;
+}
+
+.index .group-2 {
+  height: 28px;
+  left: 0;
+  position: absolute;
+  top: 69px;
+  width: 232px;
+}
+
+.index .p {
+  color: #ffffff;
+  font-family: "Abhaya Libre", Helvetica;
+  font-size: 18px;
+  font-weight: 400;
+  left: 40px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 5px;
+  white-space: nowrap;
+}
+
+.index .overlap-group-wrapper {
+  height: 28px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 28px;
+}
+
+.index .overlap-group-2 {
+  border-radius: 6px;
+  height: 28px;
+  position: relative;
+}
+
+.index .rectangle {
+  background-color: #ffffff;
+  border-radius: 6px;
+  height: 28px;
+  left: 0;
+  opacity: 0.1;
+  position: absolute;
+  top: 0;
+  width: 28px;
+}
+
+.index .ion-ios-arrow-round {
+  height: 22px;
+  left: 3px;
+  position: absolute;
+  top: 3px;
+  width: 22px;
+}
+
+.index .overlap-wrapper {
+  height: 42px;
+  left: 286px;
+  position: absolute;
+  top: 0;
+  width: 42px;
+}
+
+.index .overlap-4 {
+  border-radius: 8px;
+  height: 42px;
+  position: relative;
+}
+
+.index .rectangle-2 {
+  background-color: #ffffff;
+  border-radius: 8px;
+  height: 42px;
+  left: 0;
+  opacity: 0.15;
+  position: absolute;
+  top: 0;
+  width: 42px;
+}
+
+.index .ion-ios-add {
+  height: 32px;
+  left: 5px;
+  position: absolute;
+  top: 5px;
+  width: 32px;
+}
+
+.index .feather-search {
+  height: 20px;
+  left: 329px;
+  position: absolute;
+  top: 52px;
+  width: 20px;
+}
+
+.index .screen-shot {
+  height: 51px;
+  left: 29px;
+  object-fit: cover;
+  position: absolute;
+  top: 45px;
+  width: 70px;
+}
+
+.index .frame {
+  height: 379px;
+  left: 1px;
+  position: absolute;
+  top: 316px;
+  width: 393px;
+}
+
+.index .overlap-group-3 {
+  background-color: #ffffff;
+  border: 1px solid;
+  border-color: #e37627;
+  border-radius: 8px;
+  box-shadow: 0px 8px 40px #0000000d;
+  height: 379px;
+  left: 15px;
+  position: relative;
+  width: 363px;
+}
+
+.index .img {
+  height: 32px;
+  left: 30px;
+  object-fit: cover;
+  position: absolute;
+  top: 97px;
+  width: 41px;
+}
+
+.index .screen-shot-2 {
+  height: 33px;
+  left: 34px;
+  object-fit: cover;
+  position: absolute;
+  top: 29px;
+  width: 33px;
+}
+
+.index .screen-shot-3 {
+  height: 40px;
+  left: 26px;
+  object-fit: cover;
+  position: absolute;
+  top: 165px;
+  width: 45px;
+}
+
+.index .walgreens {
+  height: 38px;
+  left: 33px;
+  object-fit: cover;
+  position: absolute;
+  top: 243px;
+  width: 35px;
+}
+
+.index .screen-shot-4 {
+  height: 47px;
+  left: 23px;
+  object-fit: cover;
+  position: absolute;
+  top: 307px;
+  width: 51px;
+}
+
+.index .walgreens-2 {
+  height: 40px;
+  left: 84px;
+  position: absolute;
+  top: 233px;
+  width: 251px;
+}
+
+.index .div-wrapper {
+  height: 23px;
+  left: 0;
+  position: absolute;
+  top: 11px;
+  width: 136px;
+}
+
+.index .text-wrapper-3 {
+  color: var(--black);
+  font-family: "Abhaya Libre", Helvetica;
+  font-size: 24px;
+  font-weight: 700;
+  left: 0;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+  width: 134px;
+}
+
+.index .element-wrapper {
+  height: 40px;
+  left: 184px;
+  position: absolute;
+  top: 0;
+  width: 69px;
+}
+
+.index .element-2 {
+  color: transparent;
+  font-family: "Abhaya Libre ExtraBold-Regular", Helvetica;
+  font-size: 24px;
+  font-weight: 400;
+  left: 0;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 0;
+  width: 67px;
+}
+
+.index .text-wrapper-4 {
+  color: #000000;
+}
+
+.index .text-wrapper-5 {
+  color: #666666;
+  font-size: 20px;
+}
+
+.index .target {
+  height: 40px;
+  left: 84px;
+  position: absolute;
+  top: 88px;
+  width: 251px;
+}
+
+.index .group-3 {
+  height: 23px;
+  left: 0;
+  position: absolute;
+  top: 11px;
+  width: 141px;
+}
+
+.index .text-wrapper-6 {
+  color: var(--black);
+  font-family: "Abhaya Libre", Helvetica;
+  font-size: 24px;
+  font-weight: 700;
+  left: 0;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+  width: 139px;
+}
+
+.index .text-wrapper-7 {
+  color: #666666;
+}
+
+.index .chipotle {
+  height: 40px;
+  left: 84px;
+  position: absolute;
+  top: 306px;
+  width: 251px;
+}
+
+.index .group-4 {
+  height: 23px;
+  left: 0;
+  position: absolute;
+  top: 11px;
+  width: 149px;
+}
+
+.index .text-wrapper-8 {
+  color: var(--black);
+  font-family: "Abhaya Libre", Helvetica;
+  font-size: 24px;
+  font-weight: 700;
+  left: 0;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+  width: 147px;
+}
+
+.index .homedepot {
+  height: 52px;
+  left: 84px;
+  position: absolute;
+  top: 16px;
+  width: 251px;
+}
+
+.index .group-5 {
+  height: 30px;
+  left: 0;
+  position: absolute;
+  top: 14px;
+  width: 149px;
+}
+
+.index .text-wrapper-9 {
+  color: var(--black);
+  font-family: "Abhaya Libre", Helvetica;
+  font-size: 24px;
+  font-weight: 700;
+  left: 0;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 0;
+  width: 147px;
+}
+
+.index .group-6 {
+  height: 52px;
+  left: 184px;
+  position: absolute;
+  top: 0;
+  width: 69px;
+}
+
+.index .starbucks {
+  height: 40px;
+  left: 84px;
+  position: absolute;
+  top: 154px;
+  width: 251px;
+}
+
+.index .line-2 {
+  height: 1px;
+  left: -1px;
+  object-fit: cover;
+  position: absolute;
+  top: 291px;
+  width: 363px;
+}
+
+.index .line-3 {
+  height: 1px;
+  left: -1px;
+  object-fit: cover;
+  position: absolute;
+  top: 214px;
+  width: 363px;
+}
+
+.index .line-4 {
+  height: 1px;
+  left: -1px;
+  object-fit: cover;
+  position: absolute;
+  top: 144px;
+  width: 363px;
+}
+
+.index .line-5 {
+  height: 1px;
+  left: -1px;
+  object-fit: cover;
+  position: absolute;
+  top: 80px;
+  width: 363px;
+}
+

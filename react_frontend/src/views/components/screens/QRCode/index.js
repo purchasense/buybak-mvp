@@ -1,0 +1,2 @@
+export { QRCode } from './QRCode';
+

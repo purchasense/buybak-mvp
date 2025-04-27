@@ -1,0 +1,2 @@
+export { ModalQRCodeDialog } from './ModalQRCodeDialog';
+

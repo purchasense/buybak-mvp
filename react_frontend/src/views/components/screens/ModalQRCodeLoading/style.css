@@ -1,0 +1,326 @@
+.index {
+  background-color: #f9fafc;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.index .div {
+  background-color: #f9fafc;
+  height: 821px;
+  overflow: hidden;
+  position: relative;
+  width: 394px;
+}
+
+.index .overlap {
+  height: 278px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 394px;
+}
+
+.index .rectangle {
+  background-color: #e37627;
+  border-radius: 50px 50px 0px 0px;
+  height: 140px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 394px;
+}
+
+.index .group {
+  height: 219px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 394px;
+}
+
+.index .group-wrapper {
+  height: 128px;
+  left: 30px;
+  position: absolute;
+  top: 150px;
+  width: 344px;
+}
+
+.index .group-2 {
+  height: 128px;
+  position: relative;
+}
+
+.index .overlap-group {
+  background-color: #ffffff;
+  border: 1px solid;
+  border-color: #e37627;
+  border-radius: 8px;
+  box-shadow: 0px 8px 40px #0000000d;
+  height: 101px;
+  left: 0;
+  position: absolute;
+  top: 27px;
+  width: 344px;
+}
+
+.index .div-wrapper {
+  height: 32px;
+  left: 136px;
+  position: relative;
+  top: 25px;
+  width: 171px;
+}
+
+.index .group-3 {
+  height: 32px;
+  position: relative;
+  width: 173px;
+}
+
+.index .text-wrapper {
+  color: var(--black);
+  font-family: "Abhaya Libre", Helvetica;
+  font-size: 32px;
+  font-weight: 700;
+  left: 0;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+  width: 171px;
+}
+
+.index .group-4 {
+  height: 18px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 336px;
+}
+
+.index .element-sameer-wrapper {
+  height: 18px;
+  position: relative;
+  width: 338px;
+}
+
+.index .element-sameer {
+  color: #888888;
+  font-family: "Abhaya Libre", Helvetica;
+  font-size: 15px;
+  font-weight: 700;
+  left: 0;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+  width: 336px;
+}
+
+.index .iphone-x-status-bars {
+  height: 44px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 394px;
+}
+
+.index .iphone-x-status-bars-2 {
+  height: 44px;
+  position: relative;
+}
+
+.index .battery {
+  height: 11px;
+  left: 353px;
+  position: absolute;
+  top: 18px;
+  width: 26px;
+}
+
+.index .capacity-wrapper {
+  border: 1px solid;
+  border-color: #ffffff59;
+  border-radius: 2.67px;
+  height: 11px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 23px;
+}
+
+.index .capacity {
+  background-color: #ffffff;
+  border-radius: 1.33px;
+  height: 7px;
+  left: 1px;
+  position: relative;
+  top: 1px;
+  width: 19px;
+}
+
+.index .cap {
+  height: 4px;
+  left: 24px;
+  position: absolute;
+  top: 4px;
+  width: 1px;
+}
+
+.index .wifi {
+  height: 11px;
+  left: 332px;
+  position: absolute;
+  top: 18px;
+  width: 16px;
+}
+
+.index .cellular-connection {
+  height: 11px;
+  left: 309px;
+  position: absolute;
+  top: 18px;
+  width: 18px;
+}
+
+.index .time-style {
+  height: 21px;
+  left: 21px;
+  position: absolute;
+  top: 13px;
+  width: 54px;
+}
+
+.index .time {
+  color: #ffffff;
+  font-family: "Abel", Helvetica;
+  font-size: 14px;
+  font-weight: 400;
+  left: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 2px;
+  width: 54px;
+}
+
+.index .span {
+  letter-spacing: -0.04px;
+}
+
+.index .text-wrapper-2 {
+  letter-spacing: 0;
+}
+
+.index .element-wrapper {
+  height: 62px;
+  left: 222px;
+  position: absolute;
+  top: 41px;
+  width: 154px;
+}
+
+.index .element {
+  color: #ffffff;
+  font-family: "Abhaya Libre", Helvetica;
+  font-size: 34px;
+  font-weight: 700;
+  left: 0;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 0;
+  width: 152px;
+}
+
+.index .text-wrapper-3 {
+  color: #ffffff;
+  font-family: "Abhaya Libre", Helvetica;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.index .text-wrapper-4 {
+  font-size: 24px;
+}
+
+.index .screen-shot {
+  height: 51px;
+  left: 29px;
+  object-fit: cover;
+  position: absolute;
+  top: 45px;
+  width: 70px;
+}
+
+.index .img {
+  height: 68px;
+  left: 50px;
+  object-fit: cover;
+  position: absolute;
+  top: 193px;
+  width: 68px;
+}
+
+.index .group-5 {
+  height: 352px;
+  left: 500px;
+  position: absolute;
+  top: -1146px;
+  width: 582px;
+}
+
+.index .overlap-2 {
+  height: 118px;
+  left: 0;
+  position: absolute;
+  top: 703px;
+  width: 394px;
+}
+
+.index .group-6 {
+  height: 117px;
+  left: 0;
+  position: absolute;
+  top: 1px;
+  width: 394px;
+}
+
+.index .ellipse {
+  background-color: #d9d9d9;
+  border-radius: 112.5px/16.5px;
+  height: 33px;
+  left: 84px;
+  position: absolute;
+  top: 0;
+  width: 225px;
+}
+
+.index .screen-shot-wrapper {
+  background-color: #ffffff;
+  border: 1px solid;
+  border-color: #e37627;
+  border-radius: 8px;
+  box-shadow: 0px 8px 40px #0000000d;
+  height: 378px;
+  left: 29px;
+  position: absolute;
+  top: 315px;
+  width: 344px;
+}
+
+.index .screen-shot-2 {
+  height: 334px;
+  left: 7px;
+  object-fit: cover;
+  position: absolute;
+  top: 21px;
+  width: 332px;
+}
+
