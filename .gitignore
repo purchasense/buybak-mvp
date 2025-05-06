@@ -1,3 +1,5 @@
 node_modules
 cscope.*
 *.swp
+__pycache__
+__pycache__/*

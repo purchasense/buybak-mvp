@@ -1,5 +1,8 @@
 import os
 import pickle
+import asyncio
+import threading
+from typing import Any
 
 import os, json
 import pandas as pd
@@ -14,6 +17,15 @@ from llama_index.core import (
     StorageContext,
     load_index_from_storage
 )
+from llama_index.core.agent.workflow import (
+    AgentOutput,
+    AgentStream,
+    ToolCall,
+    ToolCallResult,
+)
+from llama_index.llms.openai import OpenAI
+from llama_index.core.agent.workflow import AgentWorkflow
+from llama_index.core.workflow import Context
 
 from llama_index.core.workflow import (
     StartEvent,
@@ -23,7 +35,7 @@ from llama_index.core.workflow import (
     Event,
     Context
 )
-from helper import get_openai_api_key, get_llama_cloud_api_key
+from helper import get_openai_api_key, get_llama_cloud_api_key, get_tavily_api_key
 from typing import Optional
 from typing import ClassVar
 from typing import List
@@ -48,10 +60,28 @@ from llama_index.readers.web import AgentQLWebReader
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.llms.openai import OpenAI
+from buybaktools.time_series_tools import BuyBakTimeSeriesToolSpec, BuyBakLineItemAndIndicators, BuyBakTimeSeries
+from llama_index.core.tools import FunctionTool
+
+from llama_index.core.agent.workflow import FunctionAgent
+import os
 
 index = None
 stored_docs = {}
 lock = Lock()
+
+import nest_asyncio
+nest_asyncio.apply()
+
+llama_cloud_api_key = get_llama_cloud_api_key()
+openai_api_key = get_openai_api_key()
+tavily_api_key = get_tavily_api_key()
+
+print(f'LLAMA  {llama_cloud_api_key}')
+print(f'OPENAI {openai_api_key}')
+print(f'TAVILY {tavily_api_key}')
+
+
 
 index_name = "./saved_index"
 pkl_name = "stored_documents.pkl"
@@ -61,6 +91,27 @@ agentql_reader = AgentQLWebReader(
     params={
         "is_scroll_to_bottom_enabled": True
     },  # Optional additional parameters
+)
+system_prompt = f"""You are now connected to the BuyBakTimeSeries Tools, that predicts the EMA values for a live array of [['open','high','low','close']]
+Only enter details that the user has explicitly provided. Return the value from the tools provided for the predict method.
+Do not make up any details.
+"""
+buybak_time_series_tools = BuyBakTimeSeriesToolSpec().to_tool_list()
+buybak_ts_agent = FunctionAgent(
+    name="BuyBakTimeSeriesAgent",
+    description="Booking agent that predicts the next EMA values from a time series",
+    tools= buybak_time_series_tools,
+    llm=OpenAI(model="gpt-4o-mini"),
+    system_prompt=system_prompt,
+    verbose=True,
+)
+
+agent_workflow = AgentWorkflow(
+    agents=[buybak_ts_agent],
+    root_agent=buybak_ts_agent.name,
+    initial_state={
+    },
+    verbose=True,
 )
 
 
@@ -90,37 +141,63 @@ def query_index(query_text):
     return response
 
 
-def insert_url_into_index(url_path):
+# SAMPLE query        "Convert the following list into a 'BuyBakTimeSeries'. Then call the predict tool to find the answer. [[143.39, 154.93, 142.66, 149.24], [153.57, 154.44, 145.21, 146.58], [146.33, 161.87, 145.81, 161.06], [158.76, 160.03, 152.2, 155.37], [155.59, 159.86, 155.59, 159.4], [162.31, 164.03, 159.92, 161.47], [161.57, 162.05, 157.65, 158.68], [155.47, 158.18, 153.91, 155.5], [156.61, 157.07, 150.9, 153.36], [150.96, 151.06, 148.4, 149.86], [151.07, 154.61, 150.87, 153.9], [157.91, 160.02, 156.35, 157.72], [158.52, 161.71, 158.09, 161.47], [167.1, 168.24, 163.0, 163.85], [164.26, 164.95, 160.38, 162.42], [162.04, 162.68, 159.39, 162.06], [159.86, 161.37, 157.15, 160.89], [162.52, 163.94, 160.93, 162.79], [164.99, 166.45, 163.66, 165.76]]. Finally, call the MSE on the predicted sample")
+
+async def slow_update_time_series(query_prompt) -> tuple[bool, Any]:
     """Insert new URL into global index."""
-    global index, stored_docs, agentql_reader
-    document = agentql_reader.load_data(
-        url=url_path,
-        query= """
-        {
-            products[]
-            {
-                time_depart,
-                time_arrive,
-                stops,
-                total_time,
-                airlines,
-                airport_codes,
-                from_to,
-                price
-            }
-        }
+    global index, stored_docs, agentql_reader, buybak_time_series_tools
+    
+    print('------- QUERY PREDICTION ----------')
+    ctx = Context(agent_workflow)
+    response = await agent_workflow.run(query_prompt)
+    print(response)
+    print('------- Prediction DONE --------------------')
+
+    return True, response
+
+def __iter_over_async(query_prompt: str):
+    """
+    Iterates over the async iterable and yields formatted chunks.
+
+    Yields:
+        str: Formatted chunk of response text.
+    """
+    print('----- __iter_over_async ....')
+    print(query_prompt)
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    async def get_next(query_prompt) -> tuple[bool, Any]:
         """
-    )
+        Retrieves the next chunk from the iterator.
 
-    embed_model = OpenAIEmbedding(model_name="text-embedding-3-small")
-    with lock:
-        print('------- Regenerating Index from QUERY ----------')
-        print(url_path)
-        index = VectorStoreIndex(nodes=[], embed_model=embed_model).from_documents(document)
-        index.storage_context.persist(persist_dir=index_name)
-        print('------- Regeneration DONE --------------------')
+        Returns:
+            tuple[bool, Any]: A tuple with a boolean indicating if the iteration is done and the chunk.
+        """
+        try:
+            print('----- try await slow....')
+            print(query_prompt)
+            obj = await slow_update_time_series(query_prompt)
+            return True, obj
+        except StopAsyncIteration:
+            return True, obj
+        except Exception as e:
+            print(f"Error in get_next: {e}")
+            return True, f"{e}"
 
-    return
+    try:
+        while True:
+            print('----- while_true ....')
+            print(query_prompt)
+            done, obj = loop.run_until_complete(get_next(query_prompt))
+            if done:
+                break
+    finally:
+        loop.close()
+
+
+def update_time_series(query_prompt):
+    return __iter_over_async(query_prompt)
 
 def get_documents_list():
     """Get the list of currently stored documents."""
@@ -141,7 +218,7 @@ if __name__ == "__main__":
     # NOTE: you might want to handle the password in a less hardcoded way
     manager = BaseManager(('', 5602), b'password')
     manager.register('query_index', query_index)
-    manager.register('insert_url_into_index', insert_url_into_index)
+    manager.register('update_time_series', update_time_series)
     manager.register('get_documents_list', get_documents_list)
     server = manager.get_server()
 

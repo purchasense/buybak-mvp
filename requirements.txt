@@ -14,3 +14,4 @@ gradio
 llama-index-utils-workflow
 llama-index-readers-whisper
 llama-index-utils-workflow
+xgboost

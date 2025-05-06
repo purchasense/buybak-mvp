@@ -1,0 +1,176 @@
+"""BuyBak Appointment Booking Tool Spec."""
+
+import numpy as np
+import matplotlib.pyplot as plt
+import ta  # pip install ta
+import pandas as pd
+from xgboost import XGBRegressor
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import classification_report, confusion_matrix
+
+from typing import Optional
+from typing import ClassVar
+from typing import List
+from pydantic import BaseModel, Field
+import json
+
+from llama_index.core.tools.tool_spec.base import BaseToolSpec
+from typing import Optional
+
+from llama_index.core.prompts import PromptTemplate
+from llama_index.core.workflow import Context
+from llama_index.core.schema import Document
+
+from llama_index.readers.web import AgentQLWebReader
+from llama_index.core import VectorStoreIndex
+from llama_index.core.base.base_query_engine import BaseQueryEngine
+from llama_index.llms.openai import OpenAI
+from llama_index.core import (
+    VectorStoreIndex,
+    StorageContext,
+    load_index_from_storage
+)
+
+
+# we will represent and track the state of a booking as a Pydantic model
+
+# url="https://www.kayak.com/flights/GOX-ORD/2025-06-04/2025-06-22/1adults/children-17-17?ucs=111myh5&sort=bestflight_a&fs=stops=1",
+class BuyBakLineItemAndIndicators(BaseModel):
+    """Single line item to hold the OHLCV and indicator for the list of items for a symbol"""
+    open:           float = Field(description="'Open' price of that day")
+    high:           float = Field(description="'High' price that day")
+    low:            float = Field(description="'Low' price of that day")
+    close:          float = Field(description="'Low' price of that day")
+    volume:         int = Field(description="'Volume' of that day")
+    rsi:            Optional[float] = Field(description="'RSI' indicator calculated based on OHLC")
+    macd:           Optional[float] = Field(description="'MACD' indicator, calculated based on the last 14 rolling average")
+    sma:            Optional[float] = Field(description="'SMA' indicator: simple moving average, calculated based on the last 14 rolling average")
+    ema:            Optional[float] = Field(description="'EMA' indicator: exponential moving average, calculated based on the last 14 rolling average")
+    volatility:     Optional[float] = Field(description="'Implied Volatility' calculated based on the last 14 rolling average")
+
+class BuyBakTimeSeries(BaseModel):
+    """A struct to hold the line_items of OHLCV and  market indicators"""
+    name: str = None
+    line_items: List[BuyBakLineItemAndIndicators] = Field(description="Line Items shipped with the indicators as response")
+
+class BuyBakTimeSeriesToolSpec(BaseToolSpec):
+    """BuyBak Apt Booking Tool spec."""
+
+    spec_functions = [
+        "extract_bbk_time_series_from_prompt",
+        "get_bbk_ohlcv", 
+        "get_bbk_indicators",
+        "get_mean_squared_error",
+        "buybak_model_predict"
+    ]
+    query_engine                = None
+    df_ohlcv                    = {}
+    X                           = {}
+    y                           = {}
+    X_train                     = {}
+    y_train                     = {}
+    X_test                      = {}
+    y_test                      = {}
+    train_size                  = 0
+    mse                         = 0.0
+    storage_dir                 = "./storage-buybak-time-series"
+
+
+    def __init__(self):
+        print('BBK: Initializing Time Series')
+
+        # 1. Load and clean data
+        df_ohlcv = pd.read_csv("./TradesCSV/reverse_goog.csv")
+        # df = pd.read_csv("TradesCSV/small_goog.csv")
+        print('df')
+
+        # 2. Feature Engineering
+        df_ohlcv['rsi'] = ta.momentum.RSIIndicator(df_ohlcv['Close']).rsi()
+        df_ohlcv['macd'] = ta.trend.MACD(df_ohlcv['Close']).macd()
+        df_ohlcv['sma'] = df_ohlcv['Close'].rolling(14).mean()
+        df_ohlcv['ema'] = df_ohlcv['Close'].ewm(span=14).mean()
+        df_ohlcv['volatility'] = df_ohlcv['Close'].rolling(14).std()
+        df_ohlcv.dropna(inplace=True)
+
+        lf = df_ohlcv[['Open', 'High', 'Low', 'Close']]
+        self.X = np.array(lf).tolist()
+        self.y = np.array(df_ohlcv['ema']).tolist()
+
+        # Split the data into training and testing sets
+        self.train_size = int(len(self.X) * 0.8)
+        self.X_train, self.y_train = self.X[:self.train_size], self.y[:self.train_size]
+        self.X_test, self.y_test = self.X[self.train_size:], self.y[self.train_size:]
+
+        print('------------ X_train --------')
+        print(self.X_train)
+        print('------------ y_train --------')
+        print(self.y_train)
+        print('------------ train_size --------')
+        print(self.train_size)
+
+        # Create and train the XGBoost model
+        self.model = XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
+        self.model.fit(self.X_train, self.y_train)
+        print(self.model)
+        print('------ init model done --------')
+
+
+    def extract_bbk_time_series_from_prompt(self, input: str) -> []:
+        """Extract the BuyBakTimeSeries structure from the input """
+        print("Inside extract_bbk_time_series_from_prompt")
+        print(input)
+        llm = OpenAI("gpt-4o-mini")
+        sllm = llm.as_structured_llm(BuyBakTimeSeries)
+        response = sllm.complete(input)
+        print(response)
+        return response.text
+
+    def get_bbk_ohlcv(self) -> []:
+        """Get the OHLCV values from the dataframe ."""
+        try:
+            return self.df_ohlcv
+        except:
+            return f"OHLCV not found"
+
+    def get_bbk_indicators(self) -> []:
+        """Get the Indicators values from the dataframe ."""
+        try:
+            return self.df_ohlcv[['close', 'rsi', 'macd', 'sma', 'ema', 'volatility']]
+        except:
+            return f"OHLCV not found"
+
+    def get_mean_squared_error(self) -> float:
+        """Get the MSE from the live prediction ."""
+        return self.mse
+
+    def buybak_model_predict(self, argin: str) -> []:
+        """Fit the model initialized (XGBoost) with the X_live data, calcumate the MSE with y_live, and return the y_pred_live"""
+
+        try:
+            print(argin)
+            print('-------- argin above -------')
+            import json
+            data = json.loads(argin)
+            print(data['line_items'])
+            print('-------- input above -------')
+            df_data = pd.DataFrame(data["line_items"])
+            print(df_data)
+            print(f'-------- df_data above ------- {type(df_data)}')
+            lf = df_data[['open', 'high', 'low', 'close']]
+            print(lf)
+            print('-------- lf above -------')
+            X_live = np.array(lf).tolist()
+            print(X_live)
+            print('-------- X_live above -------')
+            y_live = lf['close']
+            print(y_live)
+            print('-------- y_live above -------')
+            y_pred_live = self.model.predict(X_live)
+            print('---------- y_pred_live  -------------')
+            print(y_pred_live)
+            self.mse = mean_squared_error(y_live, y_pred_live)
+            print(f'---------- self.mse  {self.mse}')
+            return y_pred_live
+        except:
+            return "Exception thrown parsing argin JSON"
+
