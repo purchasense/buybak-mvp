@@ -66,6 +66,7 @@ from llama_index.core.tools import FunctionTool
 from llama_index.core.agent.workflow import FunctionAgent
 import os
 
+notifications = {"list_items": []}
 index = None
 stored_docs = {}
 lock = Lock()
@@ -92,7 +93,7 @@ agentql_reader = AgentQLWebReader(
         "is_scroll_to_bottom_enabled": True
     },  # Optional additional parameters
 )
-system_prompt = f"""You are now connected to the BuyBakTimeSeries Tools, that predicts the EMA values for a live array of [['open','high','low','close']]
+system_prompt = f"""You are now connected to the BuyBakTimeSeries Tools, that 1. predicts the EMA values for a live array of [['open','high','low','close']], and 2. forecasts future EMA using the MLForecaster.
 Only enter details that the user has explicitly provided. Return the value from the tools provided for the predict method.
 Do not make up any details.
 """
@@ -141,7 +142,7 @@ def query_index(query_text):
     return response
 
 
-# SAMPLE query        "Convert the following list into a 'BuyBakTimeSeries'. Then call the predict tool to find the answer. [[143.39, 154.93, 142.66, 149.24], [153.57, 154.44, 145.21, 146.58], [146.33, 161.87, 145.81, 161.06], [158.76, 160.03, 152.2, 155.37], [155.59, 159.86, 155.59, 159.4], [162.31, 164.03, 159.92, 161.47], [161.57, 162.05, 157.65, 158.68], [155.47, 158.18, 153.91, 155.5], [156.61, 157.07, 150.9, 153.36], [150.96, 151.06, 148.4, 149.86], [151.07, 154.61, 150.87, 153.9], [157.91, 160.02, 156.35, 157.72], [158.52, 161.71, 158.09, 161.47], [167.1, 168.24, 163.0, 163.85], [164.26, 164.95, 160.38, 162.42], [162.04, 162.68, 159.39, 162.06], [159.86, 161.37, 157.15, 160.89], [162.52, 163.94, 160.93, 162.79], [164.99, 166.45, 163.66, 165.76]]. Finally, call the MSE on the predicted sample")
+# SAMPLE query        "Convert the following list into a BuyBakTimeSeries, with 'line_items', in the json argument. Then call the predict tool to find the answer. [[143.39, 154.93, 142.66, 149.24], [153.57, 154.44, 145.21, 146.58], [146.33, 161.87, 145.81, 161.06], [158.76, 160.03, 152.2, 155.37], [155.59, 159.86, 155.59, 159.4], [162.31, 164.03, 159.92, 161.47], [161.57, 162.05, 157.65, 158.68], [155.47, 158.18, 153.91, 155.5], [156.61, 157.07, 150.9, 153.36], [150.96, 151.06, 148.4, 149.86], [151.07, 154.61, 150.87, 153.9], [157.91, 160.02, 156.35, 157.72], [158.52, 161.71, 158.09, 161.47], [167.1, 168.24, 163.0, 163.85], [164.26, 164.95, 160.38, 162.42], [162.04, 162.68, 159.39, 162.06], [159.86, 161.37, 157.15, 160.89], [162.52, 163.94, 160.93, 162.79], [164.99, 166.45, 163.66, 165.76]]. Finally, call the MSE on the predicted sample")
 
 async def slow_update_time_series(query_prompt) -> tuple[bool, Any]:
     """Insert new URL into global index."""
@@ -178,6 +179,8 @@ def __iter_over_async(query_prompt: str):
             print('----- try await slow....')
             print(query_prompt)
             obj = await slow_update_time_series(query_prompt)
+            print('-------- return slow_update response')
+            print(obj)
             return True, obj
         except StopAsyncIteration:
             return True, obj
@@ -194,11 +197,97 @@ def __iter_over_async(query_prompt: str):
                 break
     finally:
         loop.close()
-
+    return obj
 
 def update_time_series(query_prompt):
-    return __iter_over_async(query_prompt)
+    with lock:
+        import time
+        timestamp = time.time()
+        result, response = __iter_over_async(query_prompt)
+        print(f'result: {result}')
+        print(f'response: {response}')
+        notifications["list_items"].append({str(int(timestamp)): f'{response}'})
+        print(notifications)
+        return f'{response}'
+            
+async def slow_forecast_time_series(query_prompt: str) -> tuple[bool, Any]:
+    """Forecast Time Series using the agent workflow"""
+    global index, stored_docs, agentql_reader, buybak_time_series_tools
+    
+    print('------- QUERY FORECASTING ----------')
+    ctx = Context(agent_workflow)
+    response = await agent_workflow.run(query_prompt)
+    print(response)
+    print('------- Prediction DONE --------------------')
 
+    return True, response
+
+def __iter_over_async_forecaster(query_prompt: str):
+    """
+    Iterates over the async iterable and yields formatted chunks.
+
+    Yields:
+        str: Formatted chunk of response text.
+    """
+    print('----- __iter_over_async ....')
+    print(query_prompt)
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    async def get_next(query_prompt) -> tuple[bool, Any]:
+        """
+        Retrieves the next chunk from the iterator.
+
+        Returns:
+            tuple[bool, Any]: A tuple with a boolean indicating if the iteration is done and the chunk.
+        """
+        try:
+            print('----- try await slow....')
+            print(query_prompt)
+            obj = await slow_forecast_time_series(query_prompt)
+            print('-------- return slow_update response')
+            print(obj)
+            return True, obj
+        except StopAsyncIteration:
+            return True, obj
+        except Exception as e:
+            print(f"Error in get_next: {e}")
+            return True, f"{e}"
+
+    try:
+        while True:
+            print('----- while_true ....')
+            print(query_prompt)
+            done, obj = loop.run_until_complete(get_next(query_prompt))
+            if done:
+                break
+    finally:
+        loop.close()
+    return obj
+
+def forecast_time_series(query_prompt):
+    with lock:
+        import time
+        timestamp = time.time()
+        result, response = __iter_over_async_forecaster(query_prompt)
+        print(f'result: {result}')
+        print(f'response: {response}')
+        # notifications["list_items"].append({str(int(timestamp)): f'{response}'})
+        # print(notifications)
+        return f'{response}'
+            
+
+def get_notifications():
+    """Get the Notifications to the frontend periodically"""
+    global notifications
+
+    local_notifications = {}
+    with lock:
+        local_notifications = notifications
+        
+    print(f'local_type {type(local_notifications)}')
+    return local_notifications
+    
 def get_documents_list():
     """Get the list of currently stored documents."""
     global stored_doc
@@ -219,7 +308,9 @@ if __name__ == "__main__":
     manager = BaseManager(('', 5602), b'password')
     manager.register('query_index', query_index)
     manager.register('update_time_series', update_time_series)
+    manager.register('forecast_time_series', forecast_time_series)
     manager.register('get_documents_list', get_documents_list)
+    manager.register('get_notifications', get_notifications)
     server = manager.get_server()
 
     print("server started...")

@@ -13,7 +13,9 @@ CORS(app)
 manager = BaseManager(('', 5602), b'password')
 manager.register('query_index')
 manager.register('update_time_series')
+manager.register('forecast_time_series')
 manager.register('get_documents_list')
+manager.register('get_notifications')
 manager.connect()
 
 
@@ -24,7 +26,7 @@ def query_index():
     if query_text is None:
         return "No text found, please include a ?text=blah parameter in the URL", 400
     
-    response = manager.query_index(query_text)._getvalue()
+    response = manager.query_index(query_text)
     print(response)
     print('------------------------------------------')
     response_json = {
@@ -51,10 +53,32 @@ def update_time_series():
     
     print(str(query_prompt))
 
-    response = manager.update_time_series(str(query_prompt))._getvalue()
+    response = manager.update_time_series(str(query_prompt))
     response_json = {
         "text": str("SUCCESS"),
-        "sources": [{"text": "update_time_series",
+        "sources": [{"text": f'{response}',
+                     "similarity": 0.0,
+                     "doc_id": 1,
+                     "start": "",
+                     "end": "",
+                    }]
+    }
+    return make_response(jsonify(response_json)), 200
+
+@app.route("/forecast_time_series", methods=["POST"])
+def forecast_time_series():
+    global manager
+    print(request.get_data())
+    query_prompt = request.get_data()
+    if query_prompt is None:
+        return "No text found, please include a ?text=blah parameter in the URL", 400
+    
+    print(str(query_prompt))
+
+    response = manager.forecast_time_series(str(query_prompt))
+    response_json = {
+        "text": str("SUCCESS"),
+        "sources": [{"text": f'{response}',
                      "similarity": 0.0,
                      "doc_id": 1,
                      "start": "",
@@ -69,6 +93,15 @@ def get_documents():
     document_list = manager.get_documents_list()._getvalue()
 
     return make_response(jsonify(document_list)), 200
+    
+@app.route("/get_notifications", methods=["GET"])
+def get_notifications():
+    notifications = manager.get_notifications()
+
+    print(f'notif {notifications}')
+    print(f'getvalue {notifications._getvalue()}')
+
+    return make_response(jsonify(notifications._getvalue())), 200
     
 
 @app.route("/")

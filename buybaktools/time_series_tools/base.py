@@ -21,6 +21,12 @@ from llama_index.core.prompts import PromptTemplate
 from llama_index.core.workflow import Context
 from llama_index.core.schema import Document
 
+import lightgbm as lgb
+from mlforecast import MLForecast
+from mlforecast.lag_transforms import ExpandingMean, RollingMean
+from mlforecast.target_transforms import Differences
+from utilsforecast.plotting import plot_series
+
 from llama_index.readers.web import AgentQLWebReader
 from llama_index.core import VectorStoreIndex
 from llama_index.core.base.base_query_engine import BaseQueryEngine
@@ -61,7 +67,8 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
         "get_bbk_ohlcv", 
         "get_bbk_indicators",
         "get_mean_squared_error",
-        "buybak_model_predict"
+        "buybak_model_predict",
+        "buybak_model_forecast"
     ]
     query_engine                = None
     df_ohlcv                    = {}
@@ -74,6 +81,15 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
     train_size                  = 0
     mse                         = 0.0
     storage_dir                 = "./storage-buybak-time-series"
+    # MLForecast variables
+    ml_id                       = {}
+    ml_ds                       = {}
+    ml_y                        = {}
+    ml_series                   = {}
+    ml_predict                    = {}
+    ml_models                   = []
+    ml_forecaster                = None
+
 
 
     def __init__(self):
@@ -96,10 +112,38 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
         self.X = np.array(lf).tolist()
         self.y = np.array(df_ohlcv['ema']).tolist()
 
+        self.ml_id = np.repeat(['id_00', 'id_01'], 105)
+        self.ml_ds = pd.date_range('2000-01-01', periods=210, freq='D')
+        self.ml_y = df_ohlcv["ema"]
+        self.ml_series = pd.DataFrame({
+            'unique_id': self.ml_id,
+            'ds': self.ml_ds,
+            'y': self.ml_y,
+        })
+        self.ml_models = [
+            lgb.LGBMRegressor(random_state=0, verbosity=-1),
+            # Add other models here if needed, e.g., LinearRegression()
+        ]
+
         # Split the data into training and testing sets
         self.train_size = int(len(self.X) * 0.8)
         self.X_train, self.y_train = self.X[:self.train_size], self.y[:self.train_size]
         self.X_test, self.y_test = self.X[self.train_size:], self.y[self.train_size:]
+
+
+        # Instantiate MLForecast object
+        self.ml_forecaster = MLForecast(
+            models=self.ml_models,
+            freq='D',
+            lags=[7, 14],
+            lag_transforms={
+                1: [ExpandingMean()],
+                7: [RollingMean(window_size=28)]
+            },
+            date_features=['dayofweek'],
+            target_transforms=[Differences([1])]
+        )
+        self.ml_forecaster.fit(self.ml_series)
 
         print('------------ X_train --------')
         print(self.X_train)
@@ -173,4 +217,17 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
             return y_pred_live
         except:
             return "Exception thrown parsing argin JSON"
+
+    def buybak_model_forecast(self) -> []:
+        """MLForecaster: Use the ml_forecaster model to predict the next N values, and return."""
+
+        try:
+            self.ml_predict = self.ml_forecaster.predict(15)
+            print('---------- ml_predict  -------------')
+            print(self.ml_predict)
+            filtered_df = self.ml_predict[(self.ml_predict['unique_id'] == "id_01")]
+            filtered_df = filtered_df["LGBMRegressor"]
+            return np.array(filtered_df).tolist()
+        except:
+            return "Exception thrown in ml_forecaster"
 
