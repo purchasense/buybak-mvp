@@ -103,6 +103,8 @@ const initialState = {
   total_fsop: new Number(1099.00),
   total_curr: new Number(1099.00),
   cdata: [0, 100, 175, 333, 500, 555, 689, 876, 989, 1000, 1103],
+  predictions: [],
+  forecastors: [],
   map_store_to_quotes: new I.Map({
     'AAPL':   new CustomerRetailFSOP( 
                 new Customer('', '', '', '', '', ''), 
@@ -386,6 +388,26 @@ const modalQRCodeReducer = (state = initialState, action) => {
             ...state,
             map_store_to_mobile_messages: mmap,
             alertCount: count,
+        };
+    }
+    case actionTypes.SET_BUYBAK_PREDICTIONS: {
+        console.log( 'Inside SET_BUYBAK_PREDICTIONS');
+        console.log( action.values);
+        let predictions = state.predictions;
+        predictions = action.values;
+        return {
+            ...state,
+            predictions: predictions
+        };
+    }
+    case actionTypes.SET_BUYBAK_FORECASTORS: {
+        console.log( 'Inside SET_BUYBAK_FORECASTORS');
+        console.log( action.values);
+        let forecastors = state.forecastors;
+        forecastors = action.values;
+        return {
+            ...state,
+            forecastors: forecastors
         };
     }
 

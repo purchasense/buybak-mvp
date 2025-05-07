@@ -15,7 +15,8 @@ manager.register('query_index')
 manager.register('update_time_series')
 manager.register('forecast_time_series')
 manager.register('get_documents_list')
-manager.register('get_notifications')
+manager.register('get_predictions')
+manager.register('get_forecastors')
 manager.connect()
 
 
@@ -94,14 +95,23 @@ def get_documents():
 
     return make_response(jsonify(document_list)), 200
     
-@app.route("/get_notifications", methods=["GET"])
-def get_notifications():
-    notifications = manager.get_notifications()
+@app.route("/get_predictions", methods=["GET"])
+def get_predictions():
+    predictions = manager.get_predictions()
 
-    print(f'notif {notifications}')
-    print(f'getvalue {notifications._getvalue()}')
+    print(f'notif {predictions}')
+    print(f'getvalue {predictions._getvalue()}')
 
-    return make_response(jsonify(notifications._getvalue())), 200
+    return make_response(jsonify(predictions._getvalue())), 200
+    
+@app.route("/get_forecastors", methods=["GET"])
+def get_forecastors():
+    forecastors = manager.get_forecastors()
+
+    print(f'notif {forecastors}')
+    print(f'getvalue {forecastors._getvalue()}')
+
+    return make_response(jsonify(forecastors._getvalue())), 200
     
 
 @app.route("/")

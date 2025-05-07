@@ -66,7 +66,9 @@ from llama_index.core.tools import FunctionTool
 from llama_index.core.agent.workflow import FunctionAgent
 import os
 
-notifications = {"list_items": []}
+predictions = {"list_items": []}
+forecastors = {"list_items": []}
+
 index = None
 stored_docs = {}
 lock = Lock()
@@ -206,8 +208,8 @@ def update_time_series(query_prompt):
         result, response = __iter_over_async(query_prompt)
         print(f'result: {result}')
         print(f'response: {response}')
-        notifications["list_items"].append({str(int(timestamp)): f'{response}'})
-        print(notifications)
+        predictions["list_items"].append({str(int(timestamp)): f'{response}'})
+        print(predictions)
         return f'{response}'
             
 async def slow_forecast_time_series(query_prompt: str) -> tuple[bool, Any]:
@@ -272,21 +274,32 @@ def forecast_time_series(query_prompt):
         result, response = __iter_over_async_forecaster(query_prompt)
         print(f'result: {result}')
         print(f'response: {response}')
-        # notifications["list_items"].append({str(int(timestamp)): f'{response}'})
-        # print(notifications)
+        forecastors["list_items"].append({str(int(timestamp)): f'{response}'})
+        print(forecastors)
         return f'{response}'
             
 
-def get_notifications():
+def get_predictions():
     """Get the Notifications to the frontend periodically"""
-    global notifications
+    global predictions
 
-    local_notifications = {}
+    local_predictions = {}
     with lock:
-        local_notifications = notifications
+        local_predictions = predictions
         
-    print(f'local_type {type(local_notifications)}')
-    return local_notifications
+    print(f'local_type {type(local_predictions)}')
+    return local_predictions
+    
+def get_forecastors():
+    """Get the Notifications to the frontend periodically"""
+    global forecastors
+
+    local_forecastors = {}
+    with lock:
+        local_forecastors = forecastors
+        
+    print(f'local_type {type(local_forecastors)}')
+    return local_forecastors
     
 def get_documents_list():
     """Get the list of currently stored documents."""
@@ -310,7 +323,8 @@ if __name__ == "__main__":
     manager.register('update_time_series', update_time_series)
     manager.register('forecast_time_series', forecast_time_series)
     manager.register('get_documents_list', get_documents_list)
-    manager.register('get_notifications', get_notifications)
+    manager.register('get_predictions', get_predictions)
+    manager.register('get_forecastors', get_forecastors)
     server = manager.get_server()
 
     print("server started...")

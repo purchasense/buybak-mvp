@@ -17,6 +17,8 @@ export const SET_MODAL_MOBILE_LOGIN_NAME = "@buybak/SET_MODAL_MOBILE_LOGIN_NAME"
 export const SET_BUYBAK_STATISTICS = "@buybak/SET_BUYBAK_STATISTICS";
 export const SET_BUYBAK_MOBILE_MESSAGE = "@buybak/SET_BUYBAK_MOBILE_MESSAGE";
 export const GET_BUYBAK_MOBILE_MESSAGES = "@buybak/GET_BUYBAK_MOBILE_MESSAGES";
+export const SET_BUYBAK_PREDICTIONS = "@buybak/SET_BUYBAK_PREDICTIONS";
+export const SET_BUYBAK_FORECASTORS = "@buybak/SET_BUYBAK_FORECASTORS";
 
 export function setModalQRCodeStatus(isOpen, store_id) {
   return { type: SET_MODAL_QRCODE_STATUS, isOpen, store_id };
@@ -64,5 +66,13 @@ export function setBuybakMobileMessage(id, user, message) {
 
 export function getBuybakMobileMessages() {
   return { type: GET_BUYBAK_MOBILE_MESSAGES};
+}
+
+export function setBuybakPredictions(values) {
+  return { type: SET_BUYBAK_PREDICTIONS, values};
+}
+
+export function setBuybakForecastors(values) {
+  return { type: SET_BUYBAK_FORECASTORS, values};
 }
 

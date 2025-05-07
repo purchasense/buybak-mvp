@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import classNames from 'classnames';
-import queryIndex, { ResponseSources } from '../../../../apis/queryIndex';
+import queryIndex, {getPredictions, getForecastors, ResponseSources } from '../../../../apis/queryIndex';
 import {MobileMessage} from './MobileMessage';
 import {MobileWineCard} from './MobileWineCard';
 import ColorSubCard from "ui-component/cards/ColorSubCard";
@@ -39,14 +39,57 @@ import {
 import {
   setBuybakMobileMessage,
   getBuybakMobileMessages,
+  setBuybakPredictions,
+  setBuybakForecastors
 } from "store/actions";
 
 
 export const MobileIndexQuery = () => {
-  const [isLoading, setLoading] = useState(false);
-  const [responseText, setResponseText] = useState('```HTML <table> <tr> <th>Departure</th> <th>Total Time</th> <th>Airport Codes</th> <th>Price</th> </tr> <tr> <td>7:20 pm</td> <td>20h 25m</td> <td>ORD-GOX</td> <td>1917.0</td> </tr> <tr> <td>4:10 am</td> <td>21h 50m</td> <td>GOX-ORD</td> <td>1430.0</td> </tr> <tr> <td>7:20 pm</td> <td>20h 25m</td> <td>ORD-GOX</td> <td>1921.0</td> </tr> <tr> <td>4:10 am</td> <td>21h 50m</td> <td>GOX-ORD</td> <td>1919.0</td> </tr> </table> ```');
+    const [isLoading, setLoading] = useState(false);
+    const [responseText, setResponseText] = useState('```HTML <table> <tr> <th>Departure</th> <th>Total Time</th> <th>Airport Codes</th> <th>Price</th> </tr> <tr> <td>7:20 pm</td> <td>20h 25m</td> <td>ORD-GOX</td> <td>1917.0</td> </tr> <tr> <td>4:10 am</td> <td>21h 50m</td> <td>GOX-ORD</td> <td>1430.0</td> </tr> <tr> <td>7:20 pm</td> <td>20h 25m</td> <td>ORD-GOX</td> <td>1921.0</td> </tr> <tr> <td>4:10 am</td> <td>21h 50m</td> <td>GOX-ORD</td> <td>1919.0</td> </tr> </table> ```');
+    let [predictionsText, setPredictionsText] = useState({});
+    let [forecastorsText, setForecastorsText] = useState({});
 
     const dispatch = useDispatch();
+
+    console.log( 'Pred: ' + predictionsText);
+    console.log( 'Fore: ' + forecastorsText);
+
+    useEffect(() => {
+        console.log( 'MobileIndexQuery: fetch Pred/Forecast');
+            getPredictions().then((response) => {
+                console.log(response.list_items);
+                 response.list_items.forEach((item, key) => {
+                    console.log( 'PRED Key: ' + key);
+                    console.log({item});
+                    Object.keys(item).forEach(key => {
+                        console.log(key, (item[key].length), item[key]);
+                        let values = JSON.parse(item[key]);
+                        dispatch(setBuybakPredictions(values));
+                        setPredictionsText(values);
+                    });
+                 })
+                // let parsedJson = JSON.parse(response.list_items[0]);
+            });
+            getForecastors().then((response) => {
+                console.log(response.list_items);
+                response.list_items.forEach((item, key) => {
+                    console.log( 'FORE Key: ' + key);
+                    Object.keys(item).forEach(key => {
+                        console.log(key, (item[key].length), item[key]);
+                        try {
+                            let values = JSON.parse(item[key]);
+                            dispatch(setBuybakForecastors(values));
+                            setForecastorsText(values);
+                        } catch (error) {
+                            console.log( error);
+                        } finally {
+                            console.log( 'finally');
+                        }
+                    });
+                })
+            });
+    }, []);
 
     const handleQuery = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key == 'Enter') {
