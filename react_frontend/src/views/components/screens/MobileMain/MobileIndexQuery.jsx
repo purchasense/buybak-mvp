@@ -4,8 +4,10 @@ import { useDispatch } from "react-redux";
 import classNames from 'classnames';
 import queryIndex, {getPredictions, getForecastors, ResponseSources } from '../../../../apis/queryIndex';
 import {MobileMessage} from './MobileMessage';
+import {MobileChart} from './MobileChart';
 import {MobileWineCard} from './MobileWineCard';
 import ColorSubCard from "ui-component/cards/ColorSubCard";
+import Chart from 'react-apexcharts';
 import {
   Card,
   CardContent,
@@ -44,6 +46,78 @@ import {
 } from "store/actions";
 
 
+let chartData = {
+  type: "area",
+  height: 80,
+  width: '100%',
+  offsetX: 0,
+  options: {
+    chart: {
+      sparkline: {
+        enabled: true,
+      },
+      background: "#aaa",
+    },
+    colors: ["#FFF"],
+    dataLabels: {
+      enabled: false,
+    },
+    stroke: {
+      curve: "smooth",
+      width: 3,
+    },
+    yaxis: {
+        show: "true",
+        offsetY: 40
+  },
+    legend: {
+        position: 'bottom',
+    },
+    xaxis: {
+      offsetX: -10,
+      categories: [],
+      show: "false",
+      title: {
+        text: "Weekly",
+      },
+      labels: {
+         formatter: function (value) {
+            return value;
+         }
+      },
+    },
+    tooltip: {
+      theme: "dark",
+      fixed: {
+        enabled: true,
+      },
+      x: {
+        show: false,
+      },
+      y: {
+        title: "FSOP",
+        show: "false",
+      },
+      marker: {
+        show: false,
+      },
+    },
+  },
+  series: [
+  ],
+};
+
+let  cd_data = [
+    {
+      name: "Predictions",
+      data: [159.91353, 159.91353, 162.44794, 161.24452, 157.94542, 166.76558, 160.91374, 157.94542, 157.94542, 159.91353, 158.04843]
+    },
+    {
+      name: "Forecastors",
+      data: [164.27565059931024, 163.64161088130706, 163.51398769833057, 162.67782529379727, 161.94058563595763, 161.17340857674023, 160.40623151752283, 159.82062979168805, 159.20826673198033, 158.1375598295967, 157.74369845011444, 157.06055326456507, 156.47160842118893, 155.8826635778128, 154.96341642072696]
+    },
+];
+
 export const MobileIndexQuery = () => {
     const [isLoading, setLoading] = useState(false);
     const [responseText, setResponseText] = useState('```HTML <table> <tr> <th>Departure</th> <th>Total Time</th> <th>Airport Codes</th> <th>Price</th> </tr> <tr> <td>7:20 pm</td> <td>20h 25m</td> <td>ORD-GOX</td> <td>1917.0</td> </tr> <tr> <td>4:10 am</td> <td>21h 50m</td> <td>GOX-ORD</td> <td>1430.0</td> </tr> <tr> <td>7:20 pm</td> <td>20h 25m</td> <td>ORD-GOX</td> <td>1921.0</td> </tr> <tr> <td>4:10 am</td> <td>21h 50m</td> <td>GOX-ORD</td> <td>1919.0</td> </tr> </table> ```');
@@ -67,6 +141,7 @@ export const MobileIndexQuery = () => {
                         let values = JSON.parse(item[key]);
                         dispatch(setBuybakPredictions(values));
                         setPredictionsText(values);
+                        cd_data[0].data = values;
                     });
                  })
                 // let parsedJson = JSON.parse(response.list_items[0]);
@@ -81,6 +156,7 @@ export const MobileIndexQuery = () => {
                             let values = JSON.parse(item[key]);
                             dispatch(setBuybakForecastors(values));
                             setForecastorsText(values);
+                            cd_data[1].data = values;
                         } catch (error) {
                             console.log( error);
                         } finally {
@@ -166,6 +242,10 @@ export const MobileIndexQuery = () => {
 
          <TableContainer sx={{ width: '100%', height: '450px' }}>
             <MobileWineCard index={tabsValue} />
+            <MobileChart
+                predictions={predictionsText} 
+                forecastors={forecastorsText}
+            />
             {
                 list_messages.map(message => (
                     <MobileMessage key={message.id} user={message.user} value={message.msg} />
