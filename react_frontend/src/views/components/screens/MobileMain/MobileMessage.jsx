@@ -75,9 +75,10 @@ export const  MobileMessage = (props) => {
                                         dangerouslySetInnerHTML={{ __html: props.value}}
                                         > 
                                     </span> <br/>
+                                    <Typography style={{ color: "black", fontFamily: 'tiempos-headline,Lucida,Georgia,serif', fontWeight: 'normal', fontSize: "0.9rem" }}>
                                     <small style={{color:'blue'}}>
                                         { props.user || "Guest User" } - {formatDate(new Date())}
-                                    </small> 
+                                    </small>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{props.esender}</Typography>
                                 </div>
                             </div>
                         </div>
@@ -105,9 +106,10 @@ export const  MobileMessage = (props) => {
                                         dangerouslySetInnerHTML={{ __html: props.value}}
                                     >
                                     </span> <br/>
+                                    <Typography style={{ color: "black", fontFamily: 'tiempos-headline,Lucida,Georgia,serif', fontWeight: 'normal', fontSize: "0.9rem" }}>
                                     <small style={{color:'blue'}}>
                                         { props.user || "Guest User"  } - {formatDate(new Date())}
-                                    </small>
+                                    </small>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{props.esender}</Typography>
                                 </div>
                             </div>
                         </div>

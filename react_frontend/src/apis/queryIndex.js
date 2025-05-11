@@ -57,6 +57,25 @@ export const queryStreamingIndex = async (query: string): Promise<Response> => {
     return response;
 };
 
+export const queryUserInputIndex = async (query: string): Promise<QueryResponse> => {
+
+    const response = await fetch('http://127.0.0.1:8080/submit-user-input', {
+        method: "POST",
+        body: JSON.stringify({
+            query: query,
+        }),
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "*/*",
+        }
+    }, { mode: 'no-cors' });
+
+    console.log({response});
+    const queryResponse = await response.json();
+
+    return queryResponse;
+};
+
 const queryIndex = async (query: string): Promise<QueryResponse> => {
   const queryURL = new URL('http://localhost:5601/query?');
   queryURL.searchParams.append('text', query);

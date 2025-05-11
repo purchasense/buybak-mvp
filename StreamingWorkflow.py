@@ -38,13 +38,15 @@ class MyWorkflow(Workflow):
     async def step_one(self, ctx: Context, ev: StartEvent) -> FirstEvent:
         ctx.write_event_to_stream(
             Event(
-                msg=WorkflowStreamingEvent(
-                    event_type="server_message",
-                    event_sender=inspect.currentframe().f_code.co_name,
-                    event_content={
-                        "message": f"Inside step_one, StartEvent"
-                    },
-                ).model_dump()
+                msg=json.dumps(
+                    {
+                        "event_type": "server_message",
+                        "event_sender": inspect.currentframe().f_code.co_name,
+                        "event_content": {
+                            "message": "Inside step_one, StartEvent",
+                        },
+                    }
+                )
             )
         )
         return FirstEvent(first_output="First step complete.")
@@ -53,13 +55,15 @@ class MyWorkflow(Workflow):
     async def step_two(self, ctx: Context, ev: FirstEvent) -> SecondEvent:
         ctx.write_event_to_stream(
             Event(
-                msg=WorkflowStreamingEvent(
-                    event_type="server_message",
-                    event_sender=inspect.currentframe().f_code.co_name,
-                    event_content={
-                        "message": f"Inside step_two, FirstEvent"
-                    },
-        	    ).model_dump()
+                msg=json.dumps(
+                    {
+                        "event_type": "server_message",
+                        "event_sender": inspect.currentframe().f_code.co_name,
+                        "event_content": {
+                            "message": "Inside step_two, FirstEvent",
+                        },
+                    }
+                )
 		    )
         )
 
@@ -105,13 +109,15 @@ class MyWorkflow(Workflow):
         # Process user_response, which should be a JSON string
         ctx.write_event_to_stream(
             Event(
-                msg=WorkflowStreamingEvent(
-                    event_type="server_message",
-                    event_sender=inspect.currentframe().f_code.co_name,
-                    event_content={
-                        "message": f"Finally Done step_three, StopEvent"
-                    },
-        	    ).model_dump()
+                msg=json.dumps(
+                    {
+                        "event_type": "server_message",
+                        "event_sender": "stop_event",
+                        "event_content": {
+                            "message": "Finally Done step_three",
+                        },
+                    }
+                )
 		    )
         )
         return StopEvent(result=user_response)

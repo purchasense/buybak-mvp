@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import classNames from 'classnames';
-import queryIndex, {queryStreamingIndex, getPredictions, getForecastors, ResponseSources } from '../../../../apis/queryIndex';
+import queryIndex, {queryUserInputIndex, queryStreamingIndex, getPredictions, getForecastors, ResponseSources } from '../../../../apis/queryIndex';
 import {MobileMessage} from './MobileMessage';
 import {MobileChart} from './MobileChart';
 import {MobileWineCard} from './MobileWineCard';
@@ -172,7 +172,8 @@ export const MobileIndexQuery = () => {
           setLoading(true);
           console.log('Query: ' + e.target.value);
           console.log(e);
-          dispatch(setBuybakMobileMessage(Date.now(), 'sameer', e.target.value));
+          const msg = JSON.stringify({"event_type": "Begin", "event_sender": "user", "event_content": { "message": e.target.value}});
+          dispatch(setBuybakMobileMessage(Date.now(), 'sameer', msg));
           queryStreamingIndex(e.target.value)
           .then(response => {
           if (!response.ok) {
@@ -211,17 +212,24 @@ export const MobileIndexQuery = () => {
           .catch(error => {
             console.error('Error during streaming:', error);
           });
-          /*
-          */
-          // .then((response) => {
-          //   setLoading(false);
-          //   console.log(response);
-          //   setResponseText(response);
-          //   dispatch(setBuybakMobileMessage(Date.now(), 'GPT', response));
-          // });
         }
     };
 
+    const handleUserInputQuery = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key == 'Enter') {
+          setLoading(true);
+          console.log('UserInputQuery: ' + e.target.value);
+          console.log(e);
+          const msg = JSON.stringify({"event_type": "submit-user-input", "event_sender": "user", "event_content": { "message": e.target.value}});
+          dispatch(setBuybakMobileMessage(Date.now(), 'sameer', msg));
+          queryUserInputIndex(e.target.value).then((response) => {
+            setLoading(false);
+            setResponseText(response.text);
+            console.log("UserInputQuery: ", response.text);
+            // dispatch(setBuybakMobileMessage(Date.now(), 'GPT', response.text));
+          });
+        }
+    };
     const [tabsValue, setTabsValue] = React.useState(0);
 
     const handleChangeTab = (event, newValue) => {
@@ -276,12 +284,19 @@ export const MobileIndexQuery = () => {
       <Grid item align="left" >
         <TextField
             sx={{ m: 2, width: '90ch' }}
-            id="standard-basic" label="Query" variant="standard" 
+            id="standard-basic" label="Start" variant="standard" 
             onKeyDown={handleQuery}
         ></TextField>
       </Grid>
+      <Grid item align="left" >
+        <TextField
+            sx={{ m: 2, width: '90ch' }}
+            id="standard-basic" label="User-Input" variant="standard" 
+            onKeyDown={handleUserInputQuery}
+        ></TextField>
+      </Grid>
 
-         <TableContainer sx={{ width: '100%', height: '450px' }}>
+         <TableContainer sx={{ width: '100%', height: '750px' }}>
             <MobileWineCard index={tabsValue} />
             {/*
             <MobileChart
@@ -291,7 +306,7 @@ export const MobileIndexQuery = () => {
             */}
             {
                 list_messages.map(message => (
-                    <MobileMessage key={message.id} user={message.user} value={message.msg} />
+                    <MobileMessage key={message.id} user={message.user} etype={message.event_type} esender={message.event_sender} value={message.msg} />
                 ))
             }
         </TableContainer>
