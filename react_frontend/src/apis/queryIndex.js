@@ -6,6 +6,7 @@ export type ResponseSources = {
   similarity: number;
 };
 
+
 export type QueryResponse = {
   text: string;
   sources: ResponseSources[];
@@ -35,6 +36,25 @@ export const getForecastors = async (query: string): Promise<QueryResponse> => {
   const queryResponse = await response.json();
 
   return queryResponse;
+};
+
+export const queryStreamingIndex = async (query: string): Promise<Response> => {
+
+    const response = await fetch('http://127.0.0.1:8080/run-buybak-workflow', {
+        method: "POST",
+        body: JSON.stringify({
+            query: query,
+            stream: true
+        }),
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "*/*",
+        }
+    }, { mode: 'no-cors' });
+
+    console.log({response});
+
+    return response;
 };
 
 const queryIndex = async (query: string): Promise<QueryResponse> => {

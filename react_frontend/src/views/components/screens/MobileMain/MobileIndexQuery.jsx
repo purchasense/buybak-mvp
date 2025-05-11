@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import classNames from 'classnames';
-import queryIndex, {getPredictions, getForecastors, ResponseSources } from '../../../../apis/queryIndex';
+import queryIndex, {queryStreamingIndex, getPredictions, getForecastors, ResponseSources } from '../../../../apis/queryIndex';
 import {MobileMessage} from './MobileMessage';
 import {MobileChart} from './MobileChart';
 import {MobileWineCard} from './MobileWineCard';
@@ -173,11 +173,52 @@ export const MobileIndexQuery = () => {
           console.log('Query: ' + e.target.value);
           console.log(e);
           dispatch(setBuybakMobileMessage(Date.now(), 'sameer', e.target.value));
-          queryIndex(e.target.value).then((response) => {
-            setLoading(false);
-            setResponseText(response.text);
-            dispatch(setBuybakMobileMessage(Date.now(), 'GPT', response.text));
+          queryStreamingIndex(e.target.value)
+          .then(response => {
+          if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.body.getReader();
+          })
+          .then(reader => {
+            return new ReadableStream({
+              async start(controller) {
+                try {
+                  while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) {
+                      controller.close();
+                      break;
+                    }
+                    console.log('READ ', value);
+                    const s = String.fromCharCode.apply(null, value);
+                    console.log(s);
+                    dispatch(setBuybakMobileMessage(Date.now(), 'GPT', s));
+                    controller.enqueue(value);
+                  }
+                } catch (error) {
+                  controller.error(error);
+                }
+              }
+            });
+          })
+            .then(stream => new Response(stream))
+            .then(response => response.text())
+            .then(result => {
+              // Process the data
+              // TMD console.log(result);
+            })
+          .catch(error => {
+            console.error('Error during streaming:', error);
           });
+          /*
+          */
+          // .then((response) => {
+          //   setLoading(false);
+          //   console.log(response);
+          //   setResponseText(response);
+          //   dispatch(setBuybakMobileMessage(Date.now(), 'GPT', response));
+          // });
         }
     };
 
@@ -242,10 +283,12 @@ export const MobileIndexQuery = () => {
 
          <TableContainer sx={{ width: '100%', height: '450px' }}>
             <MobileWineCard index={tabsValue} />
+            {/*
             <MobileChart
                 predictions={predictionsText} 
                 forecastors={forecastorsText}
             />
+            */}
             {
                 list_messages.map(message => (
                     <MobileMessage key={message.id} user={message.user} value={message.msg} />
