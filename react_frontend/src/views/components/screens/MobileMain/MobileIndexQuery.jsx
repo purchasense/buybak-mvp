@@ -244,6 +244,7 @@ export const MobileIndexQuery = () => {
         return list;
     });
 
+    /*********************************************************
     const list_messages = useSelector((state) => {
             let list_msgs = [];
             let mapmsgs = state.qrcode.map_store_to_mobile_messages;
@@ -253,6 +254,8 @@ export const MobileIndexQuery = () => {
             })
             return list_msgs;
     });
+    ********************************************************/
+    const list_messages = useSelector((state) => {return state.qrcode.list_store_to_mobile_messages;});
     console.log(list_messages);
 
   return (
