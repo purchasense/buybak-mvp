@@ -14,7 +14,7 @@ class SecondEvent(Event):
     response: str
 
 
-class ProgressEvent(Event):
+class GetUserEvent(Event):
     msg: str
 
 

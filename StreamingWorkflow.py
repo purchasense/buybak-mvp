@@ -20,6 +20,21 @@ from llama_index.llms.openai import OpenAI
 
 from buybakworkflow.events import *
 
+def generateEvent(etype: str, estate: str, stimuli: str, outline: str, message: str) -> Event:
+        return Event(
+                msg=json.dumps(
+                    {
+                        "event_type": etype,
+                        "event_state": estate,
+                        "event_stimuli": stimuli,
+                        "event_content": {
+                            "outline": outline,
+                            "message": message
+                        },
+                    }
+                )
+            )
+
 class MyWorkflow(Workflow):
 
     def __init__(self, *args, **kwargs):
@@ -36,65 +51,49 @@ class MyWorkflow(Workflow):
         self.user_input_future = self.loop.create_future()
     @step
     async def step_one(self, ctx: Context, ev: StartEvent) -> FirstEvent:
-        ctx.write_event_to_stream(
-            Event(
-                msg=json.dumps(
-                    {
-                        "event_type": "server_message",
-                        "event_sender": inspect.currentframe().f_code.co_name,
-                        "event_content": {
-                            "message": "Inside step_one, StartEvent",
-                        },
-                    }
-                )
+        ctx.write_event_to_stream( generateEvent( 
+                "agent", 
+                inspect.currentframe().f_code.co_name, 
+                "StartEvent", 
+                "outline", 
+                "Inside step_one"
             )
         )
         return FirstEvent(first_output="First step complete.")
 
     @step
     async def step_two(self, ctx: Context, ev: FirstEvent) -> SecondEvent:
-        ctx.write_event_to_stream(
-            Event(
-                msg=json.dumps(
-                    {
-                        "event_type": "server_message",
-                        "event_sender": inspect.currentframe().f_code.co_name,
-                        "event_content": {
-                            "message": "Inside step_two, FirstEvent",
-                        },
-                    }
-                )
-		    )
+        ctx.write_event_to_stream( generateEvent( 
+                "agent", 
+                inspect.currentframe().f_code.co_name, 
+                "FirstEvent", 
+                "outline", 
+                "Inside step_two"
+            )
         )
-
         return SecondEvent(
             second_output="Second step complete, full response attached",
             response="step_two completed"
         )
 
     @step
-    async def step_three(self, ctx: Context, ev: SecondEvent) -> StopEvent:
-        ctx.write_event_to_stream(
-            Event(
-                msg=json.dumps(
-                    {
-                        "event_type": "request_user_input",
-                        "event_sender": inspect.currentframe().f_code.co_name,
-                        "event_content": {
-                            "eid": "".join(
-                                random.choices(
-                                    string.ascii_lowercase + string.digits, k=10
-                                )
-                            ),
-                            "summary": "Summary",
-                            "outline": "Outline",
-                            "message": "Do you approve this outline? If not, please provide feedback.",
-                        },
-                    }
-                )
+    async def step_three(self, ctx: Context, ev: SecondEvent) -> GetUserEvent:
+        ctx.write_event_to_stream( generateEvent( 
+                "input", 
+                inspect.currentframe().f_code.co_name, 
+                "SecondEvent", 
+                "outline", 
+                "Do you approve this outline? If not, please provide feedback."
             )
-		)
+        )
 
+        return GetUserEvent(
+            msg="Look for input from user"
+        )
+
+    @step
+    async def step_four(self, ctx: Context, ev: GetUserEvent) -> StopEvent:
+        print(ev.msg)
         # Initialize the future if it's None
         if self.user_input_future is None:
             print( "self.user_input_future is None, initializing user input future")
@@ -107,18 +106,13 @@ class MyWorkflow(Workflow):
             self.user_input_future = self.loop.create_future()
 
         # Process user_response, which should be a JSON string
-        ctx.write_event_to_stream(
-            Event(
-                msg=json.dumps(
-                    {
-                        "event_type": "server_message",
-                        "event_sender": "stop_event",
-                        "event_content": {
-                            "message": "Finally Done step_three",
-                        },
-                    }
-                )
-		    )
+        ctx.write_event_to_stream( generateEvent( 
+                "agent", 
+                inspect.currentframe().f_code.co_name, 
+                "StopEvent", 
+                "outline", 
+                "Finally Done."
+            )
         )
         return StopEvent(result=user_response)
 

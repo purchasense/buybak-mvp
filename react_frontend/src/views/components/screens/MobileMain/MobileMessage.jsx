@@ -72,13 +72,13 @@ export const  MobileMessage = (props) => {
                                 <div>
                                     <span 
                                         className="px-4 py-2 rounded-lg inline-block max-w-sm break-all float-right rounded-br-none bg-blue-600 text-white "
-                                        dangerouslySetInnerHTML={{ __html: props.value}}
+                                        dangerouslySetInnerHTML={{ __html: props.msg}}
                                         > 
                                     </span> <br/>
-                                    <Typography style={{ color: "black", fontFamily: 'tiempos-headline,Lucida,Georgia,serif', fontWeight: 'normal', fontSize: "0.9rem" }}>
                                     <small style={{color:'blue'}}>
                                         { props.user || "Guest User" } - {formatDate(new Date())}
-                                    </small>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{props.esender}</Typography>
+                                    </small>
+                                    <Typography style={{ color: "gray", fontFamily: 'tiempos-headline,Lucida,Georgia,serif', fontWeight: 'normal', fontSize: "0.9rem" }}>{props.etype}{': '}&nbsp;&nbsp;{props.estate}{'( '}{props.estimuli}&nbsp;&nbsp;{')'}&nbsp;&nbsp;</Typography>
                                 </div>
                             </div>
                         </div>
@@ -103,13 +103,13 @@ export const  MobileMessage = (props) => {
                                 <div>
                                     <span 
                                         className="px-4 py-2 rounded-lg inline-block max-w-sm break-all rounded-bl-none bg-gray-800 text-gray-100"
-                                        dangerouslySetInnerHTML={{ __html: props.value}}
+                                        dangerouslySetInnerHTML={{ __html: props.msg}}
                                     >
                                     </span> <br/>
-                                    <Typography style={{ color: "black", fontFamily: 'tiempos-headline,Lucida,Georgia,serif', fontWeight: 'normal', fontSize: "0.9rem" }}>
                                     <small style={{color:'blue'}}>
                                         { props.user || "Guest User"  } - {formatDate(new Date())}
-                                    </small>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{props.esender}</Typography>
+                                    </small>
+                                    <Typography style={{ color: "gray", fontFamily: 'tiempos-headline,Lucida,Georgia,serif', fontWeight: 'normal', fontSize: "0.9rem" }}>{props.etype}{': '}&nbsp;&nbsp;{props.estate}{'( '}{props.estimuli}&nbsp;&nbsp;{')'}&nbsp;&nbsp;</Typography>
                                 </div>
                             </div>
                         </div>

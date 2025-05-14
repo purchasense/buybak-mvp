@@ -172,7 +172,7 @@ export const MobileIndexQuery = () => {
           setLoading(true);
           console.log('Query: ' + e.target.value);
           console.log(e);
-          const msg = JSON.stringify({"event_type": "Begin", "event_sender": "user", "event_content": { "message": e.target.value}});
+          const msg = JSON.stringify({"event_type": "user", "event_state": "init", "event_stimuli": "AgenticEvent", "event_content": { "outline": "", "message": e.target.value}});
           dispatch(setBuybakMobileMessage(Date.now(), 'sameer', msg));
           queryStreamingIndex(e.target.value)
           .then(response => {
@@ -220,7 +220,7 @@ export const MobileIndexQuery = () => {
           setLoading(true);
           console.log('UserInputQuery: ' + e.target.value);
           console.log(e);
-          const msg = JSON.stringify({"event_type": "submit-user-input", "event_sender": "user", "event_content": { "message": e.target.value}});
+          const msg = JSON.stringify({"event_type": "submit", "event_state": "user", "event_stimuli": "SubmitEvent", "event_content": { "outline": "", "message": e.target.value}});
           dispatch(setBuybakMobileMessage(Date.now(), 'sameer', msg));
           queryUserInputIndex(e.target.value).then((response) => {
             setLoading(false);
@@ -308,9 +308,12 @@ export const MobileIndexQuery = () => {
             />
             */}
             {
-                list_messages.map(message => (
-                    <MobileMessage key={message.id} user={message.user} etype={message.event_type} esender={message.event_sender} value={message.msg} />
-                ))
+                list_messages.map(message => {
+                    console.log({message});
+                    return (
+                        <MobileMessage key={message.id} user={message.user} etype={message.event_type} estate={message.event_state} estimuli={message.event_stimuli} msg={message.msg} />
+                );
+                })
             }
         </TableContainer>
 

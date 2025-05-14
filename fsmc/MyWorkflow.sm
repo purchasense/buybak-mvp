@@ -1,0 +1,90 @@
+{"fsmc": 
+    {
+        "name": "MyWorkflow",
+        "headers": [
+            "from llama_index.llms.openai import OpenAI",
+            "from buybakworkflow.events import *",
+            "from pathlib import Path",
+            "from typing import List",
+            "from llama_index.core.workflow import Event",
+            "from buybakworkflow.schemas import *",
+            "from llama_index.core.workflow import ( StartEvent, StopEvent, Workflow, step, Event, Context)",
+            "import click",
+            "import asyncio",
+            "import json",
+            "import random",
+            "import shutil",
+            "import string",
+            "import uuid",
+            "import json",
+            "import asyncio",
+            "import inspect"
+        ],
+        "dictionary": [
+            {"class": "Booking", "attributes": [
+                    {"name": "str", "field": "..., description=\"Name\""},
+                    {"userid": "str", "field": "..., description=\"Unique UserID\""},
+                    {"depart_airport_code": "str", "field": "..., description=\"Departure Airport Code\""},
+                    {"arrival_airport_code": "str", "field": "..., description=\"Arrival Airport Code\""},
+                    {"departure_date": "str", "field": "..., description=\"Depart Date\""},
+                    {"return_date": "str", "field": "..., description=\"Return Date\""},
+                    {"num_adults": "str", "field": "..., description=\"Number of adults\""},
+                    {"num_children": "str", "field": "..., description=\"Number of Children\""}
+                ]
+            },
+            {"class": "WorkflowStreamingEvent", "attributes": [
+                    {"event_type": "Literal[\"agent\", \"input\"]", "field": "..., description=\"Type of the event\""},
+                    {"event_state": "str", "field": "..., description=\"Finite State\""},
+                    {"event_stimuli": "str", "field": "..., description=\"Stimulus applied to the state transition\""},
+                    {"outline": "str", "field": "..., description=\"Outline\""},
+                    {"message": "str", "field": "..., description=\"Message\""}
+                ]
+            },
+            {"class": "ResearchTopic", "attributes": [
+                    {"query": "str", "field": "..., example=\"example query\""}
+                ]
+            }
+        ],
+        "stimuli": [
+            {"method": "FirstEvent", "args": "Event", "body": [{"first_output": "str"}]},
+            {"method": "SecondEvent", "args": "Event", "body": [{"second_output": "str"}, {"response": "str"}]},
+            {"method": "ProgressEvent", "args": "Event", "body": [{"msg": "str"}]},
+            {"method": "SetAIEvent", "args": "Event", "body": [{"msg": "str"}]}
+        ],
+        "membervars": [
+            {"name": "user_input_future", "type": "asyncio.Future", "field": "..., description=\"future to hold the user_input event\""}
+        ],
+        "steps": [
+            {
+                "state":        "__init__", 
+                "args":         ["self", "*args", "**kwargs"], 
+                "stimuli":      [], 
+                "emits":      []
+            },
+            {
+                "state":        "step_one", 
+                "args":         ["self", "ctx: Context"],
+                "stimuli":      [{"stimulus": "StartEvent", "actions": ["action_1"]}], 
+                "emits":        [{"event": "FirstEvent", "args": ["first_output=\"First step complete.\""]}]
+            },
+            {
+                "state":        "step_two", 
+                "args":         ["self", "ctx: Context"],
+                "stimuli":      [{"stimulus": "FirstEvent", "actions": ["action_1"]}], 
+                "emits":        [{"event": "SecondEvent", "args": ["first_output=\"First step complete.\"", "response=\"step_two completed\""]}]
+            },
+            {
+                "state":        "step_three", 
+                "args":         ["self", "ctx: Context"],
+                "stimuli":      [{"stimulus": "SecondEvent", "actions": ["action_1"]}], 
+                "emits":        [{"event": "GetUserEvent", "args": ["msg=\"Look for input from user\""]}]
+            },
+            {
+                "state":        "step_four", 
+                "args":         ["self", "ctx: Context"],
+                "stimuli":      [{"stimulus": "GetUserEvent", "actions": ["action_1"]}, {"stimulus": "SetAIEvent", "actions": ["action_2"]}], 
+                "emits":        [{"event": "StopEvent", "args": ["result=user_response"]}]
+            }
+        ]
+    }
+}

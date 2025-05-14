@@ -51,12 +51,14 @@ export class BuybakStatistics {
 
 export class MobileChatMessage {
     
-    constructor( id: Number, user: String, event_type: String, event_sender: String, msg: String)
+    constructor( id: Number, user: String, event_type: String, event_state: String, event_stimuli: String, outline: String, msg: String)
     {
         this.id = id;
         this.user = user;
         this.event_type = event_type;
-        this.event_sender = event_sender;
+        this.event_state = event_state;
+        this.event_stimuli = event_stimuli;
+        this.outline = outline;
         this.msg = msg;
     }
 }
@@ -170,7 +172,7 @@ const initialState = {
     }),
   list_store_to_mobile_messages: [],
   map_store_to_mobile_messages: new I.Map({
-    1745754093973:   new MobileChatMessage( 1745754093973, 'sameer', 'user', 'Begin', '<div> <p> Hi ChatGPT</p> </div> '),
+    1745754093973:   new MobileChatMessage( 1745754093973, 'sameer', 'user', '__init', 'InitEvent', '', '<div> <p> Hi ChatGPT</p> </div> '),
   }),
   map_store_to_wines: new I.Map({
         0: new WineSelection( 0, '/images/clubdvin_image1.jpg', 'Italy', 'Filippo Magnani', 'Discover Italian wines in Oslavia, ', 'Italian wine expert and educator Filippo Magnani will be your guide on this journey to Oslavia, a small hamlet in Collio close to the Slovenian border. '),
@@ -383,7 +385,7 @@ const modalQRCodeReducer = (state = initialState, action) => {
             console.log( action.message);
             const jmsg = JSON.parse(action.message);
             console.log({jmsg});
-            const msg = new MobileChatMessage(action.id, action.user, jmsg.event_type, jmsg.event_sender, jmsg.event_content.message);
+            const msg = new MobileChatMessage(action.id, action.user, jmsg.event_type, jmsg.event_state, jmsg.event_stimuli, jmsg.event_content.outline, jmsg.event_content.message);
             console.log(msg);
             mmap = mmap.set(action.id, msg);
             mlist = [...mlist, msg];
