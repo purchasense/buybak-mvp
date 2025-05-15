@@ -8,6 +8,102 @@ from buybakworkflow.schemas import *
 import inspect
 import json
 import asyncio
+from llama_index.llms.openai import OpenAI
+from llama_index.embeddings.openai import OpenAIEmbedding
+from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, Settings
+from llama_index.core.workflow import InputRequiredEvent, HumanResponseEvent
+from llama_index.core import (
+    VectorStoreIndex,
+    StorageContext,
+    load_index_from_storage
+)
+from llama_index.core.agent.workflow import (
+    AgentOutput,
+    AgentStream,
+    ToolCall,
+    ToolCallResult,
+)
+from llama_index.llms.openai import OpenAI
+from llama_index.core.agent.workflow import AgentWorkflow
+from llama_index.core.workflow import Context
+
+from llama_index.core.workflow import (
+    StartEvent,
+    StopEvent,
+    Workflow,
+    step,
+    Event,
+    Context
+)
+from helper import get_openai_api_key, get_llama_cloud_api_key, get_tavily_api_key
+from typing import Optional
+from typing import ClassVar
+from typing import List
+from pydantic import BaseModel
+import json
+from llama_index.core.indices.composability.graph import ComposableGraph
+from llama_index.core.indices.list.base import SummaryIndex
+from llama_index.core.indices.tree.base import TreeIndex
+from llama_index.core.schema import Document
+from llama_index.core.service_context import ServiceContext
+
+
+from multiprocessing import Lock
+from multiprocessing.managers import BaseManager
+from llama_index.core import (
+    SimpleDirectoryReader,
+    VectorStoreIndex,
+    StorageContext,
+    load_index_from_storage,
+)
+from llama_index.embeddings.openai import OpenAIEmbedding
+from llama_index.llms.openai import OpenAI
+from buybaktools.time_series_tools import BuyBakTimeSeriesToolSpec, BuyBakLineItemAndIndicators, BuyBakTimeSeries
+from llama_index.core.tools import FunctionTool
+
+from llama_index.core.agent.workflow import FunctionAgent
+import os
+
+predictions = {"list_items": []}
+forecastors = {"list_items": []}
+
+index = None
+stored_docs = {}
+lock = Lock()
+
+import nest_asyncio
+nest_asyncio.apply()
+
+llama_cloud_api_key = get_llama_cloud_api_key()
+openai_api_key = get_openai_api_key()
+tavily_api_key = get_tavily_api_key()
+
+print(f'LLAMA  {llama_cloud_api_key}')
+print(f'OPENAI {openai_api_key}')
+print(f'TAVILY {tavily_api_key}')
+
+system_prompt = f"""You are now connected to the BuyBakTimeSeries Tools, that 1. predicts the EMA values for a live array of [['open','high','low','close']], and 2. forecasts future EMA using the MLForecaster.
+Only enter details that the user has explicitly provided. Return the value from the tools provided for the predict method.
+Do not make up any details.
+"""
+buybak_time_series_tools = BuyBakTimeSeriesToolSpec().to_tool_list()
+buybak_ts_agent = FunctionAgent(
+    name="BuyBakTimeSeriesAgent",
+    description="Booking agent that predicts the next EMA values from a time series",
+    tools= buybak_time_series_tools,
+    llm=OpenAI(model="gpt-4o-mini"),
+    system_prompt=system_prompt,
+    verbose=True,
+)
+
+agent_workflow = AgentWorkflow(
+    agents=[buybak_ts_agent],
+    root_agent=buybak_ts_agent.name,
+    initial_state={
+    },
+    verbose=True,
+)
+
 
 def generateEvent(etype: str, estate: str, stimuli: str, outline: str, message: str) -> Event:
         return Event(
@@ -117,3 +213,29 @@ class MyWorkflowContext():
             )
         )
         return False, user_response
+
+    async def slow_forecast_time_series(query_prompt: str) -> tuple[bool, Any]:
+        """Forecast Time Series using the agent workflow"""
+        global index, stored_docs, agentql_reader, buybak_time_series_tools
+
+        print('------- QUERY FORECASTING ----------')
+        ctx = Context(agent_workflow)
+        response = await agent_workflow.run(query_prompt)
+        print(response)
+        print('------- Prediction DONE --------------------')
+
+        try:
+            if response.ok:
+                jData = json.loads(response.content)
+                print(jData)
+                if jData["text"] == "SUCCESS":
+                    print(jData["sources"][0]["text"])
+                    nospecial = re.sub(r'[^,0-9\.]', '', jData["sources"][0]["text"])
+                    print(nospecial)
+                    sdata = nospecial.split(",")
+                    print(sdata)
+                    float_list = [float(num) for num in sdata]
+                    print(float_list)
+                    return True, float_list
+        except: 
+            return False, []

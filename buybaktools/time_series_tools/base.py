@@ -1,7 +1,6 @@
 """BuyBak Appointment Booking Tool Spec."""
 
 import numpy as np
-import matplotlib.pyplot as plt
 import ta  # pip install ta
 import pandas as pd
 from xgboost import XGBRegressor
@@ -27,15 +26,7 @@ from mlforecast.lag_transforms import ExpandingMean, RollingMean
 from mlforecast.target_transforms import Differences
 from utilsforecast.plotting import plot_series
 
-from llama_index.readers.web import AgentQLWebReader
-from llama_index.core import VectorStoreIndex
-from llama_index.core.base.base_query_engine import BaseQueryEngine
 from llama_index.llms.openai import OpenAI
-from llama_index.core import (
-    VectorStoreIndex,
-    StorageContext,
-    load_index_from_storage
-)
 
 
 # we will represent and track the state of a booking as a Pydantic model
