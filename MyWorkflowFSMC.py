@@ -31,6 +31,7 @@ import uuid
 import json
 import asyncio
 import inspect
+global_list = []
 
 
 class Booking(BaseModel):
@@ -70,11 +71,14 @@ class TimerFiredEvent(Event):
     timer:   str
     name:   str
 
-class ProgressEvent(Event):
+class GetUserEvent(Event):
     msg:   str
 
 class SetAIEvent(Event):
     result:   str
+
+class ForecastEvent(Event):
+    query:   str
 
 
 
@@ -130,31 +134,31 @@ class MyWorkflow(Workflow):
         await self.fsmc.generate_stream_event(ctx, ev, 'input', 'SecondEvent', 'step_three', 'Two Message')
         await self.fsmc.two_action_1(ctx, ev, 'call action_2')
         
-        return GetUserEvent(msg="Look for input from user")
+        return GetUserEvent(msg="Hello World")
 
 
     @step
-    async def step_four(self,ctx: Context, ev:  GetUserEvent) ->  SetAIEvent |  StopEvent:
+    async def step_four(self,ctx: Context, ev:  GetUserEvent) ->  ForecastEvent |  StopEvent:
         print("Inside step_four")
         await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'GetUserEvent', 'step_four', 'Three Message')
         ret_val, user_response = await self.fsmc.conditional_three_action_1(ctx, ev, self.user_input_future, 'call action_3')
         await self.reset_user_input_future()
         
         if ret_val == True:
-            return SetAIEvent(result=user_response)
+            return ForecastEvent(query=user_response)
         else:
             return StopEvent(result=user_response)
 
 
     @step
-    async def step_five(self,ctx: Context, ev:  SetAIEvent) ->  GetUserEvent |  StopEvent:
+    async def step_five(self,ctx: Context, ev:  ForecastEvent) ->  GetUserEvent |  StopEvent:
         print("Inside step_five")
         await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'SetAIEvent', 'step_five', 'Four Message')
-        ret_val, user_response = await self.fsmc.conditional_four_action_1(ctx, ev, self.user_input_future, 'call action_4')
+        ret_val, user_response = await self.fsmc.conditional_forecast_ema(ctx, ev, self.user_input_future, 'ev.query')
         await self.reset_user_input_future()
         
         if ret_val == True:
-            return GetUserEvent(result=user_response)
+            return GetUserEvent(msg=user_response)
         else:
             return StopEvent(result=user_response)
 

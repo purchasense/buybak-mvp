@@ -18,7 +18,8 @@
             "import uuid",
             "import json",
             "import asyncio",
-            "import inspect"
+            "import inspect",
+            "global_list = []"
         ],
         "dictionary": [
             {"class": "Booking", "attributes": [
@@ -50,8 +51,9 @@
             {"method": "SecondEvent", "args": "Event", "body": [{"second_output": "str"}, {"response": "str"}]},
             {"method": "WfTimerEvent", "args": "Event", "body": [{"timer": "str"}, {"name": "str"}]},
             {"method": "TimerFiredEvent", "args": "Event", "body": [{"timer": "str"}, {"name": "str"}]},
-            {"method": "ProgressEvent", "args": "Event", "body": [{"msg": "str"}]},
-            {"method": "SetAIEvent", "args": "Event", "body": [{"result": "str"}]}
+            {"method": "GetUserEvent", "args": "Event", "body": [{"msg": "str"}]},
+            {"method": "SetAIEvent", "args": "Event", "body": [{"result": "str"}]},
+            {"method": "ForecastEvent", "args": "Event", "body": [{"query": "str"}]}
         ],
         "membervars": [
             {"name": "sameer_here", "type": "str", "field": "..., description=\"placeholder\""}
@@ -102,7 +104,7 @@
                                                         {"action": "two_action_1", "args":["call action_2"]}
                                                         ] 
                                   }], 
-                "emits":        [{"event": "GetUserEvent", "args": ["msg=\"Look for input from user\""]}]
+                "emits":        [{"event": "GetUserEvent", "args": ["msg=\"Hello World\""]}]
             },
             {
                 "state":        "step_four", 
@@ -112,17 +114,17 @@
                                                         {"action": "conditional_three_action_1", "args":["call action_3"]}
                                                         ] 
                                   }], 
-                "emits":        [{"event": "SetAIEvent", "args": ["result=user_response"]},{"event": "StopEvent", "args": ["result=user_response"]}] 
+                "emits":        [{"event": "ForecastEvent", "args": ["query=user_response"]},{"event": "StopEvent", "args": ["result=user_response"]}] 
             },
             {
                 "state":        "step_five", 
                 "args":         ["self", "ctx: Context"],
-                "stimuli":      [{"stimulus": "SetAIEvent", "actions": [
+                "stimuli":      [{"stimulus": "ForecastEvent", "actions": [
                                                         {"action": "generate_stream_event", "args":["agent", "SetAIEvent", "step_five", "Four Message"]}, 
-                                                        {"action": "conditional_four_action_1", "args":["call action_4"]}
+                                                        {"action": "conditional_forecast_ema", "args":["ev.query"]}
                                                         ] 
                                   }], 
-                "emits":        [{"event": "GetUserEvent", "args": ["result=user_response"]}, {"event": "StopEvent", "args": ["result=user_response"]}]
+                "emits":        [{"event": "GetUserEvent", "args": ["msg=user_response"]}, {"event": "StopEvent", "args": ["result=user_response"]}]
             }
         ]
     }

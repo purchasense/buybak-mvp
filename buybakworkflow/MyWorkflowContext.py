@@ -5,9 +5,11 @@ from llama_index.core.workflow import Event
 from llama_index.core.workflow import Context
 
 from buybakworkflow.schemas import *
+import time
 import inspect
 import json
 import asyncio
+import re
 from llama_index.llms.openai import OpenAI
 from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, Settings
@@ -136,6 +138,61 @@ class MyWorkflowContext():
             )
         )
 
+    async def slow_forecast_time_series(self, query_prompt: str) -> tuple[bool, Any]:
+        """Forecast Time Series using the agent workflow"""
+        global index, stored_docs, agentql_reader, buybak_time_series_tools
+
+        print('------- QUERY FORECASTING ----------')
+        ctx = Context(agent_workflow)
+        response = await agent_workflow.run(query_prompt)
+        print(response)
+        print('------- Prediction DONE --------------------')
+
+        return True, response
+
+    def __iter_over_async_forecaster(self, query_prompt: str):
+        """
+        Iterates over the async iterable and yields formatted chunks.
+
+        Yields:
+            str: Formatted chunk of response text.
+        """
+        print('----- __iter_over_async ....')
+        print(query_prompt)
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
+        async def get_next(query_prompt) -> tuple[bool, Any]:
+            """
+            Retrieves the next chunk from the iterator.
+
+            Returns:
+                tuple[bool, Any]: A tuple with a boolean indicating if the iteration is done and the chunk.
+            """
+            try:
+                print('----- try await slow....')
+                print(query_prompt)
+                obj = await self.slow_forecast_time_series(query_prompt)
+                print('-------- return slow_update response')
+                print(obj)
+                return True, obj
+            except StopAsyncIteration:
+                return True, obj
+            except Exception as e:
+                print(f"Error in get_next: {e}")
+                return True, f"{e}"
+
+        try:
+            while True:
+                print('----- while_true ....')
+                print(query_prompt)
+                done, obj = loop.run_until_complete(get_next(query_prompt))
+                if done:
+                    break
+        finally:
+            loop.close()
+        return obj
+
     async def one_action_1(self,ctx: Context, ev: Event, msg: str):
         print(f"Inside one_action_1 {msg}")
 
@@ -214,28 +271,45 @@ class MyWorkflowContext():
         )
         return False, user_response
 
-    async def slow_forecast_time_series(query_prompt: str) -> tuple[bool, Any]:
+    async def conditional_forecast_ema(self,ctx: Context, ev: Event, user_input_future: asyncio.Future, query: str) -> tuple[bool, Any]:
+
         """Forecast Time Series using the agent workflow"""
-        global index, stored_docs, agentql_reader, buybak_time_series_tools
 
-        print('------- QUERY FORECASTING ----------')
-        ctx = Context(agent_workflow)
-        response = await agent_workflow.run(query_prompt)
-        print(response)
-        print('------- Prediction DONE --------------------')
+        ctx.write_event_to_stream( generateEvent(
+                "agent",
+                "forecast_state",
+                "ForecastEvent",
+                "outline",
+                "Starting MLForecastor"
+            )
+        )
+        print(query)
 
-        try:
-            if response.ok:
-                jData = json.loads(response.content)
-                print(jData)
-                if jData["text"] == "SUCCESS":
-                    print(jData["sources"][0]["text"])
-                    nospecial = re.sub(r'[^,0-9\.]', '', jData["sources"][0]["text"])
-                    print(nospecial)
-                    sdata = nospecial.split(",")
-                    print(sdata)
-                    float_list = [float(num) for num in sdata]
-                    print(float_list)
-                    return True, float_list
-        except: 
-            return False, []
+        query_prompt = "Query using the buybaktools, forecast time series for next 15 days, and strictly print only the forcast column"
+
+        timestamp = time.time()
+        result, response = self.__iter_over_async_forecaster(query_prompt)
+        print(f'result: {result}')
+        print(f'response: {response}')
+        forecastors["list_items"].append({str(int(timestamp)): f'{response}'})
+        print(forecastors)
+        ctx.write_event_to_stream( generateEvent(
+                "agent",
+                "forecast_state",
+                "ForecastEvent",
+                "outline",
+                "ENDING MLForecastor"
+            )
+        )
+
+        return True, f'{response}'
+
+if __name__ == "__main__":
+    print("initializing MyWorkflowContext...")
+    fsmcontext = MyWorkflowContext()
+    ev = Event()
+    ctx = Context(fsmcontext)
+    user_input_future = asyncio.Future()
+    retval, response = fsmcontext.conditional_forecast_ema(ctx, ev, user_input_future, "Sameer Kulkarni")
+    print(response)
+
