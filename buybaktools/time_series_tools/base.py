@@ -190,14 +190,33 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
     def buybak_model_predict(self, argin: str) -> []:
         """Fit the model initialized (XGBoost) with the X_live data, calcumate the MSE with y_live, and return the y_pred_live"""
 
+        # let's try to get the data, it could be in diff formats
+        data = {}
+        df_data = []
+
         try:
             print(argin)
             print('-------- argin above -------')
             import json
             data = json.loads(argin)
-            print(data['line_items'])
+            print(data)
+        except:
+            return "Exception thrown parsing argin JSON"
+
+        try:
             print('-------- input above -------')
-            df_data = pd.DataFrame(data["line_items"])
+            if "line_items" in  argin:
+                print(f'-------- line_items')
+                df_data = pd.DataFrame(data["line_items"])
+            elif "ohlcv" in argin:
+                print(f'-------- ohlcv')
+                df_data = pd.DataFrame(data["ohlcv"])
+            elif "data" in argin:
+                print(f'-------- data')
+                df_data = pd.DataFrame(data["data"])
+            else:
+                return "Could not find data in argin JSON"
+
             print(df_data)
             print(f'-------- df_data above ------- {type(df_data)}')
             lf = df_data[['open', 'high', 'low', 'close']]

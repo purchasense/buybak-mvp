@@ -48,6 +48,8 @@
         "stimuli": [
             {"method": "FirstEvent", "args": "Event", "body": [{"first_output": "str"}]},
             {"method": "SecondEvent", "args": "Event", "body": [{"second_output": "str"}, {"response": "str"}]},
+            {"method": "WfTimerEvent", "args": "Event", "body": [{"timer": "str"}, {"name": "str"}]},
+            {"method": "TimerFiredEvent", "args": "Event", "body": [{"timer": "str"}, {"name": "str"}]},
             {"method": "ProgressEvent", "args": "Event", "body": [{"msg": "str"}]},
             {"method": "SetAIEvent", "args": "Event", "body": [{"result": "str"}]}
         ],
@@ -65,10 +67,10 @@
                 "state":        "step_one", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [{"stimulus": "StartEvent", "actions": [
-                                                                {"action": "generate_stream_event", "args":["agent", "StartEvent", "step_one", "One Message"]}, 
-                                                                {"action": "one_action_1", "args":["call action_1"]},
-                                                                {"action": "suneels_action_function", "args":["I am Suneel!"]}
-                                                                ] 
+                                                        {"action": "generate_stream_event", "args":["agent", "StartEvent", "step_one", "One Message"]}, 
+                                                        {"action": "one_action_1", "args":["call action_1"]},
+                                                        {"action": "suneels_action_function", "args":["I am Suneel!"]}
+                                                        ] 
                                   }], 
                 "emits":        [{"event": "FirstEvent", "args": ["first_output=\"First step complete.\""]}]
             },
@@ -76,19 +78,29 @@
                 "state":        "step_two", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [{"stimulus": "FirstEvent", "actions": [
-                                                                {"action": "generate_stream_event", "args":["agent", "FirstEvent", "step_two", "Two Message"]}, 
-                                                                {"action": "two_action_1", "args":["call action_1"]}
-                                                                ] 
+                                                        {"action": "generate_stream_event", "args":["agent", "FirstEvent", "step_two", "Two Message"]}, 
+                                                        {"action": "two_action_1", "args":["call action_1"]}
+                                                        ] 
                                   }], 
-                "emits":        [{"event": "SecondEvent", "args": ["second_output=\"First step complete.\"", "response=\"step_two completed\""]}]
+                "emits":        [{"event": "WfTimerEvent", "args": ["timer=\"5\"", "name=\"timer_5\""]}]
+            },
+            {
+                "state":        "step_timer", 
+                "args":         ["self", "ctx: Context"],
+                "stimuli":      [{"stimulus": "WfTimerEvent", "actions": [
+                                                        {"action": "generate_stream_event", "args":["agent", "WfTimerEvent", "step_timer", "Waitime for Timer"]}, 
+                                                        {"action": "armTimer", "args":["5", "state::step_timer"]}
+                                                        ] 
+                                  }], 
+                "emits":        [{"event": "TimerFiredEvent", "args": ["timer=\"5\"", "name=\"timer_fired\""]}]
             },
             {
                 "state":        "step_three", 
                 "args":         ["self", "ctx: Context"],
-                "stimuli":      [{"stimulus": "SecondEvent", "actions": [
-                                                                {"action": "generate_stream_event", "args":["input", "SecondEvent", "step_three", "Two Message"]}, 
-                                                                {"action": "two_action_1", "args":["call action_2"]}
-                                                                ] 
+                "stimuli":      [{"stimulus": "TimerFiredEvent", "actions": [
+                                                        {"action": "generate_stream_event", "args":["input", "SecondEvent", "step_three", "Two Message"]}, 
+                                                        {"action": "two_action_1", "args":["call action_2"]}
+                                                        ] 
                                   }], 
                 "emits":        [{"event": "GetUserEvent", "args": ["msg=\"Look for input from user\""]}]
             },
@@ -96,9 +108,9 @@
                 "state":        "step_four", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [{"stimulus": "GetUserEvent", "actions": [
-                                                                {"action": "generate_stream_event", "args":["agent", "GetUserEvent", "step_four", "Three Message"]}, 
-                                                                {"action": "conditional_three_action_1", "args":["call action_3"]}
-                                                                ] 
+                                                        {"action": "generate_stream_event", "args":["agent", "GetUserEvent", "step_four", "Three Message"]}, 
+                                                        {"action": "conditional_three_action_1", "args":["call action_3"]}
+                                                        ] 
                                   }], 
                 "emits":        [{"event": "SetAIEvent", "args": ["result=user_response"]},{"event": "StopEvent", "args": ["result=user_response"]}] 
             },
@@ -106,9 +118,9 @@
                 "state":        "step_five", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [{"stimulus": "SetAIEvent", "actions": [
-                                                                {"action": "generate_stream_event", "args":["agent", "SetAIEvent", "step_five", "Four Message"]}, 
-                                                                {"action": "conditional_four_action_1", "args":["call action_4"]}
-                                                                ] 
+                                                        {"action": "generate_stream_event", "args":["agent", "SetAIEvent", "step_five", "Four Message"]}, 
+                                                        {"action": "conditional_four_action_1", "args":["call action_4"]}
+                                                        ] 
                                   }], 
                 "emits":        [{"event": "GetUserEvent", "args": ["result=user_response"]}, {"event": "StopEvent", "args": ["result=user_response"]}]
             }

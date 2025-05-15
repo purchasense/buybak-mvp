@@ -43,6 +43,20 @@ class MyWorkflowContext():
     async def one_action_1(self,ctx: Context, ev: Event, msg: str):
         print(f"Inside one_action_1 {msg}")
 
+    async def armTimer(self, ctx: Context, ev: Event, timer: str, msg: str):
+        print(f"Inside armTimer {timer}, {msg}")
+        await asyncio.sleep(int(timer))
+
+        ctx.write_event_to_stream( generateEvent(
+                "timer",
+                "TimerState",
+                "WfTimerEvent",
+                "outline",
+                "Timer fired!"
+            )
+        )
+
+
     async def suneels_action_function(self,ctx: Context, ev: Event, msg: str):
         print(f"suneels_action_function one_action_1 {msg}")
 

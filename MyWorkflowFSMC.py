@@ -62,6 +62,14 @@ class SecondEvent(Event):
     second_output:   str
     response:   str
 
+class WfTimerEvent(Event):
+    timer:   str
+    name:   str
+
+class TimerFiredEvent(Event):
+    timer:   str
+    name:   str
+
 class ProgressEvent(Event):
     msg:   str
 
@@ -99,16 +107,25 @@ class MyWorkflow(Workflow):
 
 
     @step
-    async def step_two(self,ctx: Context, ev:  FirstEvent) ->  SecondEvent:
+    async def step_two(self,ctx: Context, ev:  FirstEvent) ->  WfTimerEvent:
         print("Inside step_two")
         await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'FirstEvent', 'step_two', 'Two Message')
         await self.fsmc.two_action_1(ctx, ev, 'call action_1')
         
-        return SecondEvent(second_output="First step complete.",response="step_two completed")
+        return WfTimerEvent(timer="5",name="timer_5")
 
 
     @step
-    async def step_three(self,ctx: Context, ev:  SecondEvent) ->  GetUserEvent:
+    async def step_timer(self,ctx: Context, ev:  WfTimerEvent) ->  TimerFiredEvent:
+        print("Inside step_timer")
+        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'WfTimerEvent', 'step_timer', 'Waitime for Timer')
+        await self.fsmc.armTimer(ctx, ev, '5', 'state::step_timer')
+        
+        return TimerFiredEvent(timer="5",name="timer_fired")
+
+
+    @step
+    async def step_three(self,ctx: Context, ev:  TimerFiredEvent) ->  GetUserEvent:
         print("Inside step_three")
         await self.fsmc.generate_stream_event(ctx, ev, 'input', 'SecondEvent', 'step_three', 'Two Message')
         await self.fsmc.two_action_1(ctx, ev, 'call action_2')
