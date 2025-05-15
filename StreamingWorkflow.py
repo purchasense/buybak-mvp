@@ -49,6 +49,7 @@ class MyWorkflow(Workflow):
 
     async def reset_user_input_future(self):
         self.user_input_future = self.loop.create_future()
+
     @step
     async def step_one(self, ctx: Context, ev: StartEvent) -> FirstEvent:
         ctx.write_event_to_stream( generateEvent( 
