@@ -6,7 +6,10 @@ from llama_index.core.workflow import Context
 
 from buybakworkflow.schemas import *
 import time
+import itertools as it
+import random
 import inspect
+import threading
 import json
 import asyncio
 import re
@@ -124,10 +127,50 @@ def generateEvent(etype: str, estate: str, stimuli: str, outline: str, message: 
                 )
             )
 
+
+async def makeitem(size: int = 5) -> str:
+    return os.urandom(size).hex()
+
+async def randsleep(caller=None) -> None:
+    i = random.randint(0, 10)
+    if caller:
+        print(f"{caller} sleeping for {i} seconds.")
+    await asyncio.sleep(i)
+
+async def produce(q: asyncio.Queue) -> None:
+    n = 6
+    print(f'produce: {n} times in a loop')
+    for x in it.repeat(None, n):  # Synchronous loop for each single producer
+        await randsleep(caller=f"Producer {x}")
+        i = await makeitem()
+        t = time.perf_counter()
+        await q.put((i, t))
+        print(f"Producer added <{i}> to queue.")
+        print(f"---------------------------------------------------------------------")
+        await asyncio.sleep(2)
+
+async def consume(name: int, q: asyncio.Queue) -> str:
+        await randsleep(caller=f"Consumer {name}")
+        i, t = await q.get()
+        now = time.perf_counter()
+        print(f"Consumer {name} got element <{i}> in {now-t:0.5f} seconds.")
+        q.task_done()
+        return f"Consumer {name} got element <{i}> in {now-t:0.5f} seconds."
+
+
 class MyWorkflowContext():
+
+    live_market_count: int = Field(..., description="Count of live market data events, then stop")
+    my_proconq_started: bool = Field(..., description="ProConQ started")
+    my_queue: asyncio.Queue
+    my_producers: Any
+    my_consumers: Any
 
     def __init__(self,*args,**kwargs):
         print("Inside __init__")
+        random.seed(444)
+        self.live_market_count = 0
+        self.my_proconq_started = False
 
     async def generate_stream_event(self, ctx: Context, ev: Event, etype: str, stimulus: str, estate: str, msg: str):
         print('generateEvent...')
@@ -301,26 +344,50 @@ class MyWorkflowContext():
                 str(response)
             )
 
-        """
-        if isinstance(response, AgentOutput):
-            print("1")
-            nospecial = re.sub(r'[^,0-9\.]', '', str(response))
-            print("2")
-            print(nospecial)
-            print("3")
-            outcome = str(nospecial)
-            print("4")
-            print(type(outcome))
-            print("5")
-            await self.generate_stream_event(ctx, ev, 
-                    "agent",
-                    "forecast_state",
-                    "ForecastEvent",
-                    outcome
-                )
-            """
-
         return True, f'DONE MLForecastor'
+
+    async def conditional_market_action(self, ctx: Context, ev: Event, live_market_future: asyncio.Future, query: str) -> tuple[bool, Any]:
+
+        """Live Market Event"""
+
+
+        consumed = ""
+        if self.my_proconq_started == False:
+            print(f'Starting my_proconq.....................')
+            self.my_queue = asyncio.Queue()
+            self.my_producers = [asyncio.create_task(produce(self.my_queue))]
+            self.my_proconq_started = True
+        else:
+            print(f'Consuming...')
+            consumed = await consume(self.live_market_count, self.my_queue)
+        
+        timestamp = time.time()
+        await asyncio.sleep(2)
+
+        self.live_market_count = self.live_market_count + 1
+        print(f'live_market_count: {self.live_market_count}')
+
+        if self.live_market_count > 5:
+            print('Gather my_producers')
+            # await asyncio.gather(*self.my_producers)
+            print('Join my_queue')
+            # await self.my_queue.join()
+            await self.generate_stream_event(ctx, ev, 
+                "agent",
+                "live_market_action",
+                "StopEvent",
+                "Done Live Market Events"
+            )
+            return False, f'Done Live Market Events'
+        else: 
+            print(f'Now consuming {consumed}')
+            await self.generate_stream_event(ctx, ev, 
+                "agent",
+                "live_market_action",
+                "LiveMarketEvent",
+                consumed
+            )
+            return True, consumed
 
 if __name__ == "__main__":
     print("initializing MyWorkflowContext...")

@@ -115,7 +115,7 @@
                                                         {"action": "conditional_three_action_1", "args":["call action_3"]}
                                                         ] 
                                   }], 
-                "emits":        [{"event": "ForecastEvent", "args": ["query=user_response"]},{"event": "StopEvent", "args": ["result=user_response"]}] 
+                "emits":        [{"event": "ForecastEvent", "args": ["query=user_response"]},{"event": "LiveMarketEvent", "args": ["md=user_response"]}] 
             },
             {
                 "state":        "step_five", 
@@ -126,6 +126,16 @@
                                                         ] 
                                   }], 
                 "emits":        [{"event": "GetUserEvent", "args": ["msg=user_response"]}, {"event": "StopEvent", "args": ["result=user_response"]}]
+            },
+            {
+                "state":        "step_six", 
+                "args":         ["self", "ctx: Context"],
+                "stimuli":      [{"stimulus": "LiveMarketEvent", "actions": [
+                                                        {"action": "generate_stream_event", "args":["agent", "LiveMarketEvent", "step_six", "Waiting for Live Market"]}, 
+                                                        {"action": "conditional_market_action", "args":["ev.query"]}
+                                                        ] 
+                                  }], 
+                "emits":        [{"event": "LiveMarketEvent", "args": ["md=user_response"]}, {"event": "StopEvent", "args": ["result=user_response"]}]
             }
         ]
     }

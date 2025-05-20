@@ -147,7 +147,7 @@ class MyWorkflow(Workflow):
 
 
     @step
-    async def step_four(self,ctx: Context, ev:  GetUserEvent) ->  ForecastEvent |  StopEvent:
+    async def step_four(self,ctx: Context, ev:  GetUserEvent) ->  ForecastEvent |  LiveMarketEvent:
         print("Inside step_four")
         await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'GetUserEvent', 'step_four', 'Three Message')
         ret_val, user_response = await self.fsmc.conditional_three_action_1(ctx, ev, self.user_input_future, 'call action_3')
@@ -156,7 +156,7 @@ class MyWorkflow(Workflow):
         if ret_val == True:
             return ForecastEvent(query=user_response)
         else:
-            return StopEvent(result=user_response)
+            return LiveMarketEvent(md=user_response)
 
 
     @step
@@ -168,6 +168,19 @@ class MyWorkflow(Workflow):
         
         if ret_val == True:
             return GetUserEvent(msg=user_response)
+        else:
+            return StopEvent(result=user_response)
+
+
+    @step
+    async def step_six(self,ctx: Context, ev:  LiveMarketEvent) ->  LiveMarketEvent |  StopEvent:
+        print("Inside step_six")
+        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'LiveMarketEvent', 'step_six', 'Waiting for Live Market')
+        ret_val, user_response = await self.fsmc.conditional_market_action(ctx, ev, self.live_market_future, 'ev.query')
+        await self.reset_live_market_future()
+        
+        if ret_val == True:
+            return LiveMarketEvent(md=user_response)
         else:
             return StopEvent(result=user_response)
 
