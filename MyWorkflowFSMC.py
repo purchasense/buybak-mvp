@@ -80,6 +80,9 @@ class SetAIEvent(Event):
 class ForecastEvent(Event):
     query:   str
 
+class LiveMarketEvent(Event):
+    md:   str
+
 
 
 class MyWorkflow(Workflow):
@@ -91,7 +94,10 @@ class MyWorkflow(Workflow):
         super().__init__(*args, **kwargs)
         # initialize the Future
         self.fsmc = fsmc
+        # user_input for FSMC asking qustions (AI or not to AI)
         self.user_input_future = asyncio.Future()
+        # live market data injected into the state machine, non-blocking polling, via ProConQueue 
+        self.live_market_future = asyncio.Future()
         
     async def run(self, *args, **kwargs):
             self.loop = asyncio.get_running_loop() # store the event loop
@@ -99,6 +105,9 @@ class MyWorkflow(Workflow):
  
     async def reset_user_input_future(self):
         self.user_input_future = self.loop.create_future()
+ 
+    async def reset_live_market_future(self):
+        self.live_market_future = self.loop.create_future()
  
     @step
     async def step_one(self,ctx: Context, ev:  StartEvent) ->  FirstEvent:

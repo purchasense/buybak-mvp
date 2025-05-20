@@ -96,6 +96,11 @@ async def submit_user_input(topic: ResearchTopic):
         )
 
 
+@app.get("/arm_timer")
+async def arm_timer():
+    wf = workflows.get("0")
+    return {"Hello": "World"}
+
 @app.get("/")
 async def read_root():
     return {"Hello": "World"}

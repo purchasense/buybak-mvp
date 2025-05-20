@@ -53,7 +53,8 @@
             {"method": "TimerFiredEvent", "args": "Event", "body": [{"timer": "str"}, {"name": "str"}]},
             {"method": "GetUserEvent", "args": "Event", "body": [{"msg": "str"}]},
             {"method": "SetAIEvent", "args": "Event", "body": [{"result": "str"}]},
-            {"method": "ForecastEvent", "args": "Event", "body": [{"query": "str"}]}
+            {"method": "ForecastEvent", "args": "Event", "body": [{"query": "str"}]},
+            {"method": "LiveMarketEvent", "args": "Event", "body": [{"md": "str"}]}
         ],
         "membervars": [
             {"name": "sameer_here", "type": "str", "field": "..., description=\"placeholder\""}

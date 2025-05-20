@@ -103,8 +103,9 @@ class FSMCWorkflow(Workflow):
                 if "conditional" in acts["action"]:
                     emit_if = steps["emits"][0]
                     emit_else = steps["emits"][-1]
-                    print(f'        ret_val, user_response = await self.fsmc.{acts["action"]}(ctx, ev, self.user_input_future, {args})')
-                    print(f'        await self.reset_user_input_future()')
+                    fut_var = "live_market_future" if "market" in acts["action"] else "user_input_future"
+                    print(f'        ret_val, user_response = await self.fsmc.{acts["action"]}(ctx, ev, self.{fut_var}, {args})')
+                    print(f'        await self.reset_{fut_var}()')
                     print(f'        ')
                     print(f'        if ret_val == True:')
                     print(f'            return {emit_if["event"]}({",".join(emit_if["args"])})')
@@ -130,7 +131,10 @@ class FSMCWorkflow(Workflow):
                 print(f'        super().__init__(*args, **kwargs)')
                 print(f'        # initialize the Future')
                 print(f'        self.fsmc = fsmc')
+                print(f'        # user_input for FSMC asking qustions (AI or not to AI)')
                 print(f'        self.user_input_future = asyncio.Future()')
+                print(f'        # live market data injected into the state machine, non-blocking polling, via ProConQueue ')
+                print(f'        self.live_market_future = asyncio.Future()')
                 print(f'        ')
                 print(f'    async def run(self, *args, **kwargs):')
                 print(f'            self.loop = asyncio.get_running_loop() # store the event loop')
@@ -138,6 +142,9 @@ class FSMCWorkflow(Workflow):
                 print(f' ')
                 print(f'    async def reset_user_input_future(self):')
                 print(f'        self.user_input_future = self.loop.create_future()')
+                print(f' ')
+                print(f'    async def reset_live_market_future(self):')
+                print(f'        self.live_market_future = self.loop.create_future()')
                 print(f' ')
 
             else:

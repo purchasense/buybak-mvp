@@ -10,6 +10,8 @@ import inspect
 import json
 import asyncio
 import re
+import string
+import csv
 from llama_index.llms.openai import OpenAI
 from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, Settings
@@ -200,14 +202,14 @@ class MyWorkflowContext():
         print(f"Inside armTimer {timer}, {msg}")
         await asyncio.sleep(int(timer))
 
-        ctx.write_event_to_stream( generateEvent(
+        # ctx.write_event_to_stream( generateEvent(
+        await self.generate_stream_event(ctx, ev, 
                 "timer",
                 "TimerState",
                 "WfTimerEvent",
-                "outline",
                 "Timer fired!"
             )
-        )
+        # )
 
 
     async def suneels_action_function(self,ctx: Context, ev: Event, msg: str):
@@ -218,28 +220,28 @@ class MyWorkflowContext():
 
     async def conditional_three_action_1(self,ctx: Context, ev: Event, user_input_future: asyncio.Future, msg: str) -> tuple[bool, str]:
         print(f"Inside conditional_three_action_1 {msg} {user_input_future}")
-        ctx.write_event_to_stream( generateEvent(
+        # ctx.write_event_to_stream( generateEvent(
+        await self.generate_stream_event(ctx, ev, 
                 "input",
                 "conditional_state",
                 "StartFutureEvent",
-                "outline",
                 "Please enter INPUT"
             )
-        )
+        # )
         if not user_input_future.done():
             print(f"waiting for user_input...")
             user_response = await user_input_future
             print(f"conditional_three_action_1() Got user response: {user_response}")
 
         # Process user_response, which should be a JSON string
-        ctx.write_event_to_stream( generateEvent(
+        # ctx.write_event_to_stream( generateEvent(
+        await self.generate_stream_event(ctx, ev, 
                 "agent",
                 "user_input_state",
                 "END_FutureEvent",
-                "outline",
                 user_response
             )
-        )
+        # )
         if "AI" in user_response:
             return True, user_response
         else:
@@ -247,62 +249,78 @@ class MyWorkflowContext():
 
     async def conditional_four_action_1(self,ctx: Context, ev: Event, user_input_future: asyncio.Future,msg: str) -> tuple[bool, str]:
         print(f"Inside conditional_FOUR_action_1 {msg} {user_input_future}")
-        ctx.write_event_to_stream( generateEvent(
+        # ctx.write_event_to_stream( generateEvent(
+        await self.generate_stream_event(ctx, ev, 
                 "input",
                 "conditional_state",
                 "StartFutureEvent",
-                "outline",
                 "Please enter INPUT"
             )
-        )
+        # )
         if not user_input_future.done():
             print(f"waiting for user_input...")
             user_response = await user_input_future
             print(f"conditional_four_action_1() Got user response: {user_response}")
 
         # Process user_response, which should be a JSON string
-        ctx.write_event_to_stream( generateEvent(
+        # ctx.write_event_to_stream( generateEvent(
+        await self.generate_stream_event(ctx, ev, 
                 "agent",
                 "user_input_state",
                 "END_FutureEvent",
-                "outline",
                 user_response
             )
-        )
+        # )
         return False, user_response
 
     async def conditional_forecast_ema(self,ctx: Context, ev: Event, user_input_future: asyncio.Future, query: str) -> tuple[bool, Any]:
 
         """Forecast Time Series using the agent workflow"""
 
-        ctx.write_event_to_stream( generateEvent(
+        # ctx.write_event_to_stream( generateEvent(
+        await self.generate_stream_event(ctx, ev, 
                 "agent",
                 "forecast_state",
                 "ForecastEvent",
-                "outline",
                 "Starting MLForecastor"
             )
-        )
+        # )
         print(query)
 
-        query_prompt = "Query using the buybaktools, forecast time series for next 15 days, and strictly print only the forcast column"
+        query_prompt = "Query using the buybaktools, forecast time series for next 15 days, and strictly print the columns as HTML table"
 
         timestamp = time.time()
         result, response = self.__iter_over_async_forecaster(query_prompt)
         print(f'result: {result}')
         print(f'response: {response}')
-        forecastors["list_items"].append({str(int(timestamp)): f'{response}'})
-        print(forecastors)
-        ctx.write_event_to_stream( generateEvent(
+        print(f'response: {str(response)}')
+        await self.generate_stream_event(ctx, ev, 
                 "agent",
                 "forecast_state",
                 "ForecastEvent",
-                "outline",
-                "ENDING MLForecastor"
+                str(response)
             )
-        )
 
-        return True, f'{response}'
+        """
+        if isinstance(response, AgentOutput):
+            print("1")
+            nospecial = re.sub(r'[^,0-9\.]', '', str(response))
+            print("2")
+            print(nospecial)
+            print("3")
+            outcome = str(nospecial)
+            print("4")
+            print(type(outcome))
+            print("5")
+            await self.generate_stream_event(ctx, ev, 
+                    "agent",
+                    "forecast_state",
+                    "ForecastEvent",
+                    outcome
+                )
+            """
+
+        return True, f'DONE MLForecastor'
 
 if __name__ == "__main__":
     print("initializing MyWorkflowContext...")
