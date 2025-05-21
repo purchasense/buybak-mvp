@@ -48,8 +48,9 @@ const formatDate = date => {
 export const  MobileMessage = (props) => {
     const currentUser = 'sameer';
 
-    const bgc = ((props.estimuli === "LiveMarketEvent") || (props.estimuli === "CompareMarketEvent")) ? "white" : "lightyellow";
+    const bgc = ((props.estimuli === "LiveMarketEvent") || (props.estimuli === "CompareMarketEvent")) ? "white" : "cornsilk";
     const nbgc = ((props.estimuli === "GetUserEvent") || (props.estimuli === "BuyOrSellEvent")) ? "#FFDDDD" : bgc;
+    const fbgc = (props.estimuli === "ForecastEvent") ? "#CCF" : nbgc;
     return (
         <div className="mx-4">
             <Grid container spacing={2} padding={2} >
@@ -97,7 +98,7 @@ export const  MobileMessage = (props) => {
                           align-items="left"
                           md={8}
                           aria-label="main mailbox folders"
-                          sx={{ boxShadow: '0px 0px 0px #000', border: '3px solid', borderRadius: '30px', background: nbgc}}
+                          sx={{ boxShadow: '0px 0px 0px #000', border: '3px solid', borderRadius: '30px', background: fbgc}}
                         >
                         <div className="flex items-end">
                             <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
