@@ -54,7 +54,9 @@
             {"method": "GetUserEvent", "args": "Event", "body": [{"msg": "str"}]},
             {"method": "SetAIEvent", "args": "Event", "body": [{"result": "str"}]},
             {"method": "ForecastEvent", "args": "Event", "body": [{"query": "str"}]},
-            {"method": "LiveMarketEvent", "args": "Event", "body": [{"md": "str"}]}
+            {"method": "LiveMarketEvent", "args": "Event", "body": [{"md": "str"}]},
+            {"method": "CompareMarketEvent", "args": "Event", "body": [{"md": "str"}]},
+            {"method": "BuyOrSellEvent", "args": "Event", "body": [{"md": "str"}]}
         ],
         "membervars": [
             {"name": "sameer_here", "type": "str", "field": "..., description=\"placeholder\""}
@@ -130,12 +132,38 @@
             {
                 "state":        "step_six", 
                 "args":         ["self", "ctx: Context"],
-                "stimuli":      [{"stimulus": "LiveMarketEvent", "actions": [
-                                                        {"action": "generate_stream_event", "args":["agent", "LiveMarketEvent", "step_six", "Waiting for Live Market"]}, 
-                                                        {"action": "conditional_market_action", "args":["ev.query"]}
-                                                        ] 
-                                  }], 
-                "emits":        [{"event": "LiveMarketEvent", "args": ["md=user_response"]}, {"event": "StopEvent", "args": ["result=user_response"]}]
+                "stimuli":      [
+                                    {"stimulus": "LiveMarketEvent", "actions": [
+                                            {"action": "generate_stream_event", "args":["agent", "LiveMarketEvent", "step_six", "Waiting for Live Market"]}, 
+                                            {"action": "conditional_market_action", "args":["ev.query"]}
+                                        ] 
+                                    }
+                                 ], 
+                "emits":        [{"event": "CompareMarketEvent", "args": ["md=user_response"]}, {"event": "StopEvent", "args": ["result=user_response"]}]
+            },
+            {
+                "state":        "step_seven", 
+                "args":         ["self", "ctx: Context"],
+                "stimuli":      [
+                                    {"stimulus": "CompareMarketEvent", "actions": [
+                                            {"action": "generate_stream_event", "args":["agent", "CompareMarketEvent", "step_seven", "Comparing Live Market Data"]}, 
+                                            {"action": "conditional_compare_market_action", "args":["ev.query"]}
+                                        ] 
+                                    }
+                                 ], 
+                "emits":        [{"event": "BuyOrSellEvent", "args": ["md=user_response"]}, {"event": "LiveMarketEvent", "args": ["md=user_response"]}]
+            },
+            {
+                "state":        "step_eight", 
+                "args":         ["self", "ctx: Context"],
+                "stimuli":      [
+                                    {"stimulus": "BuyOrSellEvent", "actions": [
+                                            {"action": "generate_stream_event", "args":["agent", "BuyOrSellEvent", "step_seven", "Buy or Sell?"]}, 
+                                            {"action": "conditional_buy_or_sell", "args":["ev.query"]}
+                                        ] 
+                                    }
+                                 ], 
+                "emits":        [{"event": "StopEvent", "args": ["result=user_response"]}, {"event": "LiveMarketEvent", "args": ["md=user_response"]}]
             }
         ]
     }

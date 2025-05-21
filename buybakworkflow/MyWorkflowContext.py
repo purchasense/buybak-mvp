@@ -128,8 +128,13 @@ def generateEvent(etype: str, estate: str, stimuli: str, outline: str, message: 
             )
 
 
-async def makeitem(size: int = 5) -> str:
-    return os.urandom(size).hex()
+async def makeitem(forecast: []) -> str:
+    i = random.randint(0, 10)
+    if len(forecast) > 9:
+        print(f'make_item {i} -------------------> {forecast[i]} ')
+        return forecast[i]
+    else: 
+        return 200.0
 
 async def randsleep(caller=None) -> None:
     i = random.randint(0, 10)
@@ -140,14 +145,15 @@ async def randsleep(caller=None) -> None:
 async def produce(q: asyncio.Queue) -> None:
     n = 6
     print(f'produce: {n} times in a loop')
+    forecast = [164.27565059931024, 163.64161088130706, 163.51398769833057, 162.67782529379727, 161.94058563595763, 161.17340857674023, 160.40623151752283, 159.82062979168805, 159.20826673198033, 158.1375598295967, 157.74369845011444, 157.06055326456507, 156.47160842118893, 155.8826635778128, 154.96341642072696]
     for x in it.repeat(None, n):  # Synchronous loop for each single producer
         await randsleep(caller=f"Producer {x}")
-        i = await makeitem()
+        i = await makeitem(forecast)
         t = time.perf_counter()
         await q.put((i, t))
         print(f"Producer added <{i}> to queue.")
         print(f"---------------------------------------------------------------------")
-        await asyncio.sleep(2)
+        await asyncio.sleep(1)
 
 async def consume(name: int, q: asyncio.Queue) -> str:
         await randsleep(caller=f"Consumer {name}")
@@ -155,21 +161,25 @@ async def consume(name: int, q: asyncio.Queue) -> str:
         now = time.perf_counter()
         print(f"Consumer {name} got element <{i}> in {now-t:0.5f} seconds.")
         q.task_done()
-        return f"Consumer {name} got element <{i}> in {now-t:0.5f} seconds."
+        return f'{i}'
 
 
 class MyWorkflowContext():
 
     live_market_count: int = Field(..., description="Count of live market data events, then stop")
+    live_market_data: float = Field(..., description="live market data ")
+    live_market_forecast = []
     my_proconq_started: bool = Field(..., description="ProConQ started")
     my_queue: asyncio.Queue
     my_producers: Any
     my_consumers: Any
 
+
     def __init__(self,*args,**kwargs):
         print("Inside __init__")
         random.seed(444)
         self.live_market_count = 0
+        self.live_market_data = 0
         self.my_proconq_started = False
 
     async def generate_stream_event(self, ctx: Context, ev: Event, etype: str, stimulus: str, estate: str, msg: str):
@@ -248,8 +258,8 @@ class MyWorkflowContext():
         # ctx.write_event_to_stream( generateEvent(
         await self.generate_stream_event(ctx, ev, 
                 "timer",
-                "TimerState",
                 "WfTimerEvent",
+                "TimerState",
                 "Timer fired!"
             )
         # )
@@ -266,8 +276,8 @@ class MyWorkflowContext():
         # ctx.write_event_to_stream( generateEvent(
         await self.generate_stream_event(ctx, ev, 
                 "input",
-                "conditional_state",
                 "StartFutureEvent",
+                "conditional_state",
                 "Please enter INPUT"
             )
         # )
@@ -280,8 +290,8 @@ class MyWorkflowContext():
         # ctx.write_event_to_stream( generateEvent(
         await self.generate_stream_event(ctx, ev, 
                 "agent",
-                "user_input_state",
                 "END_FutureEvent",
+                "user_input_state",
                 user_response
             )
         # )
@@ -295,8 +305,8 @@ class MyWorkflowContext():
         # ctx.write_event_to_stream( generateEvent(
         await self.generate_stream_event(ctx, ev, 
                 "input",
-                "conditional_state",
                 "StartFutureEvent",
+                "conditional_state",
                 "Please enter INPUT"
             )
         # )
@@ -309,8 +319,8 @@ class MyWorkflowContext():
         # ctx.write_event_to_stream( generateEvent(
         await self.generate_stream_event(ctx, ev, 
                 "agent",
-                "user_input_state",
                 "END_FutureEvent",
+                "user_input_state",
                 user_response
             )
         # )
@@ -323,24 +333,33 @@ class MyWorkflowContext():
         # ctx.write_event_to_stream( generateEvent(
         await self.generate_stream_event(ctx, ev, 
                 "agent",
-                "forecast_state",
                 "ForecastEvent",
+                "forecast_state",
                 "Starting MLForecastor"
             )
         # )
         print(query)
 
-        query_prompt = "Query using the buybaktools, forecast time series for next 15 days, and strictly print the columns as HTML table"
+        query_prompt = "Query using the buybaktools, forecast time series for next 15 days, and strictly print the LGBMRegressor column as comma separated CSV array"
 
         timestamp = time.time()
         result, response = self.__iter_over_async_forecaster(query_prompt)
         print(f'result: {result}')
         print(f'response: {response}')
         print(f'response: {str(response)}')
+
+        nospecial = re.sub(r'[^,0-9\.]', '', str(response))
+        print(f'nospecial: {nospecial}')
+        sdata = nospecial.split(",")
+        print(f'sdata: {sdata}')
+        float_list = [float(num) for num in sdata]
+        print(f'float_list: {float_list}')
+        self.live_market_forecast = float_list
+
         await self.generate_stream_event(ctx, ev, 
                 "agent",
-                "forecast_state",
                 "ForecastEvent",
+                "forecast_state",
                 str(response)
             )
 
@@ -360,9 +379,10 @@ class MyWorkflowContext():
         else:
             print(f'Consuming...')
             consumed = await consume(self.live_market_count, self.my_queue)
+            self.live_market_data = float(consumed)
         
         timestamp = time.time()
-        await asyncio.sleep(2)
+        await asyncio.sleep(1)
 
         self.live_market_count = self.live_market_count + 1
         print(f'live_market_count: {self.live_market_count}')
@@ -383,11 +403,67 @@ class MyWorkflowContext():
             print(f'Now consuming {consumed}')
             await self.generate_stream_event(ctx, ev, 
                 "agent",
-                "live_market_action",
                 "LiveMarketEvent",
+                "live_market_action",
                 consumed
             )
             return True, consumed
+
+    async def conditional_compare_market_action(self, ctx: Context, ev: Event, live_market_future: asyncio.Future, query: str) -> tuple[bool, Any]:
+
+        """Compare Market Event"""
+
+        await asyncio.sleep(2)
+
+        print(f'Comparing {self.live_market_data} with {self.live_market_forecast}')
+        compared = f'No Comparison Found with {self.live_market_data}'
+
+        if (self.live_market_forecast[4] - self.live_market_data) > 0:
+                compared = f'{self.live_market_data} Less Than Forecast {self.live_market_forecast[4]}! BUY? '
+                await self.generate_stream_event(ctx, ev, 
+                    "agent",
+                    "CompareMarketEvent",
+                    "compare_markets",
+                    compared
+                )
+                return True, compared
+        else:
+                compared = f'{self.live_market_data} Greater than FC {self.live_market_forecast[4]}! No-OP '
+                await self.generate_stream_event(ctx, ev, 
+                    "agent",
+                    "CompareMarketEvent",
+                    "compare_markets",
+                    compared
+                )
+                return False, compared
+
+    async def conditional_buy_or_sell(self,ctx: Context, ev: Event, user_input_future: asyncio.Future,msg: str) -> tuple[bool, str]:
+        print(f"Inside conditional_buy_or_sell {msg} {user_input_future}")
+        # ctx.write_event_to_stream( generateEvent(
+        await self.generate_stream_event(ctx, ev, 
+                "input",
+                "StartFutureEvent",
+                "buy_or_sell_state",
+                "Please enter INPUT"
+            )
+        # )
+        if not user_input_future.done():
+            print(f"waiting for user_input...")
+            user_response = await user_input_future
+            print(f"conditional_buy_or_sell() Got {user_response}")
+
+        # Process user_response, which should be a JSON string
+        await self.generate_stream_event(ctx, ev, 
+                "agent",
+                "END_FutureEvent",
+                "user_input_state",
+                user_response
+            )
+
+        if "Buy" in user_response:
+            return True, user_response
+        else:
+            return False, user_response
 
 if __name__ == "__main__":
     print("initializing MyWorkflowContext...")

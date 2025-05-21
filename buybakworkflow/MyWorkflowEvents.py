@@ -83,4 +83,10 @@ class ForecastEvent(Event):
 class LiveMarketEvent(Event):
     md:   str
 
+class CompareMarketEvent(Event):
+    md:   str
+
+class BuyOrSellEvent(Event):
+    md:   str
+
 
