@@ -145,7 +145,7 @@ async def randsleep(caller=None) -> None:
 async def produce(q: asyncio.Queue) -> None:
     n = 6
     print(f'produce: {n} times in a loop')
-    forecast = [164.27565059931024, 163.64161088130706, 163.51398769833057, 162.67782529379727, 161.94058563595763, 161.17340857674023, 160.40623151752283, 159.82062979168805, 159.20826673198033, 158.1375598295967, 157.74369845011444, 157.06055326456507, 156.47160842118893, 155.8826635778128, 154.96341642072696]
+    forecast = [164.27, 163.64, 163.51, 162.67, 161.94, 161.17, 160.40, 159.82, 159.20, 158.13, 157.74, 157.06, 156.47, 155.88, 154.96]
     for x in it.repeat(None, n):  # Synchronous loop for each single producer
         await randsleep(caller=f"Producer {x}")
         i = await makeitem(forecast)
@@ -255,14 +255,12 @@ class MyWorkflowContext():
         print(f"Inside armTimer {timer}, {msg}")
         await asyncio.sleep(int(timer))
 
-        # ctx.write_event_to_stream( generateEvent(
         await self.generate_stream_event(ctx, ev, 
                 "timer",
                 "WfTimerEvent",
                 "TimerState",
                 "Timer fired!"
             )
-        # )
 
 
     async def suneels_action_function(self,ctx: Context, ev: Event, msg: str):
@@ -273,28 +271,19 @@ class MyWorkflowContext():
 
     async def conditional_three_action_1(self,ctx: Context, ev: Event, user_input_future: asyncio.Future, msg: str) -> tuple[bool, str]:
         print(f"Inside conditional_three_action_1 {msg} {user_input_future}")
-        # ctx.write_event_to_stream( generateEvent(
-        await self.generate_stream_event(ctx, ev, 
-                "input",
-                "StartFutureEvent",
-                "conditional_state",
-                "Please enter INPUT"
-            )
-        # )
+
         if not user_input_future.done():
             print(f"waiting for user_input...")
             user_response = await user_input_future
             print(f"conditional_three_action_1() Got user response: {user_response}")
 
         # Process user_response, which should be a JSON string
-        # ctx.write_event_to_stream( generateEvent(
         await self.generate_stream_event(ctx, ev, 
                 "agent",
                 "END_FutureEvent",
                 "user_input_state",
                 user_response
             )
-        # )
         if "AI" in user_response:
             return True, user_response
         else:
@@ -302,42 +291,30 @@ class MyWorkflowContext():
 
     async def conditional_four_action_1(self,ctx: Context, ev: Event, user_input_future: asyncio.Future,msg: str) -> tuple[bool, str]:
         print(f"Inside conditional_FOUR_action_1 {msg} {user_input_future}")
-        # ctx.write_event_to_stream( generateEvent(
-        await self.generate_stream_event(ctx, ev, 
-                "input",
-                "StartFutureEvent",
-                "conditional_state",
-                "Please enter INPUT"
-            )
-        # )
         if not user_input_future.done():
             print(f"waiting for user_input...")
             user_response = await user_input_future
             print(f"conditional_four_action_1() Got user response: {user_response}")
 
         # Process user_response, which should be a JSON string
-        # ctx.write_event_to_stream( generateEvent(
         await self.generate_stream_event(ctx, ev, 
                 "agent",
                 "END_FutureEvent",
                 "user_input_state",
                 user_response
             )
-        # )
         return False, user_response
 
     async def conditional_forecast_ema(self,ctx: Context, ev: Event, user_input_future: asyncio.Future, query: str) -> tuple[bool, Any]:
 
         """Forecast Time Series using the agent workflow"""
 
-        # ctx.write_event_to_stream( generateEvent(
         await self.generate_stream_event(ctx, ev, 
                 "agent",
                 "ForecastEvent",
                 "forecast_state",
                 "Starting MLForecastor"
             )
-        # )
         print(query)
 
         query_prompt = "Query using the buybaktools, forecast time series for next 15 days, and strictly print the LGBMRegressor column as comma separated CSV array"
@@ -401,12 +378,14 @@ class MyWorkflowContext():
             return False, f'Done Live Market Events'
         else: 
             print(f'Now consuming {consumed}')
+            '''
             await self.generate_stream_event(ctx, ev, 
                 "agent",
                 "LiveMarketEvent",
                 "live_market_action",
                 consumed
             )
+            '''
             return True, consumed
 
     async def conditional_compare_market_action(self, ctx: Context, ev: Event, live_market_future: asyncio.Future, query: str) -> tuple[bool, Any]:
@@ -418,8 +397,8 @@ class MyWorkflowContext():
         print(f'Comparing {self.live_market_data} with {self.live_market_forecast}')
         compared = f'No Comparison Found with {self.live_market_data}'
 
-        if (self.live_market_forecast[4] - self.live_market_data) > 0:
-                compared = f'{self.live_market_data} Less Than Forecast {self.live_market_forecast[4]}! BUY? '
+        if ((self.live_market_data != 0) and (self.live_market_forecast[5] - self.live_market_data)) > 0:
+                compared = f'{self.live_market_data} Less Than Forecast by {round((self.live_market_forecast[5] - self.live_market_data), 2)}!!!'
                 await self.generate_stream_event(ctx, ev, 
                     "agent",
                     "CompareMarketEvent",
@@ -428,7 +407,7 @@ class MyWorkflowContext():
                 )
                 return True, compared
         else:
-                compared = f'{self.live_market_data} Greater than FC {self.live_market_forecast[4]}! No-OP '
+                compared = f'{self.live_market_data} Greater than FC by {round((self.live_market_forecast[5] - self.live_market_data), 2)}, next... '
                 await self.generate_stream_event(ctx, ev, 
                     "agent",
                     "CompareMarketEvent",
@@ -439,14 +418,6 @@ class MyWorkflowContext():
 
     async def conditional_buy_or_sell(self,ctx: Context, ev: Event, user_input_future: asyncio.Future,msg: str) -> tuple[bool, str]:
         print(f"Inside conditional_buy_or_sell {msg} {user_input_future}")
-        # ctx.write_event_to_stream( generateEvent(
-        await self.generate_stream_event(ctx, ev, 
-                "input",
-                "StartFutureEvent",
-                "buy_or_sell_state",
-                "Please enter INPUT"
-            )
-        # )
         if not user_input_future.done():
             print(f"waiting for user_input...")
             user_response = await user_input_future

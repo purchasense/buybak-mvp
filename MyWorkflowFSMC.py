@@ -99,7 +99,7 @@ class MyWorkflow(Workflow):
     @step
     async def step_four(self,ctx: Context, ev:  GetUserEvent) ->  ForecastEvent |  LiveMarketEvent:
         print("Inside step_four")
-        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'GetUserEvent', 'step_four', 'Three Message')
+        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'GetUserEvent', 'step_four', 'AI? or Market?')
         ret_val, user_response = await self.fsmc.conditional_three_action_1(ctx, ev, self.user_input_future, 'call action_3')
         await self.reset_user_input_future()
         
@@ -125,7 +125,6 @@ class MyWorkflow(Workflow):
     @step
     async def step_six(self,ctx: Context, ev:  LiveMarketEvent) ->  CompareMarketEvent |  StopEvent:
         print("Inside step_six")
-        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'LiveMarketEvent', 'step_six', 'Waiting for Live Market')
         ret_val, user_response = await self.fsmc.conditional_market_action(ctx, ev, self.live_market_future, 'ev.query')
         await self.reset_live_market_future()
         
@@ -138,7 +137,6 @@ class MyWorkflow(Workflow):
     @step
     async def step_seven(self,ctx: Context, ev:  CompareMarketEvent) ->  BuyOrSellEvent |  LiveMarketEvent:
         print("Inside step_seven")
-        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'CompareMarketEvent', 'step_seven', 'Comparing Live Market Data')
         ret_val, user_response = await self.fsmc.conditional_compare_market_action(ctx, ev, self.live_market_future, 'ev.query')
         await self.reset_live_market_future()
         
@@ -151,7 +149,7 @@ class MyWorkflow(Workflow):
     @step
     async def step_eight(self,ctx: Context, ev:  BuyOrSellEvent) ->  StopEvent |  LiveMarketEvent:
         print("Inside step_eight")
-        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'BuyOrSellEvent', 'step_seven', 'Buy or Sell?')
+        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'BuyOrSellEvent', 'step_seven', 'Buy or Not?')
         ret_val, user_response = await self.fsmc.conditional_buy_or_sell(ctx, ev, self.user_input_future, 'ev.query')
         await self.reset_user_input_future()
         
