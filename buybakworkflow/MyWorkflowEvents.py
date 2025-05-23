@@ -89,4 +89,7 @@ class CompareMarketEvent(Event):
 class BuyOrSellEvent(Event):
     md:   str
 
+class FrenchWinesEvent(Event):
+    query:   str
+
 

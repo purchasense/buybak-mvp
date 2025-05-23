@@ -15,6 +15,7 @@ import asyncio
 import re
 import string
 import csv
+import os
 from llama_index.llms.openai import OpenAI
 from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, Settings
@@ -65,11 +66,12 @@ from llama_index.core import (
 )
 from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.llms.openai import OpenAI
-from buybaktools.time_series_tools import BuyBakTimeSeriesToolSpec, BuyBakLineItemAndIndicators, BuyBakTimeSeries
 from llama_index.core.tools import FunctionTool
-
 from llama_index.core.agent.workflow import FunctionAgent
-import os
+
+from buybaktools.time_series_tools import BuyBakTimeSeriesToolSpec, BuyBakLineItemAndIndicators, BuyBakTimeSeries
+from buybaktools.french_wines_tools import BuyBakFrenchWinesToolSpec
+
 
 predictions = {"list_items": []}
 forecastors = {"list_items": []}
@@ -96,15 +98,28 @@ Do not make up any details.
 buybak_time_series_tools = BuyBakTimeSeriesToolSpec().to_tool_list()
 buybak_ts_agent = FunctionAgent(
     name="BuyBakTimeSeriesAgent",
-    description="Booking agent that predicts the next EMA values from a time series",
-    tools= buybak_time_series_tools,
-    llm=OpenAI(model="gpt-4o-mini"),
+    description="Booking agent that predicts the next EMA values from a time series AND Provides info about wines from different region in France",
+    tools=buybak_time_series_tools,
+    llm=OpenAI(model="gpt-4o"),
     system_prompt=system_prompt,
     verbose=True,
 )
 
+system_prompt_french_wines = f"""You are now connected to the BuyBakFrenchWines Tools, that uses storage for 10 different wines, and invokes the list of query_tool, one per wine district, to answer user queries. Return the value strictly as an HTML output.
+Do not make up any details.
+"""
+buybak_french_wines_tools = BuyBakFrenchWinesToolSpec().to_tool_list()
+buybak_french_wines_agent = FunctionAgent(
+    name="BuyBakFrenchWinesAgent",
+    description="Agent that tablulates French Wines from the toolspec query_engine_tool loaded from the storage",
+    tools=buybak_french_wines_tools,
+    llm=OpenAI(model="gpt-4o"),
+    system_prompt=system_prompt_french_wines,
+    verbose=True,
+)
+
 agent_workflow = AgentWorkflow(
-    agents=[buybak_ts_agent],
+    agents=[buybak_ts_agent, buybak_french_wines_agent],
     root_agent=buybak_ts_agent.name,
     initial_state={
     },
@@ -269,8 +284,8 @@ class MyWorkflowContext():
     async def two_action_1(self,ctx: Context, ev: Event, msg: str):
         print(f"Inside two_action_1 {msg}")
 
-    async def conditional_three_action_1(self,ctx: Context, ev: Event, user_input_future: asyncio.Future, msg: str) -> tuple[bool, str]:
-        print(f"Inside conditional_three_action_1 {msg} {user_input_future}")
+    async def conditional_fore_wine_live(self,ctx: Context, ev: Event, user_input_future: asyncio.Future, msg: str) -> tuple[int, str]:
+        print(f"Inside conditional_fore_wine_live {msg} {user_input_future}")
 
         if not user_input_future.done():
             print(f"waiting for user_input...")
@@ -285,11 +300,13 @@ class MyWorkflowContext():
                 user_response
             )
         if "AI" in user_response:
-            return True, user_response
+            return 0, user_response
+        elif "wines" in user_response:
+            return 1, user_response
         else:
-            return False, user_response
+            return 2, user_response
 
-    async def conditional_four_action_1(self,ctx: Context, ev: Event, user_input_future: asyncio.Future,msg: str) -> tuple[bool, str]:
+    async def conditional_four_action_1(self,ctx: Context, ev: Event, user_input_future: asyncio.Future, msg: str) -> tuple[bool, str]:
         print(f"Inside conditional_FOUR_action_1 {msg} {user_input_future}")
         if not user_input_future.done():
             print(f"waiting for user_input...")
@@ -388,7 +405,7 @@ class MyWorkflowContext():
             '''
             return True, consumed
 
-    async def conditional_compare_market_action(self, ctx: Context, ev: Event, live_market_future: asyncio.Future, query: str) -> tuple[bool, Any]:
+    async def conditional_compare_market_action(self, ctx: Context, ev: Event, live_market_future: asyncio.Future, md: str) -> tuple[bool, Any]:
 
         """Compare Market Event"""
 
@@ -416,8 +433,8 @@ class MyWorkflowContext():
                 )
                 return False, compared
 
-    async def conditional_buy_or_sell(self,ctx: Context, ev: Event, user_input_future: asyncio.Future,msg: str) -> tuple[bool, str]:
-        print(f"Inside conditional_buy_or_sell {msg} {user_input_future}")
+    async def conditional_buy_or_sell_action(self,ctx: Context, ev: Event, user_input_future: asyncio.Future, md: str) -> tuple[bool, str]:
+        print(f"Inside conditional_buy_or_sell {md} {user_input_future}")
         if not user_input_future.done():
             print(f"waiting for user_input...")
             user_response = await user_input_future
@@ -435,6 +452,33 @@ class MyWorkflowContext():
             return True, user_response
         else:
             return False, user_response
+
+    async def buybak_french_wines_action(self,ctx: Context, ev: Event, query: str) -> tuple[bool, Any]:
+
+        """French Wines ToolCall using the agent workflow"""
+
+        await self.generate_stream_event(ctx, ev, 
+                "agent",
+                "FrenchWinesEvent",
+                "french_wines_state",
+                "Querying...",
+            )
+        print(query)
+
+        query_prompt = "What are the different regions of french wines? Print result strictly as HTML Table"
+
+        timestamp = time.time()
+        result, response = self.__iter_over_async_forecaster(query)
+        print(f'result: {result}')
+        print(f'response: {response}')
+
+        await self.generate_stream_event(ctx, ev, 
+                "agent",
+                "FrenchWinesEvent",
+                "french_wine_state",
+                str(response)
+            )
+
 
 if __name__ == "__main__":
     print("initializing MyWorkflowContext...")

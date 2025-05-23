@@ -56,7 +56,8 @@
             {"method": "ForecastEvent", "args": "Event", "body": [{"query": "str"}]},
             {"method": "LiveMarketEvent", "args": "Event", "body": [{"md": "str"}]},
             {"method": "CompareMarketEvent", "args": "Event", "body": [{"md": "str"}]},
-            {"method": "BuyOrSellEvent", "args": "Event", "body": [{"md": "str"}]}
+            {"method": "BuyOrSellEvent", "args": "Event", "body": [{"md": "str"}]},
+            {"method": "FrenchWinesEvent", "args": "Event", "body": [{"query": "str"}]}
         ],
         "membervars": [
             {"name": "sameer_here", "type": "str", "field": "..., description=\"placeholder\""}
@@ -114,10 +115,10 @@
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [{"stimulus": "GetUserEvent", "actions": [
                                                         {"action": "generate_stream_event", "args":["agent", "GetUserEvent", "step_four", "AI? or Market?"]}, 
-                                                        {"action": "conditional_three_action_1", "args":["call action_3"]}
+                                                        {"action": "conditional_fore_wine_live", "args":["ev.msg"]}
                                                         ] 
                                   }], 
-                "emits":        [{"event": "ForecastEvent", "args": ["query=user_response"]},{"event": "LiveMarketEvent", "args": ["md=user_response"]}] 
+                "emits":        [{"event": "ForecastEvent", "args": ["query=user_response"]},{"event": "FrenchWinesEvent", "args": ["query=user_response"]},{"event": "LiveMarketEvent", "args": ["md=user_response"]}] 
             },
             {
                 "state":        "step_five", 
@@ -130,11 +131,21 @@
                 "emits":        [{"event": "GetUserEvent", "args": ["msg=user_response"]}, {"event": "StopEvent", "args": ["result=user_response"]}]
             },
             {
+                "state":        "step_five_point_five", 
+                "args":         ["self", "ctx: Context"],
+                "stimuli":      [{"stimulus": "FrenchWinesEvent", "actions": [
+                                                        {"action": "generate_stream_event", "args":["agent", "FrenchWinesEvent", "step_5.5", "5.5 Message"]}, 
+                                                        {"action": "buybak_french_wines_action", "args":["ev.query"]}
+                                                        ] 
+                                  }], 
+                "emits":        [{"event": "GetUserEvent", "args": ["msg=\"Sameer\""]}]
+            },
+            {
                 "state":        "step_six", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [
                                     {"stimulus": "LiveMarketEvent", "actions": [
-                                            {"action": "conditional_market_action", "args":["ev.query"]}
+                                            {"action": "conditional_market_action", "args":["ev.md"]}
                                         ] 
                                     }
                                  ], 
@@ -145,7 +156,7 @@
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [
                                     {"stimulus": "CompareMarketEvent", "actions": [
-                                            {"action": "conditional_compare_market_action", "args":["ev.query"]}
+                                            {"action": "conditional_compare_market_action", "args":["ev.md"]}
                                         ] 
                                     }
                                  ], 
@@ -156,8 +167,8 @@
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [
                                     {"stimulus": "BuyOrSellEvent", "actions": [
-                                            {"action": "generate_stream_event", "args":["agent", "BuyOrSellEvent", "step_seven", "Buy or Not?"]}, 
-                                            {"action": "conditional_buy_or_sell", "args":["ev.query"]}
+                                            {"action": "generate_stream_event", "args":["agent", "BuyOrSellEvent", "step_8", "Buy or Not?"]}, 
+                                            {"action": "conditional_buy_or_sell_action", "args":["ev.md"]}
                                         ] 
                                     }
                                  ], 

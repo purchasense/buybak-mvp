@@ -61,7 +61,6 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
         "buybak_model_predict",
         "buybak_model_forecast"
     ]
-    query_engine                = None
     df_ohlcv                    = {}
     X                           = {}
     y                           = {}

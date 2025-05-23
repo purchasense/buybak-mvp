@@ -123,9 +123,14 @@ class FSMCWorkflow(Workflow):
     def generate_actions_and_emits(self, steps: []):
         for stimuli in steps["stimuli"]:
             for acts in stimuli["actions"]:
-                quoted_list = ["'" + item + "'" for item in acts["args"]]
+                quoted_list = []
+                for item in acts["args"]:
+                    if "ev" in item:
+                        quoted_list.append(item)
+                    else:
+                        quoted_list.append("'" + item + "'")
                 args = ", ".join(quoted_list)
-                if "conditional" in acts["action"]:
+                if len(steps["emits"]) == 2 and "conditional" in acts["action"]:
                     emit_if = steps["emits"][0]
                     emit_else = steps["emits"][-1]
                     fut_var = "live_market_future" if "market" in acts["action"] else "user_input_future"
@@ -136,6 +141,20 @@ class FSMCWorkflow(Workflow):
                     print(f'            return {emit_if["event"]}({",".join(emit_if["args"])})')
                     print(f'        else:')
                     print(f'            return {emit_else["event"]}({",".join(emit_else["args"])})')
+                elif len(steps["emits"]) == 3 and "conditional" in acts["action"]:
+                    emit_0 = steps["emits"][0]
+                    emit_1 = steps["emits"][1]
+                    emit_2 = steps["emits"][-1]
+                    fut_var = "user_input_future" 
+                    print(f'        ret_val, user_response = await self.fsmc.{acts["action"]}(ctx, ev, self.{fut_var}, {args})')
+                    print(f'        await self.reset_{fut_var}()')
+                    print(f'        ')
+                    print(f'        if ret_val == 0:')
+                    print(f'            return {emit_0["event"]}({",".join(emit_0["args"])})')
+                    print(f'        elif ret_val == 1:')
+                    print(f'            return {emit_1["event"]}({",".join(emit_1["args"])})')
+                    print(f'        else:')
+                    print(f'            return {emit_2["event"]}({",".join(emit_2["args"])})')
                 else:
                     print(f'        await self.fsmc.{acts["action"]}(ctx, ev, {args})')
 
