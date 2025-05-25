@@ -1,0 +1,134 @@
+BuyBak-AI: Not just a "Live Agent", but an "Agent" that is "ALIVE"
+
+Problem: 
+
+    1. All agents are either 'alawys live' (OpenAI chatbots) or 'living while u chat with them, like the support Chatbots'
+    2. Most agents can't go back in time to determine outcomes (especially those involving Market Data Sets)
+    3. Agents don't work in the background (when u go away, or downtimes). They expect the users to be always online.
+    4. Cost of currently deployed 'live-agents' is prohibitively expensive. 
+
+
+Solution: 
+
+    Welcome to your personalized 'agent' that is 'ALIVE'
+
+    What does this mean? Let's look at an example (expensive wines)
+
+
+    Regular chatbot
+    1. What kind of wines do u know? 
+        - 6 french wines.....
+    2. Can u tell me more about a certain wine? 
+        - Yes: .....
+    3. How much does this wine cost? 
+        - Well, either $350 as per Wikipedia (or data that has been fed to me), or 
+        - U will need to connect to several market places.....
+    4. Can u monitor the prices of this wine on 'this website', and notify me when u hit a certain threshold? 
+        - No. U will need to provide me with detailed instructions. Then keep the sessiomn alive, so we can communicate.
+    5. What kind of detailed instructions? 
+
+        Well, "This is the problem with existing agents... or agentic-AI in general".
+
+
+    So what makes our Agentic-AI different? 
+
+    Let's think Philosophically: 
+
+    - BuyBak-Agent is like a Personal Assistant.
+    - Its "alive" when u ask it to come online!
+    - It takes instructions (wines, its historical market data, Who bought when, and how early)
+    - It runs in the background (like a Personal assistant that return to their cubicle, and get to work)
+    - It finds good prices (based on historical data) and NOTIFIES you. 
+    - It starts monitoring LIVE prices, matches that with the historical outcomes, compares, and NOTIFIES you.
+    - It WAKES-U-UP, and asks: Do u like this outcome? Yes/No. 
+    - If not, it continues its task (like a personal assistant), and returns with more results.
+    - Finally, when u are ready to buy, it says: I am done! Give me a new task.
+
+
+    - BuyBak-Agent(s) are waiting to be 
+      - Programmed/instructed to do a certain task
+      - They will act like a Human Secretary
+      - They will do just enough (without burning the forever-alive-aws instances)
+      - And only interrupt you when they find good results (to keep moving forward)
+
+    - U can launch multiple instances of BuyBak-Agents (that are ALIVE)
+    - They will all perform a specific task (historical, live datasets) and best outcomes.
+    - They will asynchronously notify you (when u set the thresholds to hit)
+    - They will 'finish' and 'shutdown' when u both are satisfied with the final outcome.
+
+
+BuyBak Secret Sauce: 
+
+    Think "HFT" High-Frequency-Trading Algorithms.
+
+    1. Our agents-that-are-ALIVE, are just like a "Headless Client" Or an HFT Algorithm.
+    2. They are 'launched' by the Traders to do a specific trade.
+    3. They work in the background with Historical/Quantitative-models/live-market data
+    4. They take intermittent instructions from the Trader (parameterized)
+    5. They NOTIFY the Trader on specific outcomes. And either 'finish' or 'continue' to operate under these tasks.
+    6. Finally, the 'trader' can launch 'multiple instances' as personalized Agents that are ALIVE
+
+
+BuyBak Technologies implemented: 
+
+    Our investigation on several Agentic AI frameworks (llamaindex, LangGraph, CrewAI and MS-Automate) led us to our good old HFT Algorithmic Platform driven by 
+
+1. FSMC: Finite State Machine Compiler (generated-workflow)
+
+    - Robert Martin's State-Map-Compiler. The State Pattern, which we have generated since 2001
+    - Timeout (Arm/Disarm-Timers) with retry: Which is missing altogether in many aforementioned frameworks
+    - Multiple external events to interrupt the Agentic-Workflow, which was missing altogether
+    - Async execution of sub-workflows via Synchronous REST API calls (streaming_events)
+    - WebSockets to asynchronously capture the NOTIFICATIONs within the FSMC generated Workflow State Machines.
+
+    Following describes the FSMC: Finite-State-Machine-Compiler, that generates the Workflow instance from a JSON/XML graph
+    (Note: This follows the HFT Algorithmic trader mentality of feature additions and modifications)
+
+    1. Uniform code generation of the Finite-State-Machine via FSMC
+    2. Handling of FSM errors (in every state), which allows the user to handle missing stimuli in states
+    3. Visualization of FSM to clearly interpret the requirements.
+    4. Debugging capability via "Prev-state --> Stimulus --> Next-State" paradigm at every step of the agent that is Alive
+    4. Quick turnaround of re-generated FSM and deployment.
+
+2. Multi-Models: Regressor (Market-data/math) alongside Classifier (Document parsing/NLP)
+
+    - ML_Forecaster (Regressor)
+    - XGBoost: Curating historical market data (Regressor)
+    - ToolSpec: Most powerful introduction of the LLM Agentic Workflow constructs
+
+
+    Our investigation led to combining both models as AgentWorkflow
+    - Curating recorded market-data (for XGBoost, and ML_Forcasting) via CSV (Note: JSON has exceptions and repercussions during Agent Execution!!!)
+    - Indexing PDF documents for Classifier. 
+    - Combining the two models to respond to User queries
+    - Applying the live-market-data injection to both XGBoost and ML_Forecaster to present the 'Best-Price' NOTIFICATION(s)
+
+3. BuyBak-Alive-Agentic-Foundation
+
+    - A seemless foundation oblivious to the inputs, 
+    - Provides a quick turnaround to accommodate multi-faceted clients to launch alive-agents
+    - Cost-benefit-analysis: The agents run as HFT-algorithms to completion based on User Controls.
+    - Results from individual agents that are alive thru the agentic-lifecycle perform directed tasks in the 'background' like a live Personal Assisstant
+
+
+4. Demo
+
+    1. High-End Wines' selection and purchase
+    2. State machine demostrates all aspects of the PoC foundation.
+    3. Uses test-market-data that is curated for '6-week, 5-week, 4-week' lead-time (for price-discovery),
+    4. Uses live-market-data injected into the Agents to compare against curated data above.
+    5. Notify the user of ideal purchase options!
+    6. Continues to HUNT for price-discovery, or exit if the user has made the decision to 'BUY'.
+
+    Agents-that-are-Alive! 
+
+
+
+
+
+Let's get into a DEMO.
+              
+    
+
+
+
