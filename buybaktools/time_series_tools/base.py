@@ -70,7 +70,8 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
     spec_functions = [
         "extract_bbk_time_series_from_prompt",
         "get_mean_squared_error",
-        "buybak_model_forecast"
+        "get_buybak_wines_enum",
+        "buybak_model_forecast",
     ]
     mse                         = []
     storage_dir                 = "./storage-buybak-time-series"
@@ -825,17 +826,19 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
         except:
             return "Exception thrown parsing argin JSON"
 
-    def buybak_model_forecast(self, index: int, argin: str) -> []:
+    def buybak_model_forecast(self, index: int, argin: int) -> []:
         """MLForecaster: Use the ml_forecaster model. 'index' defines which ml_forecaster to use based on the BuyBakWines IntEnum range(0-8). Predict the next N values, based on the 'argin' input, and return."""
 
         try:
             print(f'buybak_model_forecast({index}, {argin})')
-            self.ml_predict[BuyBakWines.MSFT] = self.ml_forecaster[BuyBakWines.MSFT].predict(15)
+            self.ml_predict[index] = self.ml_forecaster[index].predict(argin)
             print('---------- ml_predict  -------------')
-            print(self.ml_predict[BuyBakWines.MSFT])
-            filtered_df = self.ml_predict[BuyBakWines.MSFT][(self.ml_predict[BuyBakWines.MSFT]['unique_id'] == "id_01")]
+            print(self.ml_predict[index])
+            filtered_df = self.ml_predict[index][(self.ml_predict[index]['unique_id'] == "id_01")]
             filtered_df = filtered_df["LGBMRegressor"]
             return np.array(filtered_df).tolist()
         except:
             return "Exception thrown in ml_forecaster"
 
+    def get_buybak_wines_enum(self) -> str:
+        return "{'WinesEnum': [ {'goog': 0}, {'AMZN': 1}, {'COST': 2}, {'LLY':  3}, {'META': 4}, {'TSLA': 5}, {'NVDA': 6}, {'aapl': 7}, {'MSFT': 8}]}"
