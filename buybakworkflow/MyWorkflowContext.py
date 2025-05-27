@@ -337,7 +337,7 @@ class MyWorkflowContext():
         query_prompt = "Query using the buybaktools, forecast time series for next 15 days, and strictly print the LGBMRegressor column as comma separated CSV array"
 
         timestamp = time.time()
-        result, response = self.__iter_over_async_forecaster(query_prompt)
+        result, response = self.__iter_over_async_forecaster(query)
         print(f'result: {result}')
         print(f'response: {response}')
         print(f'response: {str(response)}')
