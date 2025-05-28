@@ -54,15 +54,15 @@ class BuyBakTimeSeries(BaseModel):
     line_items: List[BuyBakLineItemAndIndicators] = Field(description="Line Items shipped with the indicators as response")
 
 class BuyBakWines(IntEnum):
-    goog = 0
-    AMZN = 1
-    COST = 2
-    LLY  = 3
-    META = 4
-    TSLA = 5
-    NVDA = 6
-    aapl = 7
-    MSFT = 8
+    Alsace              = 0
+    Bordeaux            = 1
+    Burgundy            = 2
+    Champagne           = 3
+    Corsican            = 4
+    French              = 5
+    SouthWestFrench     = 6
+    Jura                = 7
+    Savoy               = 8
 
 class BuyBakTimeSeriesToolSpec(BaseToolSpec):
     """BuyBak Apt Booking Tool spec."""
@@ -77,15 +77,15 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
     storage_dir                 = "./storage-buybak-time-series"
 
     # XGBoost Regressor Model
-    model                       = [ BuyBakWines.goog, BuyBakWines.AMZN, BuyBakWines.COST, BuyBakWines.LLY, BuyBakWines.META, BuyBakWines.NVDA, BuyBakWines.TSLA, BuyBakWines.aapl, BuyBakWines.MSFT ]
+    model           = [ BuyBakWines.Alsace, BuyBakWines.Bordeaux, BuyBakWines.Burgundy, BuyBakWines.Champagne, BuyBakWines.Corsican, BuyBakWines.SouthWestFrench, BuyBakWines.French, BuyBakWines.Jura, BuyBakWines.Savoy ]
 
     # MLForecast Regressor Model
-    ml_id                       = [ BuyBakWines.goog, BuyBakWines.AMZN, BuyBakWines.COST, BuyBakWines.LLY, BuyBakWines.META, BuyBakWines.NVDA, BuyBakWines.TSLA, BuyBakWines.aapl, BuyBakWines.MSFT ]
-    ml_ds                       = [ BuyBakWines.goog, BuyBakWines.AMZN, BuyBakWines.COST, BuyBakWines.LLY, BuyBakWines.META, BuyBakWines.NVDA, BuyBakWines.TSLA, BuyBakWines.aapl, BuyBakWines.MSFT ]
-    ml_y                        = [ BuyBakWines.goog, BuyBakWines.AMZN, BuyBakWines.COST, BuyBakWines.LLY, BuyBakWines.META, BuyBakWines.NVDA, BuyBakWines.TSLA, BuyBakWines.aapl, BuyBakWines.MSFT ]
-    ml_series                   = [ BuyBakWines.goog, BuyBakWines.AMZN, BuyBakWines.COST, BuyBakWines.LLY, BuyBakWines.META, BuyBakWines.NVDA, BuyBakWines.TSLA, BuyBakWines.aapl, BuyBakWines.MSFT ]
-    ml_predict                  = [ BuyBakWines.goog, BuyBakWines.AMZN, BuyBakWines.COST, BuyBakWines.LLY, BuyBakWines.META, BuyBakWines.NVDA, BuyBakWines.TSLA, BuyBakWines.aapl, BuyBakWines.MSFT ]
-    ml_forecaster               = [ BuyBakWines.goog, BuyBakWines.AMZN, BuyBakWines.COST, BuyBakWines.LLY, BuyBakWines.META, BuyBakWines.NVDA, BuyBakWines.TSLA, BuyBakWines.aapl, BuyBakWines.MSFT ]
+    ml_id           = [ BuyBakWines.Alsace, BuyBakWines.Bordeaux, BuyBakWines.Burgundy, BuyBakWines.Champagne, BuyBakWines.Corsican, BuyBakWines.SouthWestFrench, BuyBakWines.French, BuyBakWines.Jura, BuyBakWines.Savoy ]
+    ml_ds           = [ BuyBakWines.Alsace, BuyBakWines.Bordeaux, BuyBakWines.Burgundy, BuyBakWines.Champagne, BuyBakWines.Corsican, BuyBakWines.SouthWestFrench, BuyBakWines.French, BuyBakWines.Jura, BuyBakWines.Savoy ]
+    ml_y            = [ BuyBakWines.Alsace, BuyBakWines.Bordeaux, BuyBakWines.Burgundy, BuyBakWines.Champagne, BuyBakWines.Corsican, BuyBakWines.SouthWestFrench, BuyBakWines.French, BuyBakWines.Jura, BuyBakWines.Savoy ]
+    ml_series       = [ BuyBakWines.Alsace, BuyBakWines.Bordeaux, BuyBakWines.Burgundy, BuyBakWines.Champagne, BuyBakWines.Corsican, BuyBakWines.SouthWestFrench, BuyBakWines.French, BuyBakWines.Jura, BuyBakWines.Savoy ]
+    ml_predict      = [ BuyBakWines.Alsace, BuyBakWines.Bordeaux, BuyBakWines.Burgundy, BuyBakWines.Champagne, BuyBakWines.Corsican, BuyBakWines.SouthWestFrench, BuyBakWines.French, BuyBakWines.Jura, BuyBakWines.Savoy ]
+    ml_forecaster   = [ BuyBakWines.Alsace, BuyBakWines.Bordeaux, BuyBakWines.Burgundy, BuyBakWines.Champagne, BuyBakWines.Corsican, BuyBakWines.SouthWestFrench, BuyBakWines.French, BuyBakWines.Jura, BuyBakWines.Savoy ]
 
 
 
@@ -93,421 +93,421 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
         print('BBK: Initializing Time Series')
 
         #####################
-        # reverse_goog.cv
+        # reverse_Alsace.cv
         #####################
-        df_ohlcv = [ BuyBakWines.goog, BuyBakWines.AMZN, BuyBakWines.COST, BuyBakWines.LLY, BuyBakWines.META, BuyBakWines.NVDA, BuyBakWines.TSLA, BuyBakWines.aapl, BuyBakWines.MSFT ]
-        X = [ BuyBakWines.goog, BuyBakWines.AMZN, BuyBakWines.COST, BuyBakWines.LLY, BuyBakWines.META, BuyBakWines.NVDA, BuyBakWines.TSLA, BuyBakWines.aapl, BuyBakWines.MSFT ]
-        y = [ BuyBakWines.goog, BuyBakWines.AMZN, BuyBakWines.COST, BuyBakWines.LLY, BuyBakWines.META, BuyBakWines.NVDA, BuyBakWines.TSLA, BuyBakWines.aapl, BuyBakWines.MSFT ]
-        lf = [ BuyBakWines.goog, BuyBakWines.AMZN, BuyBakWines.COST, BuyBakWines.LLY, BuyBakWines.META, BuyBakWines.NVDA, BuyBakWines.TSLA, BuyBakWines.aapl, BuyBakWines.MSFT ]
-        X_train = [ BuyBakWines.goog, BuyBakWines.AMZN, BuyBakWines.COST, BuyBakWines.LLY, BuyBakWines.META, BuyBakWines.NVDA, BuyBakWines.TSLA, BuyBakWines.aapl, BuyBakWines.MSFT ]
-        y_train = [ BuyBakWines.goog, BuyBakWines.AMZN, BuyBakWines.COST, BuyBakWines.LLY, BuyBakWines.META, BuyBakWines.NVDA, BuyBakWines.TSLA, BuyBakWines.aapl, BuyBakWines.MSFT ]
+        df_ohlcv = [ BuyBakWines.Alsace, BuyBakWines.Bordeaux, BuyBakWines.Burgundy, BuyBakWines.Champagne, BuyBakWines.Corsican, BuyBakWines.SouthWestFrench, BuyBakWines.French, BuyBakWines.Jura, BuyBakWines.Savoy ]
+        X = [ BuyBakWines.Alsace, BuyBakWines.Bordeaux, BuyBakWines.Burgundy, BuyBakWines.Champagne, BuyBakWines.Corsican, BuyBakWines.SouthWestFrench, BuyBakWines.French, BuyBakWines.Jura, BuyBakWines.Savoy ]
+        y = [ BuyBakWines.Alsace, BuyBakWines.Bordeaux, BuyBakWines.Burgundy, BuyBakWines.Champagne, BuyBakWines.Corsican, BuyBakWines.SouthWestFrench, BuyBakWines.French, BuyBakWines.Jura, BuyBakWines.Savoy ]
+        lf = [ BuyBakWines.Alsace, BuyBakWines.Bordeaux, BuyBakWines.Burgundy, BuyBakWines.Champagne, BuyBakWines.Corsican, BuyBakWines.SouthWestFrench, BuyBakWines.French, BuyBakWines.Jura, BuyBakWines.Savoy ]
+        X_train = [ BuyBakWines.Alsace, BuyBakWines.Bordeaux, BuyBakWines.Burgundy, BuyBakWines.Champagne, BuyBakWines.Corsican, BuyBakWines.SouthWestFrench, BuyBakWines.French, BuyBakWines.Jura, BuyBakWines.Savoy ]
+        y_train = [ BuyBakWines.Alsace, BuyBakWines.Bordeaux, BuyBakWines.Burgundy, BuyBakWines.Champagne, BuyBakWines.Corsican, BuyBakWines.SouthWestFrench, BuyBakWines.French, BuyBakWines.Jura, BuyBakWines.Savoy ]
 
         # 1. Load and clean data
-        df_ohlcv[BuyBakWines.goog] = pd.read_csv("./TradesCSV/reverse_goog.csv")
+        df_ohlcv[BuyBakWines.Alsace] = pd.read_csv("./TradesCSV/reverse_Alsace.csv")
         print('df')
 
         # 2. Feature Engineering
-        df_ohlcv[BuyBakWines.goog]['rsi'] = ta.momentum.RSIIndicator(df_ohlcv[BuyBakWines.goog]['Close']).rsi()
-        df_ohlcv[BuyBakWines.goog]['macd'] = ta.trend.MACD(df_ohlcv[BuyBakWines.goog]['Close']).macd()
-        df_ohlcv[BuyBakWines.goog]['sma'] = df_ohlcv[BuyBakWines.goog]['Close'].rolling(14).mean()
-        df_ohlcv[BuyBakWines.goog]['ema'] = df_ohlcv[BuyBakWines.goog]['Close'].ewm(span=14).mean()
-        df_ohlcv[BuyBakWines.goog]['volatility'] = df_ohlcv[BuyBakWines.goog]['Close'].rolling(14).std()
-        df_ohlcv[BuyBakWines.goog].dropna(inplace=True)
+        df_ohlcv[BuyBakWines.Alsace]['rsi'] = ta.momentum.RSIIndicator(df_ohlcv[BuyBakWines.Alsace]['Close']).rsi()
+        df_ohlcv[BuyBakWines.Alsace]['macd'] = ta.trend.MACD(df_ohlcv[BuyBakWines.Alsace]['Close']).macd()
+        df_ohlcv[BuyBakWines.Alsace]['sma'] = df_ohlcv[BuyBakWines.Alsace]['Close'].rolling(14).mean()
+        df_ohlcv[BuyBakWines.Alsace]['ema'] = df_ohlcv[BuyBakWines.Alsace]['Close'].ewm(span=14).mean()
+        df_ohlcv[BuyBakWines.Alsace]['volatility'] = df_ohlcv[BuyBakWines.Alsace]['Close'].rolling(14).std()
+        df_ohlcv[BuyBakWines.Alsace].dropna(inplace=True)
 
         #####################
-        # reverse_AMZN.cv
-        #####################
-
-        # 1. Load and clean data
-        df_ohlcv[BuyBakWines.AMZN] = pd.read_csv("./TradesCSV/reverse_AMZN.csv")
-        print('df')
-
-        # 2. Feature Engineering
-        df_ohlcv[BuyBakWines.AMZN]['rsi'] = ta.momentum.RSIIndicator(df_ohlcv[BuyBakWines.AMZN]['Close']).rsi()
-        df_ohlcv[BuyBakWines.AMZN]['macd'] = ta.trend.MACD(df_ohlcv[BuyBakWines.AMZN]['Close']).macd()
-        df_ohlcv[BuyBakWines.AMZN]['sma'] = df_ohlcv[BuyBakWines.AMZN]['Close'].rolling(14).mean()
-        df_ohlcv[BuyBakWines.AMZN]['ema'] = df_ohlcv[BuyBakWines.AMZN]['Close'].ewm(span=14).mean()
-        df_ohlcv[BuyBakWines.AMZN]['volatility'] = df_ohlcv[BuyBakWines.AMZN]['Close'].rolling(14).std()
-        df_ohlcv[BuyBakWines.AMZN].dropna(inplace=True)
-
-        #####################
-        # reverse_COST.cv
+        # reverse_Bordeaux.cv
         #####################
 
         # 1. Load and clean data
-        df_ohlcv[BuyBakWines.COST] = pd.read_csv("./TradesCSV/reverse_COST.csv")
+        df_ohlcv[BuyBakWines.Bordeaux] = pd.read_csv("./TradesCSV/reverse_Bordeaux.csv")
         print('df')
 
         # 2. Feature Engineering
-        df_ohlcv[BuyBakWines.COST]['rsi'] = ta.momentum.RSIIndicator(df_ohlcv[BuyBakWines.COST]['Close']).rsi()
-        df_ohlcv[BuyBakWines.COST]['macd'] = ta.trend.MACD(df_ohlcv[BuyBakWines.COST]['Close']).macd()
-        df_ohlcv[BuyBakWines.COST]['sma'] = df_ohlcv[BuyBakWines.COST]['Close'].rolling(14).mean()
-        df_ohlcv[BuyBakWines.COST]['ema'] = df_ohlcv[BuyBakWines.COST]['Close'].ewm(span=14).mean()
-        df_ohlcv[BuyBakWines.COST]['volatility'] = df_ohlcv[BuyBakWines.COST]['Close'].rolling(14).std()
-        df_ohlcv[BuyBakWines.COST].dropna(inplace=True)
+        df_ohlcv[BuyBakWines.Bordeaux]['rsi'] = ta.momentum.RSIIndicator(df_ohlcv[BuyBakWines.Bordeaux]['Close']).rsi()
+        df_ohlcv[BuyBakWines.Bordeaux]['macd'] = ta.trend.MACD(df_ohlcv[BuyBakWines.Bordeaux]['Close']).macd()
+        df_ohlcv[BuyBakWines.Bordeaux]['sma'] = df_ohlcv[BuyBakWines.Bordeaux]['Close'].rolling(14).mean()
+        df_ohlcv[BuyBakWines.Bordeaux]['ema'] = df_ohlcv[BuyBakWines.Bordeaux]['Close'].ewm(span=14).mean()
+        df_ohlcv[BuyBakWines.Bordeaux]['volatility'] = df_ohlcv[BuyBakWines.Bordeaux]['Close'].rolling(14).std()
+        df_ohlcv[BuyBakWines.Bordeaux].dropna(inplace=True)
 
         #####################
-        # reverse_LLY.cv
+        # reverse_Burgundy.cv
         #####################
 
         # 1. Load and clean data
-        df_ohlcv[BuyBakWines.LLY] = pd.read_csv("./TradesCSV/reverse_LLY.csv")
+        df_ohlcv[BuyBakWines.Burgundy] = pd.read_csv("./TradesCSV/reverse_Burgundy.csv")
         print('df')
 
         # 2. Feature Engineering
-        df_ohlcv[BuyBakWines.LLY]['rsi'] = ta.momentum.RSIIndicator(df_ohlcv[BuyBakWines.LLY]['Close']).rsi()
-        df_ohlcv[BuyBakWines.LLY]['macd'] = ta.trend.MACD(df_ohlcv[BuyBakWines.LLY]['Close']).macd()
-        df_ohlcv[BuyBakWines.LLY]['sma'] = df_ohlcv[BuyBakWines.LLY]['Close'].rolling(14).mean()
-        df_ohlcv[BuyBakWines.LLY]['ema'] = df_ohlcv[BuyBakWines.LLY]['Close'].ewm(span=14).mean()
-        df_ohlcv[BuyBakWines.LLY]['volatility'] = df_ohlcv[BuyBakWines.LLY]['Close'].rolling(14).std()
-        df_ohlcv[BuyBakWines.LLY].dropna(inplace=True)
+        df_ohlcv[BuyBakWines.Burgundy]['rsi'] = ta.momentum.RSIIndicator(df_ohlcv[BuyBakWines.Burgundy]['Close']).rsi()
+        df_ohlcv[BuyBakWines.Burgundy]['macd'] = ta.trend.MACD(df_ohlcv[BuyBakWines.Burgundy]['Close']).macd()
+        df_ohlcv[BuyBakWines.Burgundy]['sma'] = df_ohlcv[BuyBakWines.Burgundy]['Close'].rolling(14).mean()
+        df_ohlcv[BuyBakWines.Burgundy]['ema'] = df_ohlcv[BuyBakWines.Burgundy]['Close'].ewm(span=14).mean()
+        df_ohlcv[BuyBakWines.Burgundy]['volatility'] = df_ohlcv[BuyBakWines.Burgundy]['Close'].rolling(14).std()
+        df_ohlcv[BuyBakWines.Burgundy].dropna(inplace=True)
 
         #####################
-        # reverse_META.cv
+        # reverse_Champagne.cv
         #####################
 
         # 1. Load and clean data
-        df_ohlcv[BuyBakWines.META] = pd.read_csv("./TradesCSV/reverse_META.csv")
+        df_ohlcv[BuyBakWines.Champagne] = pd.read_csv("./TradesCSV/reverse_Champagne.csv")
         print('df')
 
         # 2. Feature Engineering
-        df_ohlcv[BuyBakWines.META]['rsi'] = ta.momentum.RSIIndicator(df_ohlcv[BuyBakWines.META]['Close']).rsi()
-        df_ohlcv[BuyBakWines.META]['macd'] = ta.trend.MACD(df_ohlcv[BuyBakWines.META]['Close']).macd()
-        df_ohlcv[BuyBakWines.META]['sma'] = df_ohlcv[BuyBakWines.META]['Close'].rolling(14).mean()
-        df_ohlcv[BuyBakWines.META]['ema'] = df_ohlcv[BuyBakWines.META]['Close'].ewm(span=14).mean()
-        df_ohlcv[BuyBakWines.META]['volatility'] = df_ohlcv[BuyBakWines.META]['Close'].rolling(14).std()
-        df_ohlcv[BuyBakWines.META].dropna(inplace=True)
+        df_ohlcv[BuyBakWines.Champagne]['rsi'] = ta.momentum.RSIIndicator(df_ohlcv[BuyBakWines.Champagne]['Close']).rsi()
+        df_ohlcv[BuyBakWines.Champagne]['macd'] = ta.trend.MACD(df_ohlcv[BuyBakWines.Champagne]['Close']).macd()
+        df_ohlcv[BuyBakWines.Champagne]['sma'] = df_ohlcv[BuyBakWines.Champagne]['Close'].rolling(14).mean()
+        df_ohlcv[BuyBakWines.Champagne]['ema'] = df_ohlcv[BuyBakWines.Champagne]['Close'].ewm(span=14).mean()
+        df_ohlcv[BuyBakWines.Champagne]['volatility'] = df_ohlcv[BuyBakWines.Champagne]['Close'].rolling(14).std()
+        df_ohlcv[BuyBakWines.Champagne].dropna(inplace=True)
 
         #####################
-        # reverse_NVDA.cv
+        # reverse_Corsican.cv
         #####################
 
         # 1. Load and clean data
-        df_ohlcv[BuyBakWines.NVDA] = pd.read_csv("./TradesCSV/reverse_NVDA.csv")
+        df_ohlcv[BuyBakWines.Corsican] = pd.read_csv("./TradesCSV/reverse_Corsican.csv")
         print('df')
 
         # 2. Feature Engineering
-        df_ohlcv[BuyBakWines.NVDA]['rsi'] = ta.momentum.RSIIndicator(df_ohlcv[BuyBakWines.NVDA]['Close']).rsi()
-        df_ohlcv[BuyBakWines.NVDA]['macd'] = ta.trend.MACD(df_ohlcv[BuyBakWines.NVDA]['Close']).macd()
-        df_ohlcv[BuyBakWines.NVDA]['sma'] = df_ohlcv[BuyBakWines.NVDA]['Close'].rolling(14).mean()
-        df_ohlcv[BuyBakWines.NVDA]['ema'] = df_ohlcv[BuyBakWines.NVDA]['Close'].ewm(span=14).mean()
-        df_ohlcv[BuyBakWines.NVDA]['volatility'] = df_ohlcv[BuyBakWines.NVDA]['Close'].rolling(14).std()
-        df_ohlcv[BuyBakWines.NVDA].dropna(inplace=True)
+        df_ohlcv[BuyBakWines.Corsican]['rsi'] = ta.momentum.RSIIndicator(df_ohlcv[BuyBakWines.Corsican]['Close']).rsi()
+        df_ohlcv[BuyBakWines.Corsican]['macd'] = ta.trend.MACD(df_ohlcv[BuyBakWines.Corsican]['Close']).macd()
+        df_ohlcv[BuyBakWines.Corsican]['sma'] = df_ohlcv[BuyBakWines.Corsican]['Close'].rolling(14).mean()
+        df_ohlcv[BuyBakWines.Corsican]['ema'] = df_ohlcv[BuyBakWines.Corsican]['Close'].ewm(span=14).mean()
+        df_ohlcv[BuyBakWines.Corsican]['volatility'] = df_ohlcv[BuyBakWines.Corsican]['Close'].rolling(14).std()
+        df_ohlcv[BuyBakWines.Corsican].dropna(inplace=True)
 
         #####################
-        # reverse_TSLA.cv
+        # reverse_SouthWestFrench.cv
         #####################
 
         # 1. Load and clean data
-        df_ohlcv[BuyBakWines.TSLA] = pd.read_csv("./TradesCSV/reverse_TSLA.csv")
+        df_ohlcv[BuyBakWines.SouthWestFrench] = pd.read_csv("./TradesCSV/reverse_SouthWestFrench.csv")
         print('df')
 
         # 2. Feature Engineering
-        df_ohlcv[BuyBakWines.TSLA]['rsi'] = ta.momentum.RSIIndicator(df_ohlcv[BuyBakWines.TSLA]['Close']).rsi()
-        df_ohlcv[BuyBakWines.TSLA]['macd'] = ta.trend.MACD(df_ohlcv[BuyBakWines.TSLA]['Close']).macd()
-        df_ohlcv[BuyBakWines.TSLA]['sma'] = df_ohlcv[BuyBakWines.TSLA]['Close'].rolling(14).mean()
-        df_ohlcv[BuyBakWines.TSLA]['ema'] = df_ohlcv[BuyBakWines.TSLA]['Close'].ewm(span=14).mean()
-        df_ohlcv[BuyBakWines.TSLA]['volatility'] = df_ohlcv[BuyBakWines.TSLA]['Close'].rolling(14).std()
-        df_ohlcv[BuyBakWines.TSLA].dropna(inplace=True)
+        df_ohlcv[BuyBakWines.SouthWestFrench]['rsi'] = ta.momentum.RSIIndicator(df_ohlcv[BuyBakWines.SouthWestFrench]['Close']).rsi()
+        df_ohlcv[BuyBakWines.SouthWestFrench]['macd'] = ta.trend.MACD(df_ohlcv[BuyBakWines.SouthWestFrench]['Close']).macd()
+        df_ohlcv[BuyBakWines.SouthWestFrench]['sma'] = df_ohlcv[BuyBakWines.SouthWestFrench]['Close'].rolling(14).mean()
+        df_ohlcv[BuyBakWines.SouthWestFrench]['ema'] = df_ohlcv[BuyBakWines.SouthWestFrench]['Close'].ewm(span=14).mean()
+        df_ohlcv[BuyBakWines.SouthWestFrench]['volatility'] = df_ohlcv[BuyBakWines.SouthWestFrench]['Close'].rolling(14).std()
+        df_ohlcv[BuyBakWines.SouthWestFrench].dropna(inplace=True)
 
         #####################
-        # reverse_aapl.cv
+        # reverse_French.cv
         #####################
 
         # 1. Load and clean data
-        df_ohlcv[BuyBakWines.aapl] = pd.read_csv("./TradesCSV/reverse_aapl.csv")
+        df_ohlcv[BuyBakWines.French] = pd.read_csv("./TradesCSV/reverse_French.csv")
         print('df')
 
         # 2. Feature Engineering
-        df_ohlcv[BuyBakWines.aapl]['rsi'] = ta.momentum.RSIIndicator(df_ohlcv[BuyBakWines.aapl]['Close']).rsi()
-        df_ohlcv[BuyBakWines.aapl]['macd'] = ta.trend.MACD(df_ohlcv[BuyBakWines.aapl]['Close']).macd()
-        df_ohlcv[BuyBakWines.aapl]['sma'] = df_ohlcv[BuyBakWines.aapl]['Close'].rolling(14).mean()
-        df_ohlcv[BuyBakWines.aapl]['ema'] = df_ohlcv[BuyBakWines.aapl]['Close'].ewm(span=14).mean()
-        df_ohlcv[BuyBakWines.aapl]['volatility'] = df_ohlcv[BuyBakWines.aapl]['Close'].rolling(14).std()
-        df_ohlcv[BuyBakWines.aapl].dropna(inplace=True)
+        df_ohlcv[BuyBakWines.French]['rsi'] = ta.momentum.RSIIndicator(df_ohlcv[BuyBakWines.French]['Close']).rsi()
+        df_ohlcv[BuyBakWines.French]['macd'] = ta.trend.MACD(df_ohlcv[BuyBakWines.French]['Close']).macd()
+        df_ohlcv[BuyBakWines.French]['sma'] = df_ohlcv[BuyBakWines.French]['Close'].rolling(14).mean()
+        df_ohlcv[BuyBakWines.French]['ema'] = df_ohlcv[BuyBakWines.French]['Close'].ewm(span=14).mean()
+        df_ohlcv[BuyBakWines.French]['volatility'] = df_ohlcv[BuyBakWines.French]['Close'].rolling(14).std()
+        df_ohlcv[BuyBakWines.French].dropna(inplace=True)
 
         #####################
-        # reverse_MSFT.cv
+        # reverse_Jura.cv
         #####################
 
         # 1. Load and clean data
-        df_ohlcv[BuyBakWines.MSFT] = pd.read_csv("./TradesCSV/reverse_MSFT.csv")
+        df_ohlcv[BuyBakWines.Jura] = pd.read_csv("./TradesCSV/reverse_Jura.csv")
         print('df')
 
         # 2. Feature Engineering
-        df_ohlcv[BuyBakWines.MSFT]['rsi'] = ta.momentum.RSIIndicator(df_ohlcv[BuyBakWines.MSFT]['Close']).rsi()
-        df_ohlcv[BuyBakWines.MSFT]['macd'] = ta.trend.MACD(df_ohlcv[BuyBakWines.MSFT]['Close']).macd()
-        df_ohlcv[BuyBakWines.MSFT]['sma'] = df_ohlcv[BuyBakWines.MSFT]['Close'].rolling(14).mean()
-        df_ohlcv[BuyBakWines.MSFT]['ema'] = df_ohlcv[BuyBakWines.MSFT]['Close'].ewm(span=14).mean()
-        df_ohlcv[BuyBakWines.MSFT]['volatility'] = df_ohlcv[BuyBakWines.MSFT]['Close'].rolling(14).std()
-        df_ohlcv[BuyBakWines.MSFT].dropna(inplace=True)
+        df_ohlcv[BuyBakWines.Jura]['rsi'] = ta.momentum.RSIIndicator(df_ohlcv[BuyBakWines.Jura]['Close']).rsi()
+        df_ohlcv[BuyBakWines.Jura]['macd'] = ta.trend.MACD(df_ohlcv[BuyBakWines.Jura]['Close']).macd()
+        df_ohlcv[BuyBakWines.Jura]['sma'] = df_ohlcv[BuyBakWines.Jura]['Close'].rolling(14).mean()
+        df_ohlcv[BuyBakWines.Jura]['ema'] = df_ohlcv[BuyBakWines.Jura]['Close'].ewm(span=14).mean()
+        df_ohlcv[BuyBakWines.Jura]['volatility'] = df_ohlcv[BuyBakWines.Jura]['Close'].rolling(14).std()
+        df_ohlcv[BuyBakWines.Jura].dropna(inplace=True)
+
+        #####################
+        # reverse_Savoy.cv
+        #####################
+
+        # 1. Load and clean data
+        df_ohlcv[BuyBakWines.Savoy] = pd.read_csv("./TradesCSV/reverse_Savoy.csv")
+        print('df')
+
+        # 2. Feature Engineering
+        df_ohlcv[BuyBakWines.Savoy]['rsi'] = ta.momentum.RSIIndicator(df_ohlcv[BuyBakWines.Savoy]['Close']).rsi()
+        df_ohlcv[BuyBakWines.Savoy]['macd'] = ta.trend.MACD(df_ohlcv[BuyBakWines.Savoy]['Close']).macd()
+        df_ohlcv[BuyBakWines.Savoy]['sma'] = df_ohlcv[BuyBakWines.Savoy]['Close'].rolling(14).mean()
+        df_ohlcv[BuyBakWines.Savoy]['ema'] = df_ohlcv[BuyBakWines.Savoy]['Close'].ewm(span=14).mean()
+        df_ohlcv[BuyBakWines.Savoy]['volatility'] = df_ohlcv[BuyBakWines.Savoy]['Close'].rolling(14).std()
+        df_ohlcv[BuyBakWines.Savoy].dropna(inplace=True)
 
         ##############################
         # prepare X y
         ##############################
 
         #######
-        # goog
+        # Alsace
         #######
-        lf[BuyBakWines.goog] = df_ohlcv[BuyBakWines.goog][['Open', 'High', 'Low', 'Close']]
-        X[BuyBakWines.goog] = np.array(lf[BuyBakWines.goog]).tolist()
-        y[BuyBakWines.goog] = np.array(df_ohlcv[BuyBakWines.goog]['ema']).tolist()
+        lf[BuyBakWines.Alsace] = df_ohlcv[BuyBakWines.Alsace][['Open', 'High', 'Low', 'Close']]
+        X[BuyBakWines.Alsace] = np.array(lf[BuyBakWines.Alsace]).tolist()
+        y[BuyBakWines.Alsace] = np.array(df_ohlcv[BuyBakWines.Alsace]['ema']).tolist()
 
-        self.ml_id[BuyBakWines.goog] = np.repeat(['id_00', 'id_01'], 105)
-        self.ml_ds[BuyBakWines.goog] = pd.date_range('2000-01-01', periods=210, freq='D')
-        self.ml_y[BuyBakWines.goog] = df_ohlcv[BuyBakWines.goog]['ema']
-        print(f'[goog] len {len(y[BuyBakWines.goog])}, {len(self.ml_id[BuyBakWines.goog])} , {len(self.ml_ds[BuyBakWines.goog])} , {len(self.ml_y[BuyBakWines.goog])} ')
-        self.ml_series[BuyBakWines.goog] = pd.DataFrame({
-            'unique_id': self.ml_id[BuyBakWines.goog],
-            'ds': self.ml_ds[BuyBakWines.goog],
-            'y': self.ml_y[BuyBakWines.goog],
+        self.ml_id[BuyBakWines.Alsace] = np.repeat(['id_00', 'id_01'], 105)
+        self.ml_ds[BuyBakWines.Alsace] = pd.date_range('2000-01-01', periods=210, freq='D')
+        self.ml_y[BuyBakWines.Alsace] = df_ohlcv[BuyBakWines.Alsace]['ema']
+        print(f'[Alsace] len {len(y[BuyBakWines.Alsace])}, {len(self.ml_id[BuyBakWines.Alsace])} , {len(self.ml_ds[BuyBakWines.Alsace])} , {len(self.ml_y[BuyBakWines.Alsace])} ')
+        self.ml_series[BuyBakWines.Alsace] = pd.DataFrame({
+            'unique_id': self.ml_id[BuyBakWines.Alsace],
+            'ds': self.ml_ds[BuyBakWines.Alsace],
+            'y': self.ml_y[BuyBakWines.Alsace],
         })
 
         # Split the data into training and testing sets
-        train_size = int(len(X[BuyBakWines.goog]) * 0.8)
-        print('------------ goog train_size --------')
+        train_size = int(len(X[BuyBakWines.Alsace]) * 0.8)
+        print('------------ Alsace train_size --------')
         print(train_size)
-        X_train[BuyBakWines.goog], y_train[BuyBakWines.goog] = X[BuyBakWines.goog][:train_size], y[BuyBakWines.goog][:train_size]
+        X_train[BuyBakWines.Alsace], y_train[BuyBakWines.Alsace] = X[BuyBakWines.Alsace][:train_size], y[BuyBakWines.Alsace][:train_size]
 
         #######
-        # AMZN
+        # Bordeaux
         #######
-        lf[BuyBakWines.AMZN] = df_ohlcv[BuyBakWines.AMZN][['Open', 'High', 'Low', 'Close']]
-        X[BuyBakWines.AMZN] = np.array(lf[BuyBakWines.AMZN]).tolist()
-        y[BuyBakWines.AMZN] = np.array(df_ohlcv[BuyBakWines.AMZN]['ema']).tolist()
+        lf[BuyBakWines.Bordeaux] = df_ohlcv[BuyBakWines.Bordeaux][['Open', 'High', 'Low', 'Close']]
+        X[BuyBakWines.Bordeaux] = np.array(lf[BuyBakWines.Bordeaux]).tolist()
+        y[BuyBakWines.Bordeaux] = np.array(df_ohlcv[BuyBakWines.Bordeaux]['ema']).tolist()
 
         # let's drop the last
-        AMZN_len = len(y[BuyBakWines.AMZN])
-        if AMZN_len % 2 == 1:
-            y[BuyBakWines.AMZN].pop()
-            AMZN_len = AMZN_len - 1
+        Bordeaux_len = len(y[BuyBakWines.Bordeaux])
+        if Bordeaux_len % 2 == 1:
+            y[BuyBakWines.Bordeaux].pop()
+            Bordeaux_len = Bordeaux_len - 1
 
-        self.ml_id[BuyBakWines.AMZN] = np.repeat(['id_00', 'id_01'], AMZN_len/2)
-        self.ml_ds[BuyBakWines.AMZN] = pd.date_range('2000-01-01', periods=AMZN_len, freq='D')
-        self.ml_y[BuyBakWines.AMZN] = y[BuyBakWines.AMZN] #df_ohlcv[BuyBakWines.AMZN]['ema']
+        self.ml_id[BuyBakWines.Bordeaux] = np.repeat(['id_00', 'id_01'], Bordeaux_len/2)
+        self.ml_ds[BuyBakWines.Bordeaux] = pd.date_range('2000-01-01', periods=Bordeaux_len, freq='D')
+        self.ml_y[BuyBakWines.Bordeaux] = y[BuyBakWines.Bordeaux] #df_ohlcv[BuyBakWines.Bordeaux]['ema']
 
-        print(f'[AMZN] len {len(y[BuyBakWines.AMZN])}, {len(self.ml_id[BuyBakWines.AMZN])} , {len(self.ml_ds[BuyBakWines.AMZN])} , {len(self.ml_y[BuyBakWines.AMZN])} ')
-        self.ml_series[BuyBakWines.AMZN] = pd.DataFrame({
-            'unique_id': self.ml_id[BuyBakWines.AMZN],
-            'ds': self.ml_ds[BuyBakWines.AMZN],
-            'y': self.ml_y[BuyBakWines.AMZN],
+        print(f'[Bordeaux] len {len(y[BuyBakWines.Bordeaux])}, {len(self.ml_id[BuyBakWines.Bordeaux])} , {len(self.ml_ds[BuyBakWines.Bordeaux])} , {len(self.ml_y[BuyBakWines.Bordeaux])} ')
+        self.ml_series[BuyBakWines.Bordeaux] = pd.DataFrame({
+            'unique_id': self.ml_id[BuyBakWines.Bordeaux],
+            'ds': self.ml_ds[BuyBakWines.Bordeaux],
+            'y': self.ml_y[BuyBakWines.Bordeaux],
         })
 
         # Split the data into training and testing sets
-        train_size = int(len(X[BuyBakWines.AMZN]) * 0.8)
-        print('------------ AMZN train_size --------')
+        train_size = int(len(X[BuyBakWines.Bordeaux]) * 0.8)
+        print('------------ Bordeaux train_size --------')
         print(train_size)
-        X_train[BuyBakWines.AMZN], y_train[BuyBakWines.AMZN] = X[BuyBakWines.AMZN][:train_size], y[BuyBakWines.AMZN][:train_size]
+        X_train[BuyBakWines.Bordeaux], y_train[BuyBakWines.Bordeaux] = X[BuyBakWines.Bordeaux][:train_size], y[BuyBakWines.Bordeaux][:train_size]
 
         #######
-        # COST
+        # Burgundy
         #######
-        lf[BuyBakWines.COST] = df_ohlcv[BuyBakWines.COST][['Open', 'High', 'Low', 'Close']]
-        X[BuyBakWines.COST] = np.array(lf[BuyBakWines.COST]).tolist()
-        y[BuyBakWines.COST] = np.array(df_ohlcv[BuyBakWines.COST]['ema']).tolist()
-
-
-        # let's drop the last
-        COST_len = len(y[BuyBakWines.COST])
-        if COST_len % 2 == 1:
-            y[BuyBakWines.COST].pop()
-            COST_len = COST_len - 1
-
-        self.ml_id[BuyBakWines.COST] = np.repeat(['id_00', 'id_01'], COST_len/2)
-        self.ml_ds[BuyBakWines.COST] = pd.date_range('2000-01-01', periods=COST_len, freq='D')
-        self.ml_y[BuyBakWines.COST] = y[BuyBakWines.COST] #df_ohlcv[BuyBakWines.COST]['ema']
-        print(f'[COST] len {len(y[BuyBakWines.COST])}, {len(self.ml_id[BuyBakWines.COST])} , {len(self.ml_ds[BuyBakWines.COST])} , {len(self.ml_y[BuyBakWines.COST])} ')
-        self.ml_series[BuyBakWines.COST] = pd.DataFrame({
-            'unique_id': self.ml_id[BuyBakWines.COST],
-            'ds': self.ml_ds[BuyBakWines.COST],
-            'y': self.ml_y[BuyBakWines.COST],
-        })
-
-        # Split the data into training and testing sets
-        train_size = int(len(X[BuyBakWines.COST]) * 0.8)
-        print('------------ COST train_size --------')
-        print(train_size)
-        X_train[BuyBakWines.COST], y_train[BuyBakWines.COST] = X[BuyBakWines.COST][:train_size], y[BuyBakWines.COST][:train_size]
-
-        #######
-        # LLY
-        #######
-        lf[BuyBakWines.LLY] = df_ohlcv[BuyBakWines.LLY][['Open', 'High', 'Low', 'Close']]
-        X[BuyBakWines.LLY] = np.array(lf[BuyBakWines.LLY]).tolist()
-        y[BuyBakWines.LLY] = np.array(df_ohlcv[BuyBakWines.LLY]['ema']).tolist()
+        lf[BuyBakWines.Burgundy] = df_ohlcv[BuyBakWines.Burgundy][['Open', 'High', 'Low', 'Close']]
+        X[BuyBakWines.Burgundy] = np.array(lf[BuyBakWines.Burgundy]).tolist()
+        y[BuyBakWines.Burgundy] = np.array(df_ohlcv[BuyBakWines.Burgundy]['ema']).tolist()
 
 
         # let's drop the last
-        LLY_len = len(y[BuyBakWines.LLY])
-        if LLY_len % 2 == 1:
-            y[BuyBakWines.LLY].pop()
-            LLY_len = LLY_len - 1
+        Burgundy_len = len(y[BuyBakWines.Burgundy])
+        if Burgundy_len % 2 == 1:
+            y[BuyBakWines.Burgundy].pop()
+            Burgundy_len = Burgundy_len - 1
 
-        self.ml_id[BuyBakWines.LLY] = np.repeat(['id_00', 'id_01'], LLY_len/2)
-        self.ml_ds[BuyBakWines.LLY] = pd.date_range('2000-01-01', periods=LLY_len, freq='D')
-        self.ml_y[BuyBakWines.LLY] = y[BuyBakWines.LLY] #df_ohlcv[BuyBakWines.LLY]['ema']
-        print(f'[LLY] len {len(y[BuyBakWines.LLY])}, {len(self.ml_id[BuyBakWines.LLY])} , {len(self.ml_ds[BuyBakWines.LLY])} , {len(self.ml_y[BuyBakWines.LLY])} ')
-        self.ml_series[BuyBakWines.LLY] = pd.DataFrame({
-            'unique_id': self.ml_id[BuyBakWines.LLY],
-            'ds': self.ml_ds[BuyBakWines.LLY],
-            'y': self.ml_y[BuyBakWines.LLY],
+        self.ml_id[BuyBakWines.Burgundy] = np.repeat(['id_00', 'id_01'], Burgundy_len/2)
+        self.ml_ds[BuyBakWines.Burgundy] = pd.date_range('2000-01-01', periods=Burgundy_len, freq='D')
+        self.ml_y[BuyBakWines.Burgundy] = y[BuyBakWines.Burgundy] #df_ohlcv[BuyBakWines.Burgundy]['ema']
+        print(f'[Burgundy] len {len(y[BuyBakWines.Burgundy])}, {len(self.ml_id[BuyBakWines.Burgundy])} , {len(self.ml_ds[BuyBakWines.Burgundy])} , {len(self.ml_y[BuyBakWines.Burgundy])} ')
+        self.ml_series[BuyBakWines.Burgundy] = pd.DataFrame({
+            'unique_id': self.ml_id[BuyBakWines.Burgundy],
+            'ds': self.ml_ds[BuyBakWines.Burgundy],
+            'y': self.ml_y[BuyBakWines.Burgundy],
         })
 
         # Split the data into training and testing sets
-        train_size = int(len(X[BuyBakWines.LLY]) * 0.8)
-        print('------------ LLY train_size --------')
+        train_size = int(len(X[BuyBakWines.Burgundy]) * 0.8)
+        print('------------ Burgundy train_size --------')
         print(train_size)
-        X_train[BuyBakWines.LLY], y_train[BuyBakWines.LLY] = X[BuyBakWines.LLY][:train_size], y[BuyBakWines.LLY][:train_size]
+        X_train[BuyBakWines.Burgundy], y_train[BuyBakWines.Burgundy] = X[BuyBakWines.Burgundy][:train_size], y[BuyBakWines.Burgundy][:train_size]
 
         #######
-        # META
+        # Champagne
         #######
-        lf[BuyBakWines.META] = df_ohlcv[BuyBakWines.META][['Open', 'High', 'Low', 'Close']]
-        X[BuyBakWines.META] = np.array(lf[BuyBakWines.META]).tolist()
-        y[BuyBakWines.META] = np.array(df_ohlcv[BuyBakWines.META]['ema']).tolist()
+        lf[BuyBakWines.Champagne] = df_ohlcv[BuyBakWines.Champagne][['Open', 'High', 'Low', 'Close']]
+        X[BuyBakWines.Champagne] = np.array(lf[BuyBakWines.Champagne]).tolist()
+        y[BuyBakWines.Champagne] = np.array(df_ohlcv[BuyBakWines.Champagne]['ema']).tolist()
 
 
         # let's drop the last
-        META_len = len(y[BuyBakWines.META])
-        if META_len % 2 == 1:
-            y[BuyBakWines.META].pop()
-            META_len = META_len - 1
+        Champagne_len = len(y[BuyBakWines.Champagne])
+        if Champagne_len % 2 == 1:
+            y[BuyBakWines.Champagne].pop()
+            Champagne_len = Champagne_len - 1
 
-        self.ml_id[BuyBakWines.META] = np.repeat(['id_00', 'id_01'], META_len/2)
-        self.ml_ds[BuyBakWines.META] = pd.date_range('2000-01-01', periods=META_len, freq='D')
-        self.ml_y[BuyBakWines.META] = y[BuyBakWines.META] #df_ohlcv[BuyBakWines.META]['ema']
-        print(f'[META] len {len(y[BuyBakWines.META])}, {len(self.ml_id[BuyBakWines.META])} , {len(self.ml_ds[BuyBakWines.META])} , {len(self.ml_y[BuyBakWines.META])} ')
-        self.ml_series[BuyBakWines.META] = pd.DataFrame({
-            'unique_id': self.ml_id[BuyBakWines.META],
-            'ds': self.ml_ds[BuyBakWines.META],
-            'y': self.ml_y[BuyBakWines.META],
+        self.ml_id[BuyBakWines.Champagne] = np.repeat(['id_00', 'id_01'], Champagne_len/2)
+        self.ml_ds[BuyBakWines.Champagne] = pd.date_range('2000-01-01', periods=Champagne_len, freq='D')
+        self.ml_y[BuyBakWines.Champagne] = y[BuyBakWines.Champagne] #df_ohlcv[BuyBakWines.Champagne]['ema']
+        print(f'[Champagne] len {len(y[BuyBakWines.Champagne])}, {len(self.ml_id[BuyBakWines.Champagne])} , {len(self.ml_ds[BuyBakWines.Champagne])} , {len(self.ml_y[BuyBakWines.Champagne])} ')
+        self.ml_series[BuyBakWines.Champagne] = pd.DataFrame({
+            'unique_id': self.ml_id[BuyBakWines.Champagne],
+            'ds': self.ml_ds[BuyBakWines.Champagne],
+            'y': self.ml_y[BuyBakWines.Champagne],
         })
 
         # Split the data into training and testing sets
-        train_size = int(len(X[BuyBakWines.META]) * 0.8)
-        print('------------ META train_size --------')
+        train_size = int(len(X[BuyBakWines.Champagne]) * 0.8)
+        print('------------ Champagne train_size --------')
         print(train_size)
-        X_train[BuyBakWines.META], y_train[BuyBakWines.META] = X[BuyBakWines.META][:train_size], y[BuyBakWines.META][:train_size]
+        X_train[BuyBakWines.Champagne], y_train[BuyBakWines.Champagne] = X[BuyBakWines.Champagne][:train_size], y[BuyBakWines.Champagne][:train_size]
 
         #######
-        # NVDA
+        # Corsican
         #######
-        lf[BuyBakWines.NVDA] = df_ohlcv[BuyBakWines.NVDA][['Open', 'High', 'Low', 'Close']]
-        X[BuyBakWines.NVDA] = np.array(lf[BuyBakWines.NVDA]).tolist()
-        y[BuyBakWines.NVDA] = np.array(df_ohlcv[BuyBakWines.NVDA]['ema']).tolist()
+        lf[BuyBakWines.Corsican] = df_ohlcv[BuyBakWines.Corsican][['Open', 'High', 'Low', 'Close']]
+        X[BuyBakWines.Corsican] = np.array(lf[BuyBakWines.Corsican]).tolist()
+        y[BuyBakWines.Corsican] = np.array(df_ohlcv[BuyBakWines.Corsican]['ema']).tolist()
 
 
         # let's drop the last
-        NVDA_len = len(y[BuyBakWines.NVDA])
-        if NVDA_len % 2 == 1:
-            y[BuyBakWines.NVDA].pop()
-            NVDA_len = NVDA_len - 1
+        Corsican_len = len(y[BuyBakWines.Corsican])
+        if Corsican_len % 2 == 1:
+            y[BuyBakWines.Corsican].pop()
+            Corsican_len = Corsican_len - 1
 
-        self.ml_id[BuyBakWines.NVDA] = np.repeat(['id_00', 'id_01'], NVDA_len/2)
-        self.ml_ds[BuyBakWines.NVDA] = pd.date_range('2000-01-01', periods=NVDA_len, freq='D')
-        self.ml_y[BuyBakWines.NVDA] = y[BuyBakWines.NVDA] #df_ohlcv[BuyBakWines.NVDA]['ema']
-        print(f'[NVDA] len {len(y[BuyBakWines.NVDA])}, {len(self.ml_id[BuyBakWines.NVDA])} , {len(self.ml_ds[BuyBakWines.NVDA])} , {len(self.ml_y[BuyBakWines.NVDA])} ')
-        self.ml_series[BuyBakWines.NVDA] = pd.DataFrame({
-            'unique_id': self.ml_id[BuyBakWines.NVDA],
-            'ds': self.ml_ds[BuyBakWines.NVDA],
-            'y': self.ml_y[BuyBakWines.NVDA],
+        self.ml_id[BuyBakWines.Corsican] = np.repeat(['id_00', 'id_01'], Corsican_len/2)
+        self.ml_ds[BuyBakWines.Corsican] = pd.date_range('2000-01-01', periods=Corsican_len, freq='D')
+        self.ml_y[BuyBakWines.Corsican] = y[BuyBakWines.Corsican] #df_ohlcv[BuyBakWines.Corsican]['ema']
+        print(f'[Corsican] len {len(y[BuyBakWines.Corsican])}, {len(self.ml_id[BuyBakWines.Corsican])} , {len(self.ml_ds[BuyBakWines.Corsican])} , {len(self.ml_y[BuyBakWines.Corsican])} ')
+        self.ml_series[BuyBakWines.Corsican] = pd.DataFrame({
+            'unique_id': self.ml_id[BuyBakWines.Corsican],
+            'ds': self.ml_ds[BuyBakWines.Corsican],
+            'y': self.ml_y[BuyBakWines.Corsican],
         })
 
         # Split the data into training and testing sets
-        train_size = int(len(X[BuyBakWines.NVDA]) * 0.8)
-        print('------------ NVDA train_size --------')
+        train_size = int(len(X[BuyBakWines.Corsican]) * 0.8)
+        print('------------ Corsican train_size --------')
         print(train_size)
-        X_train[BuyBakWines.NVDA], y_train[BuyBakWines.NVDA] = X[BuyBakWines.NVDA][:train_size], y[BuyBakWines.NVDA][:train_size]
+        X_train[BuyBakWines.Corsican], y_train[BuyBakWines.Corsican] = X[BuyBakWines.Corsican][:train_size], y[BuyBakWines.Corsican][:train_size]
 
         #######
-        # TSLA
+        # SouthWestFrench
         #######
-        lf[BuyBakWines.TSLA] = df_ohlcv[BuyBakWines.TSLA][['Open', 'High', 'Low', 'Close']]
-        X[BuyBakWines.TSLA] = np.array(lf[BuyBakWines.TSLA]).tolist()
-        y[BuyBakWines.TSLA] = np.array(df_ohlcv[BuyBakWines.TSLA]['ema']).tolist()
+        lf[BuyBakWines.SouthWestFrench] = df_ohlcv[BuyBakWines.SouthWestFrench][['Open', 'High', 'Low', 'Close']]
+        X[BuyBakWines.SouthWestFrench] = np.array(lf[BuyBakWines.SouthWestFrench]).tolist()
+        y[BuyBakWines.SouthWestFrench] = np.array(df_ohlcv[BuyBakWines.SouthWestFrench]['ema']).tolist()
 
 
         # let's drop the last
-        TSLA_len = len(y[BuyBakWines.TSLA])
-        if TSLA_len % 2 == 1:
-            y[BuyBakWines.TSLA].pop()
-            TSLA_len = TSLA_len - 1
+        SouthWestFrench_len = len(y[BuyBakWines.SouthWestFrench])
+        if SouthWestFrench_len % 2 == 1:
+            y[BuyBakWines.SouthWestFrench].pop()
+            SouthWestFrench_len = SouthWestFrench_len - 1
 
-        self.ml_id[BuyBakWines.TSLA] = np.repeat(['id_00', 'id_01'], TSLA_len/2)
-        self.ml_ds[BuyBakWines.TSLA] = pd.date_range('2000-01-01', periods=TSLA_len, freq='D')
-        self.ml_y[BuyBakWines.TSLA] = y[BuyBakWines.TSLA] #df_ohlcv[BuyBakWines.TSLA]['ema']
-        print(f'[TSLA] len {len(y[BuyBakWines.TSLA])}, {len(self.ml_id[BuyBakWines.TSLA])} , {len(self.ml_ds[BuyBakWines.TSLA])} , {len(self.ml_y[BuyBakWines.TSLA])} ')
-        self.ml_series[BuyBakWines.TSLA] = pd.DataFrame({
-            'unique_id': self.ml_id[BuyBakWines.TSLA],
-            'ds': self.ml_ds[BuyBakWines.TSLA],
-            'y': self.ml_y[BuyBakWines.TSLA],
+        self.ml_id[BuyBakWines.SouthWestFrench] = np.repeat(['id_00', 'id_01'], SouthWestFrench_len/2)
+        self.ml_ds[BuyBakWines.SouthWestFrench] = pd.date_range('2000-01-01', periods=SouthWestFrench_len, freq='D')
+        self.ml_y[BuyBakWines.SouthWestFrench] = y[BuyBakWines.SouthWestFrench] #df_ohlcv[BuyBakWines.SouthWestFrench]['ema']
+        print(f'[SouthWestFrench] len {len(y[BuyBakWines.SouthWestFrench])}, {len(self.ml_id[BuyBakWines.SouthWestFrench])} , {len(self.ml_ds[BuyBakWines.SouthWestFrench])} , {len(self.ml_y[BuyBakWines.SouthWestFrench])} ')
+        self.ml_series[BuyBakWines.SouthWestFrench] = pd.DataFrame({
+            'unique_id': self.ml_id[BuyBakWines.SouthWestFrench],
+            'ds': self.ml_ds[BuyBakWines.SouthWestFrench],
+            'y': self.ml_y[BuyBakWines.SouthWestFrench],
         })
 
         # Split the data into training and testing sets
-        train_size = int(len(X[BuyBakWines.TSLA]) * 0.8)
-        print('------------ TSLA train_size --------')
+        train_size = int(len(X[BuyBakWines.SouthWestFrench]) * 0.8)
+        print('------------ SouthWestFrench train_size --------')
         print(train_size)
-        X_train[BuyBakWines.TSLA], y_train[BuyBakWines.TSLA] = X[BuyBakWines.TSLA][:train_size], y[BuyBakWines.TSLA][:train_size]
+        X_train[BuyBakWines.SouthWestFrench], y_train[BuyBakWines.SouthWestFrench] = X[BuyBakWines.SouthWestFrench][:train_size], y[BuyBakWines.SouthWestFrench][:train_size]
 
         #######
-        # aapl
+        # French
         #######
-        lf[BuyBakWines.aapl] = df_ohlcv[BuyBakWines.aapl][['Open', 'High', 'Low', 'Close']]
-        X[BuyBakWines.aapl] = np.array(lf[BuyBakWines.aapl]).tolist()
-        y[BuyBakWines.aapl] = np.array(df_ohlcv[BuyBakWines.aapl]['ema']).tolist()
+        lf[BuyBakWines.French] = df_ohlcv[BuyBakWines.French][['Open', 'High', 'Low', 'Close']]
+        X[BuyBakWines.French] = np.array(lf[BuyBakWines.French]).tolist()
+        y[BuyBakWines.French] = np.array(df_ohlcv[BuyBakWines.French]['ema']).tolist()
 
 
         # let's drop the last
-        aapl_len = len(y[BuyBakWines.aapl])
-        if aapl_len % 2 == 1:
-            y[BuyBakWines.aapl].pop()
-            aapl_len = aapl_len - 1
+        French_len = len(y[BuyBakWines.French])
+        if French_len % 2 == 1:
+            y[BuyBakWines.French].pop()
+            French_len = French_len - 1
 
-        self.ml_id[BuyBakWines.aapl] = np.repeat(['id_00', 'id_01'], aapl_len/2)
-        self.ml_ds[BuyBakWines.aapl] = pd.date_range('2000-01-01', periods=aapl_len, freq='D')
-        self.ml_y[BuyBakWines.aapl] = y[BuyBakWines.aapl] #df_ohlcv[BuyBakWines.aapl]['ema']
-        print(f'[aapl] len {len(y[BuyBakWines.aapl])}, {len(self.ml_id[BuyBakWines.aapl])} , {len(self.ml_ds[BuyBakWines.aapl])} , {len(self.ml_y[BuyBakWines.aapl])} ')
-        self.ml_series[BuyBakWines.aapl] = pd.DataFrame({
-            'unique_id': self.ml_id[BuyBakWines.aapl],
-            'ds': self.ml_ds[BuyBakWines.aapl],
-            'y': self.ml_y[BuyBakWines.aapl],
+        self.ml_id[BuyBakWines.French] = np.repeat(['id_00', 'id_01'], French_len/2)
+        self.ml_ds[BuyBakWines.French] = pd.date_range('2000-01-01', periods=French_len, freq='D')
+        self.ml_y[BuyBakWines.French] = y[BuyBakWines.French] #df_ohlcv[BuyBakWines.French]['ema']
+        print(f'[French] len {len(y[BuyBakWines.French])}, {len(self.ml_id[BuyBakWines.French])} , {len(self.ml_ds[BuyBakWines.French])} , {len(self.ml_y[BuyBakWines.French])} ')
+        self.ml_series[BuyBakWines.French] = pd.DataFrame({
+            'unique_id': self.ml_id[BuyBakWines.French],
+            'ds': self.ml_ds[BuyBakWines.French],
+            'y': self.ml_y[BuyBakWines.French],
         })
 
         # Split the data into training and testing sets
-        train_size = int(len(X[BuyBakWines.aapl]) * 0.8)
-        print('------------ aapl train_size --------')
+        train_size = int(len(X[BuyBakWines.French]) * 0.8)
+        print('------------ French train_size --------')
         print(train_size)
-        X_train[BuyBakWines.aapl], y_train[BuyBakWines.aapl] = X[BuyBakWines.aapl][:train_size], y[BuyBakWines.aapl][:train_size]
+        X_train[BuyBakWines.French], y_train[BuyBakWines.French] = X[BuyBakWines.French][:train_size], y[BuyBakWines.French][:train_size]
 
         #######
-        # MSFT
+        # Jura
         #######
-        lf[BuyBakWines.MSFT] = df_ohlcv[BuyBakWines.MSFT][['Open', 'High', 'Low', 'Close']]
-        X[BuyBakWines.MSFT] = np.array(lf[BuyBakWines.MSFT]).tolist()
-        y[BuyBakWines.MSFT] = np.array(df_ohlcv[BuyBakWines.MSFT]['ema']).tolist()
+        lf[BuyBakWines.Jura] = df_ohlcv[BuyBakWines.Jura][['Open', 'High', 'Low', 'Close']]
+        X[BuyBakWines.Jura] = np.array(lf[BuyBakWines.Jura]).tolist()
+        y[BuyBakWines.Jura] = np.array(df_ohlcv[BuyBakWines.Jura]['ema']).tolist()
 
 
         # let's drop the last
-        MSFT_len = len(y[BuyBakWines.MSFT])
-        if MSFT_len % 2 == 1:
-            y[BuyBakWines.MSFT].pop()
-            MSFT_len = MSFT_len - 1
+        Jura_len = len(y[BuyBakWines.Jura])
+        if Jura_len % 2 == 1:
+            y[BuyBakWines.Jura].pop()
+            Jura_len = Jura_len - 1
 
-        self.ml_id[BuyBakWines.MSFT] = np.repeat(['id_00', 'id_01'], MSFT_len/2)
-        self.ml_ds[BuyBakWines.MSFT] = pd.date_range('2000-01-01', periods=MSFT_len, freq='D')
-        self.ml_y[BuyBakWines.MSFT] = y[BuyBakWines.MSFT] #df_ohlcv[BuyBakWines.MSFT]['ema']
-        print(f'[MSFT] len {len(y[BuyBakWines.MSFT])}, {len(self.ml_id[BuyBakWines.MSFT])} , {len(self.ml_ds[BuyBakWines.MSFT])} , {len(self.ml_y[BuyBakWines.MSFT])} ')
-        self.ml_series[BuyBakWines.MSFT] = pd.DataFrame({
-            'unique_id': self.ml_id[BuyBakWines.MSFT],
-            'ds': self.ml_ds[BuyBakWines.MSFT],
-            'y': self.ml_y[BuyBakWines.MSFT],
+        self.ml_id[BuyBakWines.Jura] = np.repeat(['id_00', 'id_01'], Jura_len/2)
+        self.ml_ds[BuyBakWines.Jura] = pd.date_range('2000-01-01', periods=Jura_len, freq='D')
+        self.ml_y[BuyBakWines.Jura] = y[BuyBakWines.Jura] #df_ohlcv[BuyBakWines.Jura]['ema']
+        print(f'[Jura] len {len(y[BuyBakWines.Jura])}, {len(self.ml_id[BuyBakWines.Jura])} , {len(self.ml_ds[BuyBakWines.Jura])} , {len(self.ml_y[BuyBakWines.Jura])} ')
+        self.ml_series[BuyBakWines.Jura] = pd.DataFrame({
+            'unique_id': self.ml_id[BuyBakWines.Jura],
+            'ds': self.ml_ds[BuyBakWines.Jura],
+            'y': self.ml_y[BuyBakWines.Jura],
         })
 
         # Split the data into training and testing sets
-        train_size = int(len(X[BuyBakWines.MSFT]) * 0.8)
-        print('------------ MSFT train_size --------')
+        train_size = int(len(X[BuyBakWines.Jura]) * 0.8)
+        print('------------ Jura train_size --------')
         print(train_size)
-        X_train[BuyBakWines.MSFT], y_train[BuyBakWines.MSFT] = X[BuyBakWines.MSFT][:train_size], y[BuyBakWines.MSFT][:train_size]
+        X_train[BuyBakWines.Jura], y_train[BuyBakWines.Jura] = X[BuyBakWines.Jura][:train_size], y[BuyBakWines.Jura][:train_size]
+
+        #######
+        # Savoy
+        #######
+        lf[BuyBakWines.Savoy] = df_ohlcv[BuyBakWines.Savoy][['Open', 'High', 'Low', 'Close']]
+        X[BuyBakWines.Savoy] = np.array(lf[BuyBakWines.Savoy]).tolist()
+        y[BuyBakWines.Savoy] = np.array(df_ohlcv[BuyBakWines.Savoy]['ema']).tolist()
+
+
+        # let's drop the last
+        Savoy_len = len(y[BuyBakWines.Savoy])
+        if Savoy_len % 2 == 1:
+            y[BuyBakWines.Savoy].pop()
+            Savoy_len = Savoy_len - 1
+
+        self.ml_id[BuyBakWines.Savoy] = np.repeat(['id_00', 'id_01'], Savoy_len/2)
+        self.ml_ds[BuyBakWines.Savoy] = pd.date_range('2000-01-01', periods=Savoy_len, freq='D')
+        self.ml_y[BuyBakWines.Savoy] = y[BuyBakWines.Savoy] #df_ohlcv[BuyBakWines.Savoy]['ema']
+        print(f'[Savoy] len {len(y[BuyBakWines.Savoy])}, {len(self.ml_id[BuyBakWines.Savoy])} , {len(self.ml_ds[BuyBakWines.Savoy])} , {len(self.ml_y[BuyBakWines.Savoy])} ')
+        self.ml_series[BuyBakWines.Savoy] = pd.DataFrame({
+            'unique_id': self.ml_id[BuyBakWines.Savoy],
+            'ds': self.ml_ds[BuyBakWines.Savoy],
+            'y': self.ml_y[BuyBakWines.Savoy],
+        })
+
+        # Split the data into training and testing sets
+        train_size = int(len(X[BuyBakWines.Savoy]) * 0.8)
+        print('------------ Savoy train_size --------')
+        print(train_size)
+        X_train[BuyBakWines.Savoy], y_train[BuyBakWines.Savoy] = X[BuyBakWines.Savoy][:train_size], y[BuyBakWines.Savoy][:train_size]
 
         #######################
         # common to all wines
@@ -518,9 +518,9 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
         ]
 
         ###################################################################
-        # Instantiate goog MLForecast object
+        # Instantiate Alsace MLForecast object
         ###################################################################
-        self.ml_forecaster[BuyBakWines.goog] = MLForecast(
+        self.ml_forecaster[BuyBakWines.Alsace] = MLForecast(
             models=ml_models,
             freq='D',
             lags=[7, 14],
@@ -531,23 +531,23 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
             date_features=['dayofweek'],
             target_transforms=[Differences([1])]
         )
-        self.ml_forecaster[BuyBakWines.goog].fit(self.ml_series[BuyBakWines.goog])
+        self.ml_forecaster[BuyBakWines.Alsace].fit(self.ml_series[BuyBakWines.Alsace])
 
         # print('------------ X_train --------')
-        # print(X_train[BuyBakWines.goog])
+        # print(X_train[BuyBakWines.Alsace])
         # print('------------ y_train --------')
-        # print(y_train[BuyBakWines.goog])
+        # print(y_train[BuyBakWines.Alsace])
 
         # Create and train the XGBoost model
-        self.model[BuyBakWines.goog] = XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
-        self.model[BuyBakWines.goog].fit(X_train[BuyBakWines.goog], y_train[BuyBakWines.goog])
-        print(self.model[BuyBakWines.goog])
+        self.model[BuyBakWines.Alsace] = XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
+        self.model[BuyBakWines.Alsace].fit(X_train[BuyBakWines.Alsace], y_train[BuyBakWines.Alsace])
+        print(self.model[BuyBakWines.Alsace])
         print('------ init model done --------')
 
         ###################################################################
-        # Instantiate AMZN MLForecast object
+        # Instantiate Bordeaux MLForecast object
         ###################################################################
-        self.ml_forecaster[BuyBakWines.AMZN] = MLForecast(
+        self.ml_forecaster[BuyBakWines.Bordeaux] = MLForecast(
             models=ml_models,
             freq='D',
             lags=[7, 14],
@@ -558,23 +558,23 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
             date_features=['dayofweek'],
             target_transforms=[Differences([1])]
         )
-        self.ml_forecaster[BuyBakWines.AMZN].fit(self.ml_series[BuyBakWines.AMZN])
+        self.ml_forecaster[BuyBakWines.Bordeaux].fit(self.ml_series[BuyBakWines.Bordeaux])
 
         # print('------------ X_train --------')
-        # print(X_train[BuyBakWines.AMZN])
+        # print(X_train[BuyBakWines.Bordeaux])
         # print('------------ y_train --------')
-        # print(y_train[BuyBakWines.AMZN])
+        # print(y_train[BuyBakWines.Bordeaux])
 
         # Create and train the XGBoost model
-        self.model[BuyBakWines.AMZN] = XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
-        self.model[BuyBakWines.AMZN].fit(X_train[BuyBakWines.AMZN], y_train[BuyBakWines.AMZN])
-        print(self.model[BuyBakWines.AMZN])
+        self.model[BuyBakWines.Bordeaux] = XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
+        self.model[BuyBakWines.Bordeaux].fit(X_train[BuyBakWines.Bordeaux], y_train[BuyBakWines.Bordeaux])
+        print(self.model[BuyBakWines.Bordeaux])
         print('------ init model done --------')
 
         ###################################################################
-        # Instantiate COST MLForecast object
+        # Instantiate Burgundy MLForecast object
         ###################################################################
-        self.ml_forecaster[BuyBakWines.COST] = MLForecast(
+        self.ml_forecaster[BuyBakWines.Burgundy] = MLForecast(
             models=ml_models,
             freq='D',
             lags=[7, 14],
@@ -585,23 +585,23 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
             date_features=['dayofweek'],
             target_transforms=[Differences([1])]
         )
-        self.ml_forecaster[BuyBakWines.COST].fit(self.ml_series[BuyBakWines.COST])
+        self.ml_forecaster[BuyBakWines.Burgundy].fit(self.ml_series[BuyBakWines.Burgundy])
 
         # print('------------ X_train --------')
-        # print(X_train[BuyBakWines.COST])
+        # print(X_train[BuyBakWines.Burgundy])
         # print('------------ y_train --------')
-        # print(y_train[BuyBakWines.COST])
+        # print(y_train[BuyBakWines.Burgundy])
 
         # Create and train the XGBoost model
-        self.model[BuyBakWines.COST] = XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
-        self.model[BuyBakWines.COST].fit(X_train[BuyBakWines.COST], y_train[BuyBakWines.COST])
-        print(self.model[BuyBakWines.COST])
+        self.model[BuyBakWines.Burgundy] = XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
+        self.model[BuyBakWines.Burgundy].fit(X_train[BuyBakWines.Burgundy], y_train[BuyBakWines.Burgundy])
+        print(self.model[BuyBakWines.Burgundy])
         print('------ init model done --------')
 
         ###################################################################
-        # Instantiate LLY MLForecast object
+        # Instantiate Champagne MLForecast object
         ###################################################################
-        self.ml_forecaster[BuyBakWines.LLY] = MLForecast(
+        self.ml_forecaster[BuyBakWines.Champagne] = MLForecast(
             models=ml_models,
             freq='D',
             lags=[7, 14],
@@ -612,23 +612,23 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
             date_features=['dayofweek'],
             target_transforms=[Differences([1])]
         )
-        self.ml_forecaster[BuyBakWines.LLY].fit(self.ml_series[BuyBakWines.LLY])
+        self.ml_forecaster[BuyBakWines.Champagne].fit(self.ml_series[BuyBakWines.Champagne])
 
         # print('------------ X_train --------')
-        # print(X_train[BuyBakWines.LLY])
+        # print(X_train[BuyBakWines.Champagne])
         # print('------------ y_train --------')
-        # print(y_train[BuyBakWines.LLY])
+        # print(y_train[BuyBakWines.Champagne])
 
         # Create and train the XGBoost model
-        self.model[BuyBakWines.LLY] = XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
-        self.model[BuyBakWines.LLY].fit(X_train[BuyBakWines.LLY], y_train[BuyBakWines.LLY])
-        print(self.model[BuyBakWines.LLY])
+        self.model[BuyBakWines.Champagne] = XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
+        self.model[BuyBakWines.Champagne].fit(X_train[BuyBakWines.Champagne], y_train[BuyBakWines.Champagne])
+        print(self.model[BuyBakWines.Champagne])
         print('------ init model done --------')
 
         ###################################################################
-        # Instantiate META MLForecast object
+        # Instantiate Corsican MLForecast object
         ###################################################################
-        self.ml_forecaster[BuyBakWines.META] = MLForecast(
+        self.ml_forecaster[BuyBakWines.Corsican] = MLForecast(
             models=ml_models,
             freq='D',
             lags=[7, 14],
@@ -639,23 +639,23 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
             date_features=['dayofweek'],
             target_transforms=[Differences([1])]
         )
-        self.ml_forecaster[BuyBakWines.META].fit(self.ml_series[BuyBakWines.META])
+        self.ml_forecaster[BuyBakWines.Corsican].fit(self.ml_series[BuyBakWines.Corsican])
 
         # print('------------ X_train --------')
-        # print(X_train[BuyBakWines.META])
+        # print(X_train[BuyBakWines.Corsican])
         # print('------------ y_train --------')
-        # print(y_train[BuyBakWines.META])
+        # print(y_train[BuyBakWines.Corsican])
 
         # Create and train the XGBoost model
-        self.model[BuyBakWines.META] = XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
-        self.model[BuyBakWines.META].fit(X_train[BuyBakWines.META], y_train[BuyBakWines.META])
-        print(self.model[BuyBakWines.META])
+        self.model[BuyBakWines.Corsican] = XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
+        self.model[BuyBakWines.Corsican].fit(X_train[BuyBakWines.Corsican], y_train[BuyBakWines.Corsican])
+        print(self.model[BuyBakWines.Corsican])
         print('------ init model done --------')
 
         ###################################################################
-        # Instantiate NVDA MLForecast object
+        # Instantiate SouthWestFrench MLForecast object
         ###################################################################
-        self.ml_forecaster[BuyBakWines.NVDA] = MLForecast(
+        self.ml_forecaster[BuyBakWines.SouthWestFrench] = MLForecast(
             models=ml_models,
             freq='D',
             lags=[7, 14],
@@ -666,23 +666,23 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
             date_features=['dayofweek'],
             target_transforms=[Differences([1])]
         )
-        self.ml_forecaster[BuyBakWines.NVDA].fit(self.ml_series[BuyBakWines.NVDA])
+        self.ml_forecaster[BuyBakWines.SouthWestFrench].fit(self.ml_series[BuyBakWines.SouthWestFrench])
 
-        print('------------ NVDA X_train --------')
-        print(X_train[BuyBakWines.NVDA])
-        print('------------ NVDA y_train --------')
-        print(y_train[BuyBakWines.NVDA])
+        print('------------ SouthWestFrench X_train --------')
+        print(X_train[BuyBakWines.SouthWestFrench])
+        print('------------ SouthWestFrench y_train --------')
+        print(y_train[BuyBakWines.SouthWestFrench])
 
         # Create and train the XGBoost model
-        # self.model[BuyBakWines.NVDA] = XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
-        # self.model[BuyBakWines.NVDA].fit(X_train[BuyBakWines.NVDA], y_train[BuyBakWines.NVDA])
-        # print(self.model[BuyBakWines.NVDA])
-        # print('------ NVDA init model done --------')
+        # self.model[BuyBakWines.SouthWestFrench] = XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
+        # self.model[BuyBakWines.SouthWestFrench].fit(X_train[BuyBakWines.SouthWestFrench], y_train[BuyBakWines.SouthWestFrench])
+        # print(self.model[BuyBakWines.SouthWestFrench])
+        # print('------ SouthWestFrench init model done --------')
 
         ###################################################################
-        # Instantiate TSLA MLForecast object
+        # Instantiate French MLForecast object
         ###################################################################
-        self.ml_forecaster[BuyBakWines.TSLA] = MLForecast(
+        self.ml_forecaster[BuyBakWines.French] = MLForecast(
             models=ml_models,
             freq='D',
             lags=[7, 14],
@@ -693,23 +693,23 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
             date_features=['dayofweek'],
             target_transforms=[Differences([1])]
         )
-        self.ml_forecaster[BuyBakWines.TSLA].fit(self.ml_series[BuyBakWines.TSLA])
+        self.ml_forecaster[BuyBakWines.French].fit(self.ml_series[BuyBakWines.French])
 
         # print('------------ X_train --------')
-        # print(X_train[BuyBakWines.TSLA])
+        # print(X_train[BuyBakWines.French])
         # print('------------ y_train --------')
-        # print(y_train[BuyBakWines.TSLA])
+        # print(y_train[BuyBakWines.French])
 
         # Create and train the XGBoost model
-        self.model[BuyBakWines.TSLA] = XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
-        self.model[BuyBakWines.TSLA].fit(X_train[BuyBakWines.TSLA], y_train[BuyBakWines.TSLA])
-        print(self.model[BuyBakWines.TSLA])
+        self.model[BuyBakWines.French] = XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
+        self.model[BuyBakWines.French].fit(X_train[BuyBakWines.French], y_train[BuyBakWines.French])
+        print(self.model[BuyBakWines.French])
         print('------ init model done --------')
 
         ###################################################################
-        # Instantiate aapl MLForecast object
+        # Instantiate Jura MLForecast object
         ###################################################################
-        self.ml_forecaster[BuyBakWines.aapl] = MLForecast(
+        self.ml_forecaster[BuyBakWines.Jura] = MLForecast(
             models=ml_models,
             freq='D',
             lags=[7, 14],
@@ -720,23 +720,23 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
             date_features=['dayofweek'],
             target_transforms=[Differences([1])]
         )
-        self.ml_forecaster[BuyBakWines.aapl].fit(self.ml_series[BuyBakWines.aapl])
+        self.ml_forecaster[BuyBakWines.Jura].fit(self.ml_series[BuyBakWines.Jura])
 
         # print('------------ X_train --------')
-        # print(X_train[BuyBakWines.aapl])
+        # print(X_train[BuyBakWines.Jura])
         # print('------------ y_train --------')
-        # print(y_train[BuyBakWines.aapl])
+        # print(y_train[BuyBakWines.Jura])
 
         # Create and train the XGBoost model
-        self.model[BuyBakWines.aapl] = XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
-        self.model[BuyBakWines.aapl].fit(X_train[BuyBakWines.aapl], y_train[BuyBakWines.aapl])
-        print(self.model[BuyBakWines.aapl])
+        self.model[BuyBakWines.Jura] = XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
+        self.model[BuyBakWines.Jura].fit(X_train[BuyBakWines.Jura], y_train[BuyBakWines.Jura])
+        print(self.model[BuyBakWines.Jura])
         print('------ init model done --------')
 
         ###################################################################
-        # Instantiate MSFT MLForecast object
+        # Instantiate Savoy MLForecast object
         ###################################################################
-        self.ml_forecaster[BuyBakWines.MSFT] = MLForecast(
+        self.ml_forecaster[BuyBakWines.Savoy] = MLForecast(
             models=ml_models,
             freq='D',
             lags=[7, 14],
@@ -747,17 +747,17 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
             date_features=['dayofweek'],
             target_transforms=[Differences([1])]
         )
-        self.ml_forecaster[BuyBakWines.MSFT].fit(self.ml_series[BuyBakWines.MSFT])
+        self.ml_forecaster[BuyBakWines.Savoy].fit(self.ml_series[BuyBakWines.Savoy])
 
         # print('------------ X_train --------')
-        # print(X_train[BuyBakWines.MSFT])
+        # print(X_train[BuyBakWines.Savoy])
         # print('------------ y_train --------')
-        # print(y_train[BuyBakWines.MSFT])
+        # print(y_train[BuyBakWines.Savoy])
 
         # Create and train the XGBoost model
-        self.model[BuyBakWines.MSFT] = XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
-        self.model[BuyBakWines.MSFT].fit(X_train[BuyBakWines.MSFT], y_train[BuyBakWines.MSFT])
-        print(self.model[BuyBakWines.MSFT])
+        self.model[BuyBakWines.Savoy] = XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
+        self.model[BuyBakWines.Savoy].fit(X_train[BuyBakWines.Savoy], y_train[BuyBakWines.Savoy])
+        print(self.model[BuyBakWines.Savoy])
         print('------ init model done --------')
 
 
@@ -774,7 +774,7 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
 
     def get_mean_squared_error(self) -> float:
         """Get the MSE from the live prediction ."""
-        return self.mse[BuyBakWines.goog]
+        return self.mse[BuyBakWines.Alsace]
 
     def buybak_model_predict(self, argin: str) -> []:
         """Fit the model initialized (XGBoost) with the X_live data, calcumate the MSE with y_live, and return the y_pred_live"""
@@ -817,11 +817,11 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
             y_live = lf['close']
             print(y_live)
             print('-------- y_live above -------')
-            y_pred_live = self.model[BuyBakWines.goog].predict(X_live)
+            y_pred_live = self.model[BuyBakWines.Alsace].predict(X_live)
             print('---------- y_pred_live  -------------')
             print(y_pred_live)
-            self.mse[BuyBakWines.goog] = mean_squared_error(y_live, y_pred_live)
-            print(f'---------- self.mse  {self.mse[BuyBakWines.goog]}')
+            self.mse[BuyBakWines.Alsace] = mean_squared_error(y_live, y_pred_live)
+            print(f'---------- self.mse  {self.mse[BuyBakWines.Alsace]}')
             return y_pred_live
         except:
             return "Exception thrown parsing argin JSON"
@@ -841,4 +841,4 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
             return "Exception thrown in ml_forecaster"
 
     def get_buybak_wines_enum(self) -> str:
-        return "{'WinesEnum': [ {'goog': 0}, {'AMZN': 1}, {'COST': 2}, {'LLY':  3}, {'META': 4}, {'TSLA': 5}, {'NVDA': 6}, {'aapl': 7}, {'MSFT': 8}]}"
+        return "{'WinesEnum': [ {'Alsace': 0}, {'Bordeaux': 1}, {'Burgundy': 2}, {'Champagne':  3}, {'Corsican': 4}, {'French': 5}, {'SouthWestFrench': 6}, {'Jura': 7}, {'Savoy': 8}]}"
