@@ -198,14 +198,13 @@ async def consume(name: int, q: asyncio.Queue) -> tuple[str, float]:
         now = time.perf_counter()
         print(f"Consumer {name} got element for {windex} at <{i}> in {now-t:0.5f} seconds.")
         q.task_done()
-        return f'Wine: {windex} buy at {i}?', i
+        return windex, i
 
 
 class MyWorkflowContext():
 
     live_market_count: int = Field(..., description="Count of live market data events, then stop")
     live_market_data: float = Field(..., description="live market data ")
-    live_market_forecast = []
     my_proconq_started: bool = Field(..., description="ProConQ started")
     my_queue: asyncio.Queue
     my_producers: Any
@@ -378,7 +377,6 @@ class MyWorkflowContext():
         float_list = [float(num) for num in sdata]
         print(f'float_list: {float_list}')
         wine_forecast[wine_forecast_args[0]] = float_list
-        self.live_market_forecast = float_list
         for wf in wine_forecast: 
             print(f'-----> ----> ----> : {wf}')
 
@@ -412,8 +410,10 @@ class MyWorkflowContext():
             print(f'Done.....my_proconq.....................')
 
         print(f'Consuming...')
-        consumed, price = await consume(self.live_market_count, self.my_queue)
+        windex, price = await consume(self.live_market_count, self.my_queue)
         self.live_market_data = float(price)
+        self.live_market_index = windex
+        consumed = f'Consumed {windex} wine at {price}!'
         
         timestamp = time.time()
         await asyncio.sleep(1)
@@ -446,16 +446,16 @@ class MyWorkflowContext():
         return True, consumed
 
     async def conditional_compare_market_action(self, ctx: Context, ev: Event, live_market_future: asyncio.Future, md: str) -> tuple[bool, Any]:
-
+        global wine_forecast
         """Compare Market Event"""
 
         await asyncio.sleep(2)
 
-        print(f'Comparing {self.live_market_data} with {self.live_market_forecast}')
+        print(f'Comparing wine[{self.live_market_index}] at {self.live_market_data} with {wine_forecast[self.live_market_index]}')
         compared = f'No Comparison Found with {self.live_market_data}'
 
-        if ((self.live_market_data != 0) and (self.live_market_forecast[5] - self.live_market_data)) > 0:
-                compared = f'{self.live_market_data} Less Than Forecast by {round((self.live_market_forecast[5] - self.live_market_data), 2)}!!!'
+        if ((self.live_market_data != 0) and (wine_forecast[self.live_market_index][5] - self.live_market_data)) > 0:
+                compared = f'{self.live_market_data} Less Than Forecast by {round((wine_forecast[self.live_market_index][5] - self.live_market_data), 2)}!!!'
                 await self.generate_stream_event(ctx, ev, 
                     "agent",
                     "CompareMarketEvent",
@@ -464,7 +464,7 @@ class MyWorkflowContext():
                 )
                 return True, compared
         else:
-                compared = f'{self.live_market_data} Greater than FC by {round((self.live_market_forecast[5] - self.live_market_data), 2)}, next... '
+                compared = f'{self.live_market_data} Greater than FC by {round((wine_forecast[self.live_market_index][5] - self.live_market_data), 2)}, next... '
                 await self.generate_stream_event(ctx, ev, 
                     "agent",
                     "CompareMarketEvent",
