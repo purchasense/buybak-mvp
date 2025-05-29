@@ -143,13 +143,34 @@ def generateEvent(etype: str, estate: str, stimuli: str, outline: str, message: 
             )
 
 
-async def makeitem(forecast: []) -> str:
-    i = random.randint(0, 10)
-    if len(forecast) > 9:
-        print(f'make_item {i} -------------------> {forecast[i]} ')
+###############
+# Globals
+###############
+wine_forecast_args: tuple[int, int] = 0,15
+
+wine_forecast =[
+    [164.27, 163.64, 163.51, 162.67, 161.94, 161.17, 160.40, 159.82, 159.20, 158.13, 157.74, 157.06, 156.47, 155.88, 154.96],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    []
+]
+
+async def makeitem(windex: int, forecast: []) -> str:
+    try:
+        print(f'makeitem for {windex}, len {len(forecast)}')
+        i = random.randint(0, len(forecast)-1)
+        print(f'makeitem for {windex} at {i}-------------------> ${forecast[i]} ')
         return forecast[i]
-    else: 
-        return 200.0
+
+    except Exception as e:
+        print(f'Exception {e}')
+        print(f'Exception: makeitem -1 -------------------> $200 ')
+        return "200"
 
 async def randsleep(caller=None) -> None:
     i = random.randint(0, 10)
@@ -157,26 +178,27 @@ async def randsleep(caller=None) -> None:
         print(f"{caller} sleeping for {i} seconds.")
     await asyncio.sleep(i)
 
-async def produce(q: asyncio.Queue) -> None:
-    n = 6
+async def produce(wine: int, q: asyncio.Queue) -> None:
+    global wine_forecast
+
+    n = 12
     print(f'produce: {n} times in a loop')
-    forecast = [164.27, 163.64, 163.51, 162.67, 161.94, 161.17, 160.40, 159.82, 159.20, 158.13, 157.74, 157.06, 156.47, 155.88, 154.96]
     for x in it.repeat(None, n):  # Synchronous loop for each single producer
         await randsleep(caller=f"Producer {x}")
-        i = await makeitem(forecast)
+        price = await makeitem(wine, wine_forecast[wine])
         t = time.perf_counter()
-        await q.put((i, t))
-        print(f"Producer added <{i}> to queue.")
+        await q.put((wine, price, t))
+        print(f"Producer added ${price} to queue.")
         print(f"---------------------------------------------------------------------")
         await asyncio.sleep(1)
 
-async def consume(name: int, q: asyncio.Queue) -> str:
+async def consume(name: int, q: asyncio.Queue) -> tuple[str, float]:
         await randsleep(caller=f"Consumer {name}")
-        i, t = await q.get()
+        windex, i, t = await q.get()
         now = time.perf_counter()
-        print(f"Consumer {name} got element <{i}> in {now-t:0.5f} seconds.")
+        print(f"Consumer {name} got element for {windex} at <{i}> in {now-t:0.5f} seconds.")
         q.task_done()
-        return f'{i}'
+        return f'Wine: {windex} buy at {i}?', i
 
 
 class MyWorkflowContext():
@@ -244,7 +266,7 @@ class MyWorkflowContext():
                 print(query_prompt)
                 obj = await self.slow_forecast_time_series(query_prompt)
                 print('-------- return slow_update response')
-                print(obj)
+                print(type(obj))
                 return True, obj
             except StopAsyncIteration:
                 return True, obj
@@ -323,6 +345,7 @@ class MyWorkflowContext():
         return False, user_response
 
     async def conditional_forecast_ema(self,ctx: Context, ev: Event, user_input_future: asyncio.Future, query: str) -> tuple[bool, Any]:
+        global wine_forecast, wine_forecast_args
 
         """Forecast Time Series using the agent workflow"""
 
@@ -339,7 +362,13 @@ class MyWorkflowContext():
         timestamp = time.time()
         result, response = self.__iter_over_async_forecaster(query)
         print(f'result: {result}')
-        print(f'response: {response}')
+        print(f'type: {type(response)}')
+        print(f'response.tool_calls: {response.tool_calls}')
+        for i in response.tool_calls: 
+            if i.tool_kwargs != {}:
+                    print(f'---------------> ToolCallResult( {i.tool_kwargs["index"]} {i.tool_kwargs["argin"]})')
+                    wine_forecast_args = i.tool_kwargs["index"], i.tool_kwargs["argin"]
+                    print(f'wine_forecast_args ---------> {wine_forecast_args}')
         print(f'response: {str(response)}')
 
         nospecial = re.sub(r'[^,0-9\.]', '', str(response))
@@ -348,7 +377,10 @@ class MyWorkflowContext():
         print(f'sdata: {sdata}')
         float_list = [float(num) for num in sdata]
         print(f'float_list: {float_list}')
+        wine_forecast[wine_forecast_args[0]] = float_list
         self.live_market_forecast = float_list
+        for wf in wine_forecast: 
+            print(f'-----> ----> ----> : {wf}')
 
         await self.generate_stream_event(ctx, ev, 
                 "agent",
@@ -360,7 +392,7 @@ class MyWorkflowContext():
         return True, f'DONE MLForecastor'
 
     async def conditional_market_action(self, ctx: Context, ev: Event, live_market_future: asyncio.Future, query: str) -> tuple[bool, Any]:
-
+        global wine_forecast 
         """Live Market Event"""
 
 
@@ -368,12 +400,20 @@ class MyWorkflowContext():
         if self.my_proconq_started == False:
             print(f'Starting my_proconq.....................')
             self.my_queue = asyncio.Queue()
-            self.my_producers = [asyncio.create_task(produce(self.my_queue))]
-            self.my_proconq_started = True
-        else:
-            print(f'Consuming...')
-            consumed = await consume(self.live_market_count, self.my_queue)
-            self.live_market_data = float(consumed)
+            count = 0
+            for i in wine_forecast: 
+                if ( len(i) > 5):
+                    task = asyncio.create_task(produce(count, self.my_queue))
+                    # self.my_producers = self.my_producers.append(task)
+                    print(f' tasks[{count}]: started')
+                    self.my_proconq_started = True
+                    await asyncio.sleep(2)
+                count = count + 1
+            print(f'Done.....my_proconq.....................')
+
+        print(f'Consuming...')
+        consumed, price = await consume(self.live_market_count, self.my_queue)
+        self.live_market_data = float(price)
         
         timestamp = time.time()
         await asyncio.sleep(1)
@@ -381,29 +421,29 @@ class MyWorkflowContext():
         self.live_market_count = self.live_market_count + 1
         print(f'live_market_count: {self.live_market_count}')
 
-        if self.live_market_count > 5:
-            print('Gather my_producers')
-            # await asyncio.gather(*self.my_producers)
-            print('Join my_queue')
-            # await self.my_queue.join()
-            await self.generate_stream_event(ctx, ev, 
-                "agent",
-                "live_market_action",
-                "StopEvent",
-                "Done Live Market Events"
-            )
-            return False, f'Done Live Market Events'
-        else: 
-            print(f'Now consuming {consumed}')
-            '''
-            await self.generate_stream_event(ctx, ev, 
-                "agent",
-                "LiveMarketEvent",
-                "live_market_action",
-                consumed
-            )
-            '''
-            return True, consumed
+        # if self.live_market_count > 5:
+        #     print('Gather my_producers')
+        #     # await asyncio.gather(*self.my_producers)
+        #     print('Join my_queue')
+        #     # await self.my_queue.join()
+        #     await self.generate_stream_event(ctx, ev, 
+        #         "agent",
+        #         "live_market_action",
+        #         "StopEvent",
+        #         "Done Live Market Events"
+        #     )
+        #     return False, f'Done Live Market Events'
+        # else: 
+        print(f'Now consuming {consumed}')
+        '''
+        await self.generate_stream_event(ctx, ev, 
+             "agent",
+             "LiveMarketEvent",
+             "live_market_action",
+             consumed
+        )
+        '''
+        return True, consumed
 
     async def conditional_compare_market_action(self, ctx: Context, ev: Event, live_market_future: asyncio.Future, md: str) -> tuple[bool, Any]:
 
@@ -465,7 +505,7 @@ class MyWorkflowContext():
             )
         print(query)
 
-        query_prompt = "What are the different regions of french wines? Print result strictly as HTML Table"
+        # query_prompt = "What are the different regions of french wines? Print result strictly as HTML Table"
 
         timestamp = time.time()
         result, response = self.__iter_over_async_forecaster(query)

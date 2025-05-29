@@ -82,7 +82,7 @@ class MyWorkflow(Workflow):
     async def step_timer(self,ctx: Context, ev:  WfTimerEvent) ->  TimerFiredEvent:
         print("Inside step_timer")
         await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'WfTimerEvent', 'step_timer', 'Waitime for Timer')
-        await self.fsmc.armTimer(ctx, ev, '5', 'state::step_timer')
+        await self.fsmc.armTimer(ctx, ev, '1', 'state::step_timer')
         
         return TimerFiredEvent(timer="5",name="timer_fired")
 

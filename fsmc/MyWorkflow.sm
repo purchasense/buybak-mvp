@@ -95,7 +95,7 @@
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [{"stimulus": "WfTimerEvent", "actions": [
                                                         {"action": "generate_stream_event", "args":["agent", "WfTimerEvent", "step_timer", "Waitime for Timer"]}, 
-                                                        {"action": "armTimer", "args":["5", "state::step_timer"]}
+                                                        {"action": "armTimer", "args":["1", "state::step_timer"]}
                                                         ] 
                                   }], 
                 "emits":        [{"event": "TimerFiredEvent", "args": ["timer=\"5\"", "name=\"timer_fired\""]}]
