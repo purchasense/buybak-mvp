@@ -4,7 +4,6 @@ from typing import List
 from llama_index.core.workflow import Event
 from llama_index.core.workflow import Context
 
-from buybakworkflow.schemas import *
 import time
 import itertools as it
 import random
@@ -16,6 +15,10 @@ import re
 import string
 import csv
 import os
+
+from typing import Optional, Any, Literal, Dict
+from pydantic import BaseModel, Field
+
 from llama_index.llms.openai import OpenAI
 from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, Settings
@@ -474,6 +477,8 @@ class MyWorkflowContext():
                 return False, compared
 
     async def conditional_buy_or_sell_action(self,ctx: Context, ev: Event, user_input_future: asyncio.Future, md: str) -> tuple[bool, str]:
+        global wine_forecast
+
         print(f"Inside conditional_buy_or_sell {md} {user_input_future}")
         if not user_input_future.done():
             print(f"waiting for user_input...")
@@ -488,12 +493,32 @@ class MyWorkflowContext():
                 user_response
             )
 
-        if "Buy" in user_response:
-            return True, user_response
-        else:
-            return False, user_response
+        buybak_wines_str = [
+            "Alsace",
+            "Bordeaux",
+            "Burgundy",
+            "Champagne",
+            "Corsican",
+            "French",
+            "SouthWestFrench",
+            "Jura",
+            "Savoy"
+        ]
+        item_dict = {
+            "action": "Buy", 
+            "wine": buybak_wines_str[self.live_market_index], 
+            "price": self.live_market_data 
+        }
+        item_json_str = json.dumps(item_dict)
+        print(item_json_str)
 
-    async def buybak_french_wines_action(self,ctx: Context, ev: Event, query: str) -> tuple[bool, Any]:
+        if "Buy" in user_response:
+            # we have a buyer.
+            return True, item_json_str
+        else:
+            return False, item_json_str
+
+    async def buybak_french_wines_action(self,ctx: Context, ev: Event, query: str):
 
         """French Wines ToolCall using the agent workflow"""
 
@@ -519,9 +544,33 @@ class MyWorkflowContext():
                 str(response)
             )
 
+    async def shopping_cart_action(self,ctx: Context, ev: Event, item: str) -> str:
+
+        """ Shopping Cart """
+
+        outcome = f'S-Cart {item}'
+        print(outcome)
+
+        await self.generate_stream_event(ctx, ev, 
+                "agent",
+                "ShoppingCartEvent",
+                "shopping_cart_state",
+                item
+            )
+        print(f'shopping_cart_action: {item}')
+        return item
+
 
 if __name__ == "__main__":
+    import sys
     print("initializing MyWorkflowContext...")
+
+    query = "Get BuyBak French Wines List as JSON"
+    if len(sys.argv) == 2:
+        query = argv[1]
+        
+    print(f'query: {query}')
+
     fsmcontext = MyWorkflowContext()
     ev = Event()
     ctx = Context(fsmcontext)

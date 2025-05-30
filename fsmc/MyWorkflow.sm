@@ -57,7 +57,8 @@
             {"method": "LiveMarketEvent", "args": "Event", "body": [{"md": "str"}]},
             {"method": "CompareMarketEvent", "args": "Event", "body": [{"md": "str"}]},
             {"method": "BuyOrSellEvent", "args": "Event", "body": [{"md": "str"}]},
-            {"method": "FrenchWinesEvent", "args": "Event", "body": [{"query": "str"}]}
+            {"method": "FrenchWinesEvent", "args": "Event", "body": [{"query": "str"}]},
+            {"method": "ShoppingCartEvent", "args": "Event", "body": [{"item": "str"}]}
         ],
         "membervars": [
             {"name": "sameer_here", "type": "str", "field": "..., description=\"placeholder\""}
@@ -81,7 +82,7 @@
                 "emits":        [{"event": "FirstEvent", "args": ["first_output=\"First step complete.\""]}]
             },
             {
-                "state":        "step_two", 
+                "state":        "start_timer_state", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [{"stimulus": "FirstEvent", "actions": [
                                                         {"action": "generate_stream_event", "args":["agent", "FirstEvent", "step_two", "Two Message"]}, 
@@ -91,7 +92,7 @@
                 "emits":        [{"event": "WfTimerEvent", "args": ["timer=\"5\"", "name=\"timer_5\""]}]
             },
             {
-                "state":        "step_timer", 
+                "state":        "wf_timer_state", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [{"stimulus": "WfTimerEvent", "actions": [
                                                         {"action": "generate_stream_event", "args":["agent", "WfTimerEvent", "step_timer", "Waitime for Timer"]}, 
@@ -101,7 +102,7 @@
                 "emits":        [{"event": "TimerFiredEvent", "args": ["timer=\"5\"", "name=\"timer_fired\""]}]
             },
             {
-                "state":        "step_three", 
+                "state":        "end_timer_state", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [{"stimulus": "TimerFiredEvent", "actions": [
                                                         {"action": "generate_stream_event", "args":["input", "SecondEvent", "step_three", "Two Message"]}, 
@@ -111,7 +112,7 @@
                 "emits":        [{"event": "GetUserEvent", "args": ["msg=\"Hello World\""]}]
             },
             {
-                "state":        "step_four", 
+                "state":        "user_input_state", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [{"stimulus": "GetUserEvent", "actions": [
                                                         {"action": "generate_stream_event", "args":["agent", "GetUserEvent", "step_four", "AI? or Market?"]}, 
@@ -121,7 +122,7 @@
                 "emits":        [{"event": "ForecastEvent", "args": ["query=user_response"]},{"event": "FrenchWinesEvent", "args": ["query=user_response"]},{"event": "LiveMarketEvent", "args": ["md=user_response"]}] 
             },
             {
-                "state":        "step_five", 
+                "state":        "forecast_state", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [{"stimulus": "ForecastEvent", "actions": [
                                                         {"action": "generate_stream_event", "args":["agent", "SetAIEvent", "step_five", "Four Message"]}, 
@@ -131,7 +132,7 @@
                 "emits":        [{"event": "GetUserEvent", "args": ["msg=user_response"]}, {"event": "StopEvent", "args": ["result=user_response"]}]
             },
             {
-                "state":        "step_five_point_five", 
+                "state":        "lookup_french_wines_state", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [{"stimulus": "FrenchWinesEvent", "actions": [
                                                         {"action": "generate_stream_event", "args":["agent", "FrenchWinesEvent", "step_5.5", "5.5 Message"]}, 
@@ -141,7 +142,7 @@
                 "emits":        [{"event": "GetUserEvent", "args": ["msg=\"Sameer\""]}]
             },
             {
-                "state":        "step_six", 
+                "state":        "market_data_state", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [
                                     {"stimulus": "LiveMarketEvent", "actions": [
@@ -152,7 +153,7 @@
                 "emits":        [{"event": "CompareMarketEvent", "args": ["md=user_response"]}, {"event": "StopEvent", "args": ["result=user_response"]}]
             },
             {
-                "state":        "step_seven", 
+                "state":        "user_decision_state", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [
                                     {"stimulus": "CompareMarketEvent", "actions": [
@@ -172,7 +173,18 @@
                                         ] 
                                     }
                                  ], 
-                "emits":        [{"event": "StopEvent", "args": ["result=user_response"]}, {"event": "LiveMarketEvent", "args": ["md=user_response"]}]
+                "emits":        [{"event": "ShoppingCartEvent", "args": ["item=user_response"]}, {"event": "LiveMarketEvent", "args": ["md=user_response"]}]
+            },
+            {
+                "state":        "shopping_cart_state", 
+                "args":         ["self", "ctx: Context"],
+                "stimuli":      [
+                                    {"stimulus": "ShoppingCartEvent", "actions": [
+                                            {"action": "shopping_cart_action", "args":["ev.item"]}
+                                        ] 
+                                    }
+                                 ], 
+                "emits":        [{"event": "StopEvent", "args": ["result=\"ShoppingCartEnd\""]}]
             }
         ]
     }

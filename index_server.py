@@ -26,6 +26,7 @@ from llama_index.core.agent.workflow import (
 from llama_index.llms.openai import OpenAI
 from llama_index.core.agent.workflow import AgentWorkflow
 from llama_index.core.workflow import Context
+from llama_cpp import LlamaGrammar
 
 from llama_index.core.workflow import (
     StartEvent,
@@ -95,6 +96,11 @@ agentql_reader = AgentQLWebReader(
         "is_scroll_to_bottom_enabled": True
     },  # Optional additional parameters
 )
+
+# Load a grammar (replace with actual path)
+grammar = LlamaGrammar.from_file("./buybakworkflow/json.gbnf")
+
+
 system_prompt = f"""You are now connected to the BuyBakTimeSeries Tools, that 1. predicts the EMA values for a live array of [['open','high','low','close']], and 2. forecasts future EMA using the MLForecaster.
 Only enter details that the user has explicitly provided. Return the value from the tools provided for the predict method.
 Do not make up any details.
@@ -102,10 +108,11 @@ Do not make up any details.
 buybak_time_series_tools = BuyBakTimeSeriesToolSpec().to_tool_list()
 buybak_ts_agent = FunctionAgent(
     name="BuyBakTimeSeriesAgent",
-    description="Booking agent that predicts the next EMA values from a time series",
+    description="BuyBak Time Series Agent that predicts the next EMA values from a time series",
     tools= buybak_time_series_tools,
-    llm=OpenAI(model="gpt-4o-mini"),
     system_prompt=system_prompt,
+    llm=OpenAI(model="gpt-4o-mini"),
+    grammar=grammar,
     verbose=True,
 )
 

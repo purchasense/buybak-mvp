@@ -70,8 +70,8 @@ class MyWorkflow(Workflow):
 
 
     @step
-    async def step_two(self,ctx: Context, ev:  FirstEvent) ->  WfTimerEvent:
-        print("Inside step_two")
+    async def start_timer_state(self,ctx: Context, ev:  FirstEvent) ->  WfTimerEvent:
+        print("Inside start_timer_state")
         await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'FirstEvent', 'step_two', 'Two Message')
         await self.fsmc.two_action_1(ctx, ev, 'call action_1')
         
@@ -79,8 +79,8 @@ class MyWorkflow(Workflow):
 
 
     @step
-    async def step_timer(self,ctx: Context, ev:  WfTimerEvent) ->  TimerFiredEvent:
-        print("Inside step_timer")
+    async def wf_timer_state(self,ctx: Context, ev:  WfTimerEvent) ->  TimerFiredEvent:
+        print("Inside wf_timer_state")
         await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'WfTimerEvent', 'step_timer', 'Waitime for Timer')
         await self.fsmc.armTimer(ctx, ev, '1', 'state::step_timer')
         
@@ -88,8 +88,8 @@ class MyWorkflow(Workflow):
 
 
     @step
-    async def step_three(self,ctx: Context, ev:  TimerFiredEvent) ->  GetUserEvent:
-        print("Inside step_three")
+    async def end_timer_state(self,ctx: Context, ev:  TimerFiredEvent) ->  GetUserEvent:
+        print("Inside end_timer_state")
         await self.fsmc.generate_stream_event(ctx, ev, 'input', 'SecondEvent', 'step_three', 'Two Message')
         await self.fsmc.two_action_1(ctx, ev, 'call action_2')
         
@@ -97,8 +97,8 @@ class MyWorkflow(Workflow):
 
 
     @step
-    async def step_four(self,ctx: Context, ev:  GetUserEvent) ->  ForecastEvent |  FrenchWinesEvent |  LiveMarketEvent:
-        print("Inside step_four")
+    async def user_input_state(self,ctx: Context, ev:  GetUserEvent) ->  ForecastEvent |  FrenchWinesEvent |  LiveMarketEvent:
+        print("Inside user_input_state")
         await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'GetUserEvent', 'step_four', 'AI? or Market?')
         ret_val, user_response = await self.fsmc.conditional_fore_wine_live(ctx, ev, self.user_input_future, ev.msg)
         await self.reset_user_input_future()
@@ -112,8 +112,8 @@ class MyWorkflow(Workflow):
 
 
     @step
-    async def step_five(self,ctx: Context, ev:  ForecastEvent) ->  GetUserEvent |  StopEvent:
-        print("Inside step_five")
+    async def forecast_state(self,ctx: Context, ev:  ForecastEvent) ->  GetUserEvent |  StopEvent:
+        print("Inside forecast_state")
         await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'SetAIEvent', 'step_five', 'Four Message')
         ret_val, user_response = await self.fsmc.conditional_forecast_ema(ctx, ev, self.user_input_future, ev.query)
         await self.reset_user_input_future()
@@ -125,8 +125,8 @@ class MyWorkflow(Workflow):
 
 
     @step
-    async def step_five_point_five(self,ctx: Context, ev:  FrenchWinesEvent) ->  GetUserEvent:
-        print("Inside step_five_point_five")
+    async def lookup_french_wines_state(self,ctx: Context, ev:  FrenchWinesEvent) ->  GetUserEvent:
+        print("Inside lookup_french_wines_state")
         await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'FrenchWinesEvent', 'step_5.5', '5.5 Message')
         await self.fsmc.buybak_french_wines_action(ctx, ev, ev.query)
         
@@ -134,8 +134,8 @@ class MyWorkflow(Workflow):
 
 
     @step
-    async def step_six(self,ctx: Context, ev:  LiveMarketEvent) ->  CompareMarketEvent |  StopEvent:
-        print("Inside step_six")
+    async def market_data_state(self,ctx: Context, ev:  LiveMarketEvent) ->  CompareMarketEvent |  StopEvent:
+        print("Inside market_data_state")
         ret_val, user_response = await self.fsmc.conditional_market_action(ctx, ev, self.live_market_future, ev.md)
         await self.reset_live_market_future()
         
@@ -146,8 +146,8 @@ class MyWorkflow(Workflow):
 
 
     @step
-    async def step_seven(self,ctx: Context, ev:  CompareMarketEvent) ->  BuyOrSellEvent |  LiveMarketEvent:
-        print("Inside step_seven")
+    async def user_decision_state(self,ctx: Context, ev:  CompareMarketEvent) ->  BuyOrSellEvent |  LiveMarketEvent:
+        print("Inside user_decision_state")
         ret_val, user_response = await self.fsmc.conditional_compare_market_action(ctx, ev, self.live_market_future, ev.md)
         await self.reset_live_market_future()
         
@@ -158,16 +158,24 @@ class MyWorkflow(Workflow):
 
 
     @step
-    async def step_eight(self,ctx: Context, ev:  BuyOrSellEvent) ->  StopEvent |  LiveMarketEvent:
+    async def step_eight(self,ctx: Context, ev:  BuyOrSellEvent) ->  ShoppingCartEvent |  LiveMarketEvent:
         print("Inside step_eight")
         await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'BuyOrSellEvent', 'step_8', 'Buy or Not?')
         ret_val, user_response = await self.fsmc.conditional_buy_or_sell_action(ctx, ev, self.user_input_future, ev.md)
         await self.reset_user_input_future()
         
         if ret_val == True:
-            return StopEvent(result=user_response)
+            return ShoppingCartEvent(item=user_response)
         else:
             return LiveMarketEvent(md=user_response)
+
+
+    @step
+    async def shopping_cart_state(self,ctx: Context, ev:  ShoppingCartEvent) ->  StopEvent:
+        print("Inside shopping_cart_state")
+        await self.fsmc.shopping_cart_action(ctx, ev, ev.item)
+        
+        return StopEvent(result="ShoppingCartEnd")
 
 
 

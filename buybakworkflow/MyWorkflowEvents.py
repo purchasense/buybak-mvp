@@ -92,4 +92,7 @@ class BuyOrSellEvent(Event):
 class FrenchWinesEvent(Event):
     query:   str
 
+class ShoppingCartEvent(Event):
+    item:   str
+
 
