@@ -1,5 +1,6 @@
 import { formatRelative } from 'date-fns';
-import React, { useContext } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useContext } from 'react';
 import ColorSubCard from "ui-component/cards/ColorSubCard";
 import {
   Card,
@@ -29,6 +30,8 @@ import {
   Typography,
 } from '@mui/material';
 
+import {setModalQRCodeStatus, setModalQRCodeLoadingExecutionStatus, setModalQRCodeLoadingStatus, setModalQRCodeScan, setModalQRCodeSell, CustomerRetailFSOP} from 'store/actions';
+
 const formatDate = date => {
   let formattedDate = '';
 
@@ -46,11 +49,27 @@ const formatDate = date => {
 
 
 export const  MobileMessage = (props) => {
-    const currentUser = 'sameer';
 
+    const dispatch = useDispatch();
+
+    const currentUser = 'sameer';
     const bgc = ((props.estimuli === "LiveMarketEvent") || (props.estimuli === "CompareMarketEvent")) ? "white" : "cornsilk";
     const nbgc = ((props.estimuli === "GetUserEvent") || (props.estimuli === "BuyOrSellEvent")) ? "#FFDDDD" : bgc;
     const fbgc = (props.estimuli === "ForecastEvent") ? "#CCF" : nbgc;
+    console.log({props});
+    console.log(props.outline);
+    console.log(props.msg);
+
+    useEffect(() => {
+        if ( props.outline && props.msg && props.outline === "BUY")
+        {
+            const values = JSON.parse(props.msg);
+            console.log('------------- BUY -------------')
+            console.log({values})
+            dispatch(setModalQRCodeScan(values.wine, values.quantity, values.price));
+        }
+    }, []);
+
     return (
         <div className="mx-4">
             <Grid container spacing={1} padding={1} >

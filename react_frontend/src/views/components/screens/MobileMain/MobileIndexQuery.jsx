@@ -129,6 +129,7 @@ export const MobileIndexQuery = () => {
     console.log( 'Pred: ' + predictionsText);
     console.log( 'Fore: ' + forecastorsText);
 
+    /*
     useEffect(() => {
         console.log( 'MobileIndexQuery: fetch Pred/Forecast');
             getPredictions().then((response) => {
@@ -166,6 +167,7 @@ export const MobileIndexQuery = () => {
                 })
             });
     }, []);
+    */
 
     const handleQuery = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key == 'Enter') {
@@ -311,7 +313,7 @@ export const MobileIndexQuery = () => {
                 list_messages.map(message => {
                     console.log({message});
                     return (
-                        <MobileMessage key={message.id} user={message.user} etype={message.event_type} estate={message.event_state} estimuli={message.event_stimuli} msg={message.msg} />
+                        <MobileMessage key={message.id} user={message.user} etype={message.event_type} estate={message.event_state} estimuli={message.event_stimuli} outline={message.outline} msg={message.msg} />
                 );
                 })
             }

@@ -255,7 +255,8 @@ export const MobileStocks = () => {
                                 <TableCell>
                                     <img src={row.retailer.store_logo}
                                          alt={row.retailer.store_name}
-                                         width="60px"
+                                         width="70px"
+                                         height="70px"
                                     />
                                 </TableCell>
                                 <TableCell>

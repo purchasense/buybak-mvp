@@ -188,15 +188,15 @@ export const MobileMain = () => {
                     sx={{width:'400px'}}
                   >
                         <Tab
-                            sx={{color: 'white', background: '#888800'}}
-                            label={'Stocks'}
+                            sx={{color: 'white', fontWeight: 'bold', background: '#888800'}}
+                            label={'Wines'}
                         />
                         <Tab
-                            sx={{color: 'white', background: '#888800'}}
+                            sx={{color: 'white', fontWeight: 'bold', background: '#888800'}}
                             label={'Portfolio'}
                         />
                         <Tab
-                            sx={{color: 'white', background: '#888800'}}
+                            sx={{color: 'white', fontWeight: 'bold', background: '#888800'}}
                             label={'Query'}
                         />
                 </Tabs>

@@ -221,13 +221,13 @@ class MyWorkflowContext():
         self.live_market_data = 0
         self.my_proconq_started = False
 
-    async def generate_stream_event(self, ctx: Context, ev: Event, etype: str, stimulus: str, estate: str, msg: str):
+    async def generate_stream_event(self, ctx: Context, ev: Event, etype: str, stimulus: str, estate: str, outline: str, msg: str):
         print('generateEvent...')
         ctx.write_event_to_stream( generateEvent(
                 etype, 
                 estate, 
                 stimulus,
-                "outline",
+                outline,
                 msg, 
             )
         )
@@ -293,17 +293,27 @@ class MyWorkflowContext():
     async def armTimer(self, ctx: Context, ev: Event, timer: str, msg: str):
         print(f"Inside armTimer {timer}, {msg}")
         await asyncio.sleep(int(timer))
+        purchase = "{\"action\": \"Buy\", \"wine\": \"Bordeaux\", \"price\": 9622000}"
 
         await self.generate_stream_event(ctx, ev, 
                 "timer",
                 "WfTimerEvent",
                 "TimerState",
-                "Timer fired!"
+                "BUY",
+                purchase
             )
 
 
     async def suneels_action_function(self,ctx: Context, ev: Event, msg: str):
         print(f"suneels_action_function one_action_1 {msg}")
+        purchase = "{\"action\": \"Buy\", \"wine\": \"Champagne\", \"price\": 5295900}"
+        await self.generate_stream_event(ctx, ev, 
+                "agent",
+                "ShoppingCart",
+                "suneels_action_state",
+                "BUY",
+                purchase
+            )
 
     async def two_action_1(self,ctx: Context, ev: Event, msg: str):
         print(f"Inside two_action_1 {msg}")
@@ -321,6 +331,7 @@ class MyWorkflowContext():
                 "agent",
                 "END_FutureEvent",
                 "user_input_state",
+                "outline",
                 user_response
             )
         if "AI" in user_response:
@@ -342,6 +353,7 @@ class MyWorkflowContext():
                 "agent",
                 "END_FutureEvent",
                 "user_input_state",
+                "outline",
                 user_response
             )
         return False, user_response
@@ -355,6 +367,7 @@ class MyWorkflowContext():
                 "agent",
                 "ForecastEvent",
                 "forecast_state",
+                "outline",
                 "Starting MLForecastor"
             )
         print(query)
@@ -377,7 +390,7 @@ class MyWorkflowContext():
         print(f'nospecial: {nospecial}')
         sdata = nospecial.split(",")
         print(f'sdata: {sdata}')
-        float_list = [float(num) for num in sdata]
+        float_list = [round(float(num),2) for num in sdata]
         print(f'float_list: {float_list}')
         wine_forecast[wine_forecast_args[0]] = float_list
         for wf in wine_forecast: 
@@ -387,6 +400,7 @@ class MyWorkflowContext():
                 "agent",
                 "ForecastEvent",
                 "forecast_state",
+                "outline",
                 str(response)
             )
 
@@ -443,6 +457,7 @@ class MyWorkflowContext():
              "agent",
              "LiveMarketEvent",
              "live_market_action",
+             "outline",
              consumed
         )
         '''
@@ -454,27 +469,33 @@ class MyWorkflowContext():
 
         await asyncio.sleep(2)
 
-        print(f'Comparing wine[{self.live_market_index}] at {self.live_market_data} with {wine_forecast[self.live_market_index]}')
         compared = f'No Comparison Found with {self.live_market_data}'
+        try:
+            print(f'Comparing wine[{self.live_market_index}] at {(self.live_market_data)} with {(wine_forecast[self.live_market_index])}')
 
-        if ((self.live_market_data != 0) and (wine_forecast[self.live_market_index][5] - self.live_market_data)) > 0:
-                compared = f'{self.live_market_data} Less Than Forecast by {round((wine_forecast[self.live_market_index][5] - self.live_market_data), 2)}!!!'
-                await self.generate_stream_event(ctx, ev, 
-                    "agent",
-                    "CompareMarketEvent",
-                    "compare_markets",
-                    compared
-                )
-                return True, compared
-        else:
-                compared = f'{self.live_market_data} Greater than FC by {round((wine_forecast[self.live_market_index][5] - self.live_market_data), 2)}, next... '
-                await self.generate_stream_event(ctx, ev, 
-                    "agent",
-                    "CompareMarketEvent",
-                    "compare_markets",
-                    compared
-                )
-                return False, compared
+            if ((self.live_market_data != 0) and (wine_forecast[self.live_market_index][5] - self.live_market_data)) > 0:
+                    compared = f'{self.live_market_data} Less Than Forecast by {((wine_forecast[self.live_market_index][5] - self.live_market_data))}!!!'
+                    await self.generate_stream_event(ctx, ev, 
+                        "agent",
+                        "CompareMarketEvent",
+                        "compare_markets",
+                        "outline",
+                        compared
+                    )
+                    return True, compared
+            else:
+                    compared = f'{(self.live_market_data)} Greater than FC by {((wine_forecast[self.live_market_index][5] - self.live_market_data))}, next... '
+                    await self.generate_stream_event(ctx, ev, 
+                        "agent",
+                        "CompareMarketEvent",
+                        "compare_markets",
+                        "outline",
+                        compared
+                    )
+                    return False, compared
+        except Exception as e:
+            print(e)
+            return False, compared
 
     async def conditional_buy_or_sell_action(self,ctx: Context, ev: Event, user_input_future: asyncio.Future, md: str) -> tuple[bool, str]:
         global wine_forecast
@@ -490,6 +511,7 @@ class MyWorkflowContext():
                 "agent",
                 "END_FutureEvent",
                 "user_input_state",
+                "outline",
                 user_response
             )
 
@@ -504,19 +526,25 @@ class MyWorkflowContext():
             "Jura",
             "Savoy"
         ]
+        price = int(10000 * round(self.live_market_data, 2))
+        quantity = 0.25 * 100
         item_dict = {
             "action": "Buy", 
             "wine": buybak_wines_str[self.live_market_index], 
-            "price": self.live_market_data 
+            "quantity": quantity,
+            "price": price
         }
         item_json_str = json.dumps(item_dict)
         print(item_json_str)
 
         if "Buy" in user_response:
             # we have a buyer.
-            return True, item_json_str
+            return 0, item_json_str
+        elif "No" in user_response:
+            # we continue with more
+            return 1, item_json_str
         else:
-            return False, item_json_str
+            return 2, item_json_str
 
     async def buybak_french_wines_action(self,ctx: Context, ev: Event, query: str):
 
@@ -526,6 +554,7 @@ class MyWorkflowContext():
                 "agent",
                 "FrenchWinesEvent",
                 "french_wines_state",
+                "outline",
                 "Querying...",
             )
         print(query)
@@ -541,6 +570,7 @@ class MyWorkflowContext():
                 "agent",
                 "FrenchWinesEvent",
                 "french_wine_state",
+                "outline",
                 str(response)
             )
 
@@ -555,6 +585,7 @@ class MyWorkflowContext():
                 "agent",
                 "ShoppingCartEvent",
                 "shopping_cart_state",
+                "BUY",
                 item
             )
         print(f'shopping_cart_action: {item}')

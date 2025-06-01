@@ -95,6 +95,14 @@ const map_store_to_images = new I.Map({
     'LOW':  '/images/lowes.png',
     'COST': '/images/costco.png',
     'WBA':   '/images/walgreens.png',
+    'Alsace':  '/images/Alsace.png',
+	'Bordeaux':  '/images/Bordeaux.png',
+	'Burgundy':  '/images/Burgundy-2.png',
+	'Champagne':  '/images/Champagne-2.png',
+	'Corsican':  '/images/Corsican.png',
+	'Jura':  '/images/Jura-2.png',
+	'Savoy':  '/images/Savoy.png',
+	'SouthWestFrench':  '/images/SouthWestFrench.png'
 });
 
 const initialState = {
@@ -110,60 +118,30 @@ const initialState = {
   predictions: [],
   forecastors: [],
   map_store_to_quotes: new I.Map({
-    'AAPL':   new CustomerRetailFSOP( 
-                new Customer('', '', '', '', '', ''), 
-                new Retailer('Apple', 'AAPL', '1', 'Naperville', 'IL', '60563', '/images/AppleLogo.png'), 1722800, 100), 
-    'AMZN':   new CustomerRetailFSOP( 
-                new Customer('', '', '', '', '', ''), 
-                new Retailer('Amazon', 'AMZN', '1', 'Naperville', 'IL', '60563', '/images/AmazonLogo.png'), 1788700, 100), 
-    'BP':   new CustomerRetailFSOP( 
-                new Customer('', '', '', '', '', ''), 
-                new Retailer('BP PLC', 'BP', '1', 'Naperville', 'IL', '60563', '/images/BPLogo.png'), 378000, 100), 
-    'CVS':   new CustomerRetailFSOP( 
-                new Customer('', '', '', '', '', ''), 
-                new Retailer('CVS Health', 'CVS', '1', 'Naperville', 'IL', '60563', '/images/CVSLogo.png'), 784800, 100), 
-    'LLY':   new CustomerRetailFSOP( 
-                new Customer('', '', '', '', '', ''), 
-                new Retailer('Eli Lilly and Co', 'LLY', '1', 'Naperville', 'IL', '60563', '/images/LillyLogo.png'), 7706100, 100), 
-    'NVDA':   new CustomerRetailFSOP( 
-                new Customer('', '', '', '', '', ''), 
-                new Retailer('NVIDIA', 'NVDA', '1', 'Naperville', 'IL', '60563', '/images/NvidiaLogo.png'), 9428900, 100), 
-    'SHEL':   new CustomerRetailFSOP( 
-                new Customer('', '', '', '', '', ''), 
-                new Retailer('Shell PLC', 'SHEL', '1', 'Naperville', 'IL', '60563', '/images/ShellLogo.png'), 669200, 100), 
-    'TSLA':   new CustomerRetailFSOP( 
-                new Customer('', '', '', '', '', ''), 
-                new Retailer('Tesla', 'TSLA', '1', 'Naperville', 'IL', '60563', '/images/TeslaLogo.png'), 1708301, 100), 
-    'WMT':   new CustomerRetailFSOP( 
-                new Customer('', '', '', '', '', ''), 
-                new Retailer('Walmart', 'WMT', '1', 'Naperville', 'IL', '60563', '/images/WalmartLogo.png'), 608700, 100), 
-    'XOM':   new CustomerRetailFSOP( 
-                new Customer('', '', '', '', '', ''), 
-                new Retailer('Exxon Mobil', 'XOM', '1', 'Naperville', 'IL', '60563', '/images/ExxonLogo.png'), 1134900, 100), 
-    'HD':   new CustomerRetailFSOP( 
+    'Alsace':   new CustomerRetailFSOP( 
                     new Customer('', '', '', '', '', ''), 
-                    new Retailer('HomeDepot', 'HD', '171', 'Naperville', 'IL', '60563', "/images/homedepot.png"), 3631500, 1100),
-    'TGT':   new CustomerRetailFSOP( 
+                    new Retailer('Alsace', 'Alsace', '183', 'Naperville', 'IL', '60563', "/images/Alsace.png"), 26382500, 1199),
+    'Bordeaux':   new CustomerRetailFSOP( 
                     new Customer('', '', '', '', '', ''), 
-                    new Retailer('Target', 'TGT', '122', 'Naperville', 'IL', '60563', "/images/target.png"), 1463500, 2122),
-    'CMG':   new CustomerRetailFSOP( 
+                    new Retailer('Bordeaux', 'Bordeaux', '115', 'Naperville', 'IL', '60563', "/images/Bordeaux.png"), 971500, 280),
+    'Burgundy':   new CustomerRetailFSOP( 
                     new Customer('', '', '', '', '', ''), 
-                    new Retailer('Chipotle', 'CMG', '183', 'Naperville', 'IL', '60563', "/images/chipotle.png"), 26382500, 1199),
-    'SBUX':   new CustomerRetailFSOP( 
+                    new Retailer('Burgundy', 'Burgundy', '116', 'Naperville', 'IL', '60563', "/images/Burgundy-2.png"), 452500, 1235),
+    'Corsican':   new CustomerRetailFSOP( 
                     new Customer('', '', '', '', '', ''), 
-                    new Retailer('Starbucks', 'SBUX', '115', 'Naperville', 'IL', '60563', "/images/starbucks.png"), 971500, 280),
-    'ACE':   new CustomerRetailFSOP( 
+                    new Retailer('Corsican', 'Corsican', '117', 'Naperville', 'IL', '60563', "/images/Corsican.png"), 2222600, 543),
+    'Champagne':   new CustomerRetailFSOP( 
                     new Customer('', '', '', '', '', ''), 
-                    new Retailer('Ace Hard.', 'ACE', '116', 'Naperville', 'IL', '60563', "/images/ace.png"), 452500, 1235),
-    'LOW':   new CustomerRetailFSOP( 
+                    new Retailer('Champagne', 'Champagne', '118', 'Naperville', 'IL', '60563', "/images/Champagne-2.png"), 7234000, 980),
+    'Jura':   new CustomerRetailFSOP( 
                     new Customer('', '', '', '', '', ''), 
-                    new Retailer('Lowes', 'LOW', '117', 'Naperville', 'IL', '60563', "/images/lowes.png"), 2222600, 543),
-    'COST':   new CustomerRetailFSOP( 
+                    new Retailer('Jura', 'Jura', '164', 'Naperville', 'IL', '60563', "/images/Jura-2.png"), 222400, 2211),
+    'Savoy':   new CustomerRetailFSOP( 
                     new Customer('', '', '', '', '', ''), 
-                    new Retailer('Costco', 'COST', '118', 'Naperville', 'IL', '60563', "/images/costco.png"), 7234000, 980),
-    'WBA':   new CustomerRetailFSOP( 
+                    new Retailer('Savoy', 'Savoy', '118', 'Naperville', 'IL', '60563', "/images/Savoy.png"), 7234000, 980),
+    'SouthWestFrench':   new CustomerRetailFSOP( 
                     new Customer('', '', '', '', '', ''), 
-                    new Retailer('Walgreens', 'WBA', '164', 'Naperville', 'IL', '60563', "/images/walgreens.png"), 222400, 2211),
+                    new Retailer('SouthWestFrench', 'SouthWestFrench', '164', 'Naperville', 'IL', '60563', "/images/SouthWestFrench.png"), 222400, 2211),
   }),
   map_store_to_fsop: new I.Map({
     'HD':   new CustomerRetailFSOP( 
@@ -212,7 +190,7 @@ const modalQRCodeReducer = (state = initialState, action) => {
       };
     }
     case actionTypes.SET_MODAL_QRCODE_SCAN: {
-        // TMD console.log( 'Inside SET_MODAL_QRCODE_SCAN');
+        console.log( 'Inside SET_MODAL_QRCODE_SCAN');
         let login_username = state.login_username;
         let lmap = state.map_store_to_fsop;
         let fsop = lmap.get(action.store_id);
