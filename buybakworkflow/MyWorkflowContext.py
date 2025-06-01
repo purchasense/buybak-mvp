@@ -293,7 +293,7 @@ class MyWorkflowContext():
     async def armTimer(self, ctx: Context, ev: Event, timer: str, msg: str):
         print(f"Inside armTimer {timer}, {msg}")
         await asyncio.sleep(int(timer))
-        purchase = "{\"action\": \"Buy\", \"wine\": \"Bordeaux\", \"price\": 9622000}"
+        purchase = "{\"action\": \"Buy\", \"wine\": \"Bordeaux\", \"quantity\": 25, \"price\": 9622000}"
 
         await self.generate_stream_event(ctx, ev, 
                 "timer",
@@ -306,7 +306,7 @@ class MyWorkflowContext():
 
     async def suneels_action_function(self,ctx: Context, ev: Event, msg: str):
         print(f"suneels_action_function one_action_1 {msg}")
-        purchase = "{\"action\": \"Buy\", \"wine\": \"Champagne\", \"price\": 5295900}"
+        purchase = "{\"action\": \"Buy\", \"wine\": \"Champagne\", \"quantity\": 25, \"price\": 5295900}"
         await self.generate_stream_event(ctx, ev, 
                 "agent",
                 "ShoppingCart",
