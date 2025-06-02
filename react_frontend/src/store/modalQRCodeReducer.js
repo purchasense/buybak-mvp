@@ -96,12 +96,12 @@ const map_store_to_images = new I.Map({
     'COST': '/images/costco.png',
     'WBA':   '/images/walgreens.png',
     'Alsace':  '/images/Alsace.png',
-	'Bordeaux':  '/images/Bordeaux.png',
-	'Burgundy':  '/images/Burgundy-2.png',
-	'Champagne':  '/images/Champagne-2.png',
+	'Bordeaux':  '/images/Bordauex-3.jpg',
+	'Burgundy':  '/images/Burgundy-4.png',
+	'Champagne':  '/images/Champagne-3.png',
 	'Corsican':  '/images/Corsican.png',
-	'Jura':  '/images/Jura-2.png',
-	'Savoy':  '/images/Savoy.png',
+	'Jura':  '/images/Jura-3.png',
+	'Savoy':  '/images/Savoy-3.jpg',
 	'SouthWestFrench':  '/images/SouthWestFrench.png'
 });
 
@@ -123,22 +123,22 @@ const initialState = {
                     new Retailer('Alsace', 'Alsace', '183', 'Naperville', 'IL', '60563', "/images/Alsace.png"), 26382500, 1199),
     'Bordeaux':   new CustomerRetailFSOP( 
                     new Customer('', '', '', '', '', ''), 
-                    new Retailer('Bordeaux', 'Bordeaux', '115', 'Naperville', 'IL', '60563', "/images/Bordeaux.png"), 971500, 280),
+                    new Retailer('Bordeaux', 'Bordeaux', '115', 'Naperville', 'IL', '60563', "/images/Bordauex-3.jpg"), 971500, 280),
     'Burgundy':   new CustomerRetailFSOP( 
                     new Customer('', '', '', '', '', ''), 
-                    new Retailer('Burgundy', 'Burgundy', '116', 'Naperville', 'IL', '60563', "/images/Burgundy-2.png"), 452500, 1235),
+                    new Retailer('Burgundy', 'Burgundy', '116', 'Naperville', 'IL', '60563', "/images/Burgundy-4.png"), 452500, 1235),
     'Corsican':   new CustomerRetailFSOP( 
                     new Customer('', '', '', '', '', ''), 
-                    new Retailer('Corsican', 'Corsican', '117', 'Naperville', 'IL', '60563', "/images/Corsican.png"), 2222600, 543),
+                    new Retailer('Corsican', 'Corsican', '117', 'Naperville', 'IL', '60563', "/images/Corsican-3.png"), 2222600, 543),
     'Champagne':   new CustomerRetailFSOP( 
                     new Customer('', '', '', '', '', ''), 
-                    new Retailer('Champagne', 'Champagne', '118', 'Naperville', 'IL', '60563', "/images/Champagne-2.png"), 7234000, 980),
+                    new Retailer('Champagne', 'Champagne', '118', 'Naperville', 'IL', '60563', "/images/Champagne-3.png"), 7234000, 980),
     'Jura':   new CustomerRetailFSOP( 
                     new Customer('', '', '', '', '', ''), 
-                    new Retailer('Jura', 'Jura', '164', 'Naperville', 'IL', '60563', "/images/Jura-2.png"), 222400, 2211),
+                    new Retailer('Jura', 'Jura', '164', 'Naperville', 'IL', '60563', "/images/Jura-3.png"), 222400, 2211),
     'Savoy':   new CustomerRetailFSOP( 
                     new Customer('', '', '', '', '', ''), 
-                    new Retailer('Savoy', 'Savoy', '118', 'Naperville', 'IL', '60563', "/images/Savoy.png"), 7234000, 980),
+                    new Retailer('Savoy', 'Savoy', '118', 'Naperville', 'IL', '60563', "/images/Savoy-3.jpg"), 7234000, 980),
     'SouthWestFrench':   new CustomerRetailFSOP( 
                     new Customer('', '', '', '', '', ''), 
                     new Retailer('SouthWestFrench', 'SouthWestFrench', '164', 'Naperville', 'IL', '60563', "/images/SouthWestFrench.png"), 222400, 2211),

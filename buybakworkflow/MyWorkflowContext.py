@@ -151,6 +151,18 @@ def generateEvent(etype: str, estate: str, stimuli: str, outline: str, message: 
 ###############
 wine_forecast_args: tuple[int, int] = 0,15
 
+buybak_wines_str = [
+    "Alsace",
+    "Bordeaux",
+    "Burgundy",
+    "Champagne",
+    "Corsican",
+    "French",
+    "SouthWestFrench",
+    "Jura",
+    "Savoy"
+]
+
 wine_forecast =[
     [164.27, 163.64, 163.51, 162.67, 161.94, 161.17, 160.40, 159.82, 159.20, 158.13, 157.74, 157.06, 156.47, 155.88, 154.96],
     [],
@@ -176,7 +188,7 @@ async def makeitem(windex: int, forecast: []) -> str:
         return "200"
 
 async def randsleep(caller=None) -> None:
-    i = random.randint(0, 10)
+    i = 2
     if caller:
         print(f"{caller} sleeping for {i} seconds.")
     await asyncio.sleep(i)
@@ -407,7 +419,7 @@ class MyWorkflowContext():
         return True, f'DONE MLForecastor'
 
     async def conditional_market_action(self, ctx: Context, ev: Event, live_market_future: asyncio.Future, query: str) -> tuple[bool, Any]:
-        global wine_forecast 
+        global wine_forecast,  buybak_wines_str
         """Live Market Event"""
 
 
@@ -430,7 +442,19 @@ class MyWorkflowContext():
         windex, price = await consume(self.live_market_count, self.my_queue)
         self.live_market_data = float(price)
         self.live_market_index = windex
-        consumed = f'Consumed {windex} wine at {price}!'
+
+        quantity = 1.00 * 100
+        price = int(10000 * round(self.live_market_data, 2))
+
+        price_dict = {
+            "action": "MD", 
+            "wine": buybak_wines_str[self.live_market_index], 
+            "quantity": quantity,
+            "price": price
+        }
+        consumed = json.dumps(price_dict)
+        print(consumed)
+
         
         timestamp = time.time()
         await asyncio.sleep(1)
@@ -451,16 +475,15 @@ class MyWorkflowContext():
         #     )
         #     return False, f'Done Live Market Events'
         # else: 
-        print(f'Now consuming {consumed}')
-        '''
+
         await self.generate_stream_event(ctx, ev, 
              "agent",
              "LiveMarketEvent",
-             "live_market_action",
+             "md_state",
              "outline",
              consumed
         )
-        '''
+
         return True, consumed
 
     async def conditional_compare_market_action(self, ctx: Context, ev: Event, live_market_future: asyncio.Future, md: str) -> tuple[bool, Any]:
@@ -498,7 +521,7 @@ class MyWorkflowContext():
             return False, compared
 
     async def conditional_buy_or_sell_action(self,ctx: Context, ev: Event, user_input_future: asyncio.Future, md: str) -> tuple[bool, str]:
-        global wine_forecast
+        global wine_forecast, buybak_wines_str
 
         print(f"Inside conditional_buy_or_sell {md} {user_input_future}")
         if not user_input_future.done():
@@ -515,17 +538,6 @@ class MyWorkflowContext():
                 user_response
             )
 
-        buybak_wines_str = [
-            "Alsace",
-            "Bordeaux",
-            "Burgundy",
-            "Champagne",
-            "Corsican",
-            "French",
-            "SouthWestFrench",
-            "Jura",
-            "Savoy"
-        ]
         price = int(10000 * round(self.live_market_data, 2))
         quantity = 0.25 * 100
         item_dict = {
