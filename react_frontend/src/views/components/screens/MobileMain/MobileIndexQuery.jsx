@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useRef, useState, useContext, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import classNames from 'classnames';
@@ -8,6 +8,7 @@ import {MobileChart} from './MobileChart';
 import {MobileWineCard} from './MobileWineCard';
 import ColorSubCard from "ui-component/cards/ColorSubCard";
 import Chart from 'react-apexcharts';
+
 import {
   Card,
   CardContent,
@@ -118,56 +119,31 @@ let  cd_data = [
     },
 ];
 
+const scrollToBottom = (tableContainerRef) => {
+     if (tableContainerRef.current) {
+       tableContainerRef.current.scrollTo({
+         top: tableContainerRef.current.scrollHeight,
+         behavior: 'smooth', // Optional: for smooth scrolling
+       });
+     }
+};
+
 export const MobileIndexQuery = () => {
+
+
+    const tableContainerRef = useRef(null);
+
     const [isLoading, setLoading] = useState(false);
     const [responseText, setResponseText] = useState('```HTML <table> <tr> <th>Departure</th> <th>Total Time</th> <th>Airport Codes</th> <th>Price</th> </tr> <tr> <td>7:20 pm</td> <td>20h 25m</td> <td>ORD-GOX</td> <td>1917.0</td> </tr> <tr> <td>4:10 am</td> <td>21h 50m</td> <td>GOX-ORD</td> <td>1430.0</td> </tr> <tr> <td>7:20 pm</td> <td>20h 25m</td> <td>ORD-GOX</td> <td>1921.0</td> </tr> <tr> <td>4:10 am</td> <td>21h 50m</td> <td>GOX-ORD</td> <td>1919.0</td> </tr> </table> ```');
     let [predictionsText, setPredictionsText] = useState({});
     let [forecastorsText, setForecastorsText] = useState({});
+    let [tabsValue, setTabsValue] = useState(0);
+    let [listLen, setListLen] = useState(0);
 
     const dispatch = useDispatch();
 
-    console.log( 'Pred: ' + predictionsText);
-    console.log( 'Fore: ' + forecastorsText);
-
-    /*
-    useEffect(() => {
-        console.log( 'MobileIndexQuery: fetch Pred/Forecast');
-            getPredictions().then((response) => {
-                console.log(response.list_items);
-                 response.list_items.forEach((item, key) => {
-                    console.log( 'PRED Key: ' + key);
-                    console.log({item});
-                    Object.keys(item).forEach(key => {
-                        console.log(key, (item[key].length), item[key]);
-                        let values = JSON.parse(item[key]);
-                        dispatch(setBuybakPredictions(values));
-                        setPredictionsText(values);
-                        cd_data[0].data = values;
-                    });
-                 })
-                // let parsedJson = JSON.parse(response.list_items[0]);
-            });
-            getForecastors().then((response) => {
-                console.log(response.list_items);
-                response.list_items.forEach((item, key) => {
-                    console.log( 'FORE Key: ' + key);
-                    Object.keys(item).forEach(key => {
-                        console.log(key, (item[key].length), item[key]);
-                        try {
-                            let values = JSON.parse(item[key]);
-                            dispatch(setBuybakForecastors(values));
-                            setForecastorsText(values);
-                            cd_data[1].data = values;
-                        } catch (error) {
-                            console.log( error);
-                        } finally {
-                            console.log( 'finally');
-                        }
-                    });
-                })
-            });
-    }, []);
-    */
+    // TMD console.log( 'Pred: ' + predictionsText);
+    // TMD console.log( 'Fore: ' + forecastorsText);
 
     const handleQuery = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key == 'Enter') {
@@ -193,9 +169,8 @@ export const MobileIndexQuery = () => {
                       controller.close();
                       break;
                     }
-                    console.log('READ ', value);
                     const s = String.fromCharCode.apply(null, value);
-                    console.log(s);
+                    // TMD console.log(s);
                     dispatch(setBuybakMobileMessage(Date.now(), 'GPT', s));
                     controller.enqueue(value);
                   }
@@ -232,7 +207,6 @@ export const MobileIndexQuery = () => {
           });
         }
     };
-    const [tabsValue, setTabsValue] = React.useState(0);
 
     const handleChangeTab = (event, newValue) => {
         setTabsValue(newValue);
@@ -243,6 +217,7 @@ export const MobileIndexQuery = () => {
         state.qrcode.map_store_to_wines.forEach((item) => {
             list.push(item);
         });
+        // TMD console.log( 'list.length: ' + list.length);
         return list;
     });
 
@@ -257,8 +232,17 @@ export const MobileIndexQuery = () => {
             return list_msgs;
     });
     ********************************************************/
-    const list_messages = useSelector((state) => {return state.qrcode.list_store_to_mobile_messages;});
-    console.log(list_messages);
+
+    const list_messages = useSelector((state) => {
+        return state.qrcode.list_store_to_mobile_messages;
+    });
+
+    useEffect(() => {
+        setTimeout( function doSomething() {
+            scrollToBottom(tableContainerRef);
+            setTimeout(doSomething, 2000); // every 5 seconds
+        }, 2000);
+    }, []);
 
   return (
     <>
@@ -301,23 +285,23 @@ export const MobileIndexQuery = () => {
         ></TextField>
       </Grid>
 
-         <TableContainer sx={{ width: '100%', height: '750px' }}>
-            <MobileWineCard index={tabsValue} />
-            {/*
-            <MobileChart
-                predictions={predictionsText} 
-                forecastors={forecastorsText}
-            />
-            */}
-            {
-                list_messages.map(message => {
-                    console.log({message});
-                    return (
-                        <MobileMessage key={message.id} user={message.user} etype={message.event_type} estate={message.event_state} estimuli={message.event_stimuli} outline={message.outline} msg={message.msg} />
-                );
-                })
-            }
-        </TableContainer>
+            <TableContainer ref={tableContainerRef} sx={{ width: '100%', height: '750px' }}>
+                <MobileWineCard index={tabsValue} />
+                {/*
+                <MobileChart
+                    predictions={predictionsText} 
+                    forecastors={forecastorsText}
+                />
+                */}
+                {
+                    list_messages.map(message => {
+                        // TMD console.log({message});
+                        return (
+                            <MobileMessage key={message.id} user={message.user} etype={message.event_type} estate={message.event_state} estimuli={message.event_stimuli} outline={message.outline} msg={message.msg} />
+                    );
+                    })
+                }
+            </TableContainer>
 
     </Grid>
     </>

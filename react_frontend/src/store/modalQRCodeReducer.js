@@ -166,7 +166,7 @@ const modalQRCodeReducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.SET_MODAL_QRCODE_STATUS: {
         // TMD console.log( 'Inside SET_MODAL_QRCODE_STATUS');
-        // console.log( {action});
+        console.log( {action});
       return {
         ...state,
         isOpen: action.isOpen,
@@ -174,7 +174,7 @@ const modalQRCodeReducer = (state = initialState, action) => {
       };
     }
     case actionTypes.SET_MODAL_QRCODE_LOADING_STATUS: {
-        console.log( 'Inside SET_MODAL_QRCODE_LOADING_STATUS');
+        // TMD console.log( 'Inside SET_MODAL_QRCODE_LOADING_STATUS');
         console.log( {action});
       return {
         ...state,
@@ -182,7 +182,7 @@ const modalQRCodeReducer = (state = initialState, action) => {
       };
     }
     case actionTypes.SET_MODAL_QRCODE_LOADING_EXEC_STATUS: {
-        console.log( 'Inside SET_MODAL_QRCODE_LOADING_EXEC_STATUS');
+        // TMD console.log( 'Inside SET_MODAL_QRCODE_LOADING_EXEC_STATUS');
         console.log( {action});
       return {
         ...state,
@@ -190,7 +190,7 @@ const modalQRCodeReducer = (state = initialState, action) => {
       };
     }
     case actionTypes.SET_MODAL_QRCODE_SCAN: {
-        console.log( 'Inside SET_MODAL_QRCODE_SCAN');
+        // TMD console.log( 'Inside SET_MODAL_QRCODE_SCAN');
         let login_username = state.login_username;
         let lmap = state.map_store_to_fsop;
         let fsop = lmap.get(action.store_id);
@@ -337,7 +337,7 @@ const modalQRCodeReducer = (state = initialState, action) => {
       };
     }
     case actionTypes.SET_MODAL_MOBILE_LOGIN_STATUS: {
-        console.log( 'Inside SET_MODAL_MOBILE_LOGIN_STATUS');
+        // TMD console.log( 'Inside SET_MODAL_MOBILE_LOGIN_STATUS');
         console.log( {action});
       return {
         ...state,
@@ -345,7 +345,7 @@ const modalQRCodeReducer = (state = initialState, action) => {
       };
     }
     case actionTypes.SET_MODAL_MOBILE_LOGIN_NAME: {
-        console.log( 'Inside SET_MODAL_MOBILE_LOGIN_NAME');
+        // TMD console.log( 'Inside SET_MODAL_MOBILE_LOGIN_NAME');
         console.log( {action});
       return {
         ...state,
@@ -354,28 +354,28 @@ const modalQRCodeReducer = (state = initialState, action) => {
       };
     }
     case actionTypes.SET_BUYBAK_MOBILE_MESSAGE: {
-        console.log( 'Inside SET_BUYBAK_MOBILE_MESSAGE');
+        // TMD console.log( 'Inside SET_BUYBAK_MOBILE_MESSAGE');
         console.log( {action});
         let mmap = state.map_store_to_mobile_messages;
         let mlist = state.list_store_to_mobile_messages;
         // Let's JSON parse message
         try {
-            console.log( action.message);
+            // TMD console.log( action.message);
             const jmsg = JSON.parse(action.message);
-            console.log({jmsg});
+            // TMD console.log({jmsg});
             const msg = new MobileChatMessage(action.id, action.user, jmsg.event_type, jmsg.event_state, jmsg.event_stimuli, jmsg.event_content.outline, jmsg.event_content.message);
-            console.log(msg);
+            // TMD console.log(msg);
             mmap = mmap.set(action.id, msg);
             mlist = [...mlist, msg];
         } catch (error) {
             console.log( 'Error: ', error);
         } finally {
-            console.log( 'Finally');
+            // TMD console.log( 'Finally');
         }
-        console.log( 'SET_BUYBAK_MOBILE_MESSAGE');
+        // TMD console.log( 'SET_BUYBAK_MOBILE_MESSAGE');
         let count = state.alertCount;
         ++count;
-        console.log(mmap)
+        // TMD console.log(mmap)
         return {
             ...state,
             map_store_to_mobile_messages: mmap,

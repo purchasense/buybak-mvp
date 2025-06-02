@@ -50,8 +50,8 @@ export const  MobileWineCard = (props) => {
     const currentUser = 'sameer';
 
     const wineSelection = useSelector((state) => {
-        console.log(state.qrcode.map_store_to_wines);
-        console.log(state.qrcode.map_store_to_wines.get(props.index));
+        // TMD console.log(state.qrcode.map_store_to_wines);
+        // TMD console.log(state.qrcode.map_store_to_wines.get(props.index));
         if ( props.index === 0)
         {
             return state.qrcode.map_store_to_wines.get("0");
@@ -71,7 +71,7 @@ export const  MobileWineCard = (props) => {
         return undefined;
     });
 
-    console.log(props);
+    // TMD console.log(props);
     return (
             <Grid container spacing={2} padding={2} >
                 <Grid item xs="12">

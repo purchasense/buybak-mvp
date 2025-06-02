@@ -56,9 +56,6 @@ export const  MobileMessage = (props) => {
     const bgc = ((props.estimuli === "LiveMarketEvent") || (props.estimuli === "CompareMarketEvent")) ? "white" : "cornsilk";
     const nbgc = ((props.estimuli === "GetUserEvent") || (props.estimuli === "BuyOrSellEvent")) ? "#FFDDDD" : bgc;
     const fbgc = (props.estimuli === "ForecastEvent") ? "#CCF" : nbgc;
-    console.log({props});
-    console.log(props.outline);
-    console.log(props.msg);
 
     useEffect(() => {
         if ( props.outline && props.msg && props.outline === "BUY")
