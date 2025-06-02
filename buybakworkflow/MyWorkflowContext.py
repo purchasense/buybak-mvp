@@ -398,23 +398,26 @@ class MyWorkflowContext():
                     print(f'wine_forecast_args ---------> {wine_forecast_args}')
         print(f'response: {str(response)}')
 
-        nospecial = re.sub(r'[^,0-9\.]', '', str(response))
-        print(f'nospecial: {nospecial}')
-        sdata = nospecial.split(",")
-        print(f'sdata: {sdata}')
-        float_list = [round(float(num),2) for num in sdata]
-        print(f'float_list: {float_list}')
-        wine_forecast[wine_forecast_args[0]] = float_list
-        for wf in wine_forecast: 
-            print(f'-----> ----> ----> : {wf}')
+        try:
+            nospecial = re.sub(r'[^,0-9\.]', '', str(response))
+            print(f'nospecial: {nospecial}')
+            sdata = nospecial.split(",")
+            print(f'sdata: {sdata}')
+            float_list = [round(float(num),2) for num in sdata]
+            print(f'float_list: {float_list}')
+            wine_forecast[wine_forecast_args[0]] = float_list
+            for wf in wine_forecast: 
+                print(f'-----> ----> ----> : {wf}')
 
-        await self.generate_stream_event(ctx, ev, 
-                "agent",
-                "ForecastEvent",
-                "forecast_state",
-                "outline",
-                str(response)
-            )
+            await self.generate_stream_event(ctx, ev, 
+                    "agent",
+                    "ForecastEvent",
+                    "forecast_state",
+                    "outline",
+                    str(response)
+                )
+        except Exception as e:
+            print(e)
 
         return True, f'DONE MLForecastor'
 
