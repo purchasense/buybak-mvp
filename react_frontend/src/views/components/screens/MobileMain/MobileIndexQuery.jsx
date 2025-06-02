@@ -41,9 +41,9 @@ import {
 
 import {
   setBuybakMobileMessage,
-  getBuybakMobileMessages,
   setBuybakPredictions,
-  setBuybakForecastors
+  setBuybakForecastors,
+  setBuybakRefreshScroll
 } from "store/actions";
 
 
@@ -237,12 +237,25 @@ export const MobileIndexQuery = () => {
         return state.qrcode.list_store_to_mobile_messages;
     });
 
+    const refreshScroll = useSelector((state) => {return state.qrcode.refreshScroll;});
+    console.log( 'RefreshScroll: ' + refreshScroll);
+
+    useEffect(() => {
+            scrollToBottom(tableContainerRef);
+            console.log( 'scrollToBottom....................');
+            const value = false;
+            dispatch(setBuybakRefreshScroll(value));
+
+    }, [refreshScroll]);
+
+    /**
     useEffect(() => {
         setTimeout( function doSomething() {
             scrollToBottom(tableContainerRef);
             setTimeout(doSomething, 2000); // every 5 seconds
         }, 2000);
     }, []);
+    **/
 
   return (
     <>

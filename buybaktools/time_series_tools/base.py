@@ -765,7 +765,7 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
         """Extract the BuyBakTimeSeries structure from the input """
         print("Inside extract_bbk_time_series_from_prompt")
         print(input)
-        llm = OpenAI("gpt-4o-mini")
+        llm = OpenAI("gpt-4.1")
         sllm = llm.as_structured_llm(BuyBakTimeSeries)
         response = sllm.complete(input)
         print(response)

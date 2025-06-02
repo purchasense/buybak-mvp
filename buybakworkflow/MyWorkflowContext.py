@@ -103,7 +103,7 @@ buybak_ts_agent = FunctionAgent(
     name="BuyBakTimeSeriesAgent",
     description="Booking agent that predicts the next EMA values from a time series AND Provides info about wines from different region in France",
     tools=buybak_time_series_tools,
-    llm=OpenAI(model="gpt-4o"),
+    llm=OpenAI(model="gpt-4.1"),
     system_prompt=system_prompt,
     verbose=True,
 )
@@ -116,7 +116,7 @@ buybak_french_wines_agent = FunctionAgent(
     name="BuyBakFrenchWinesAgent",
     description="Agent that tablulates French Wines from the toolspec query_engine_tool loaded from the storage",
     tools=buybak_french_wines_tools,
-    llm=OpenAI(model="gpt-4o"),
+    llm=OpenAI(model="gpt-4.1"),
     system_prompt=system_prompt_french_wines,
     verbose=True,
 )

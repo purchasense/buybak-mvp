@@ -19,6 +19,7 @@ export const SET_BUYBAK_MOBILE_MESSAGE = "@buybak/SET_BUYBAK_MOBILE_MESSAGE";
 export const GET_BUYBAK_MOBILE_MESSAGES = "@buybak/GET_BUYBAK_MOBILE_MESSAGES";
 export const SET_BUYBAK_PREDICTIONS = "@buybak/SET_BUYBAK_PREDICTIONS";
 export const SET_BUYBAK_FORECASTORS = "@buybak/SET_BUYBAK_FORECASTORS";
+export const SET_BUYBAK_REFRESH_SCROLL  = "@buybak/SET_BUYBAK_REFRESH_SCROLL";
 
 export function setModalQRCodeStatus(isOpen, store_id) {
   return { type: SET_MODAL_QRCODE_STATUS, isOpen, store_id };
@@ -76,3 +77,6 @@ export function setBuybakForecastors(values) {
   return { type: SET_BUYBAK_FORECASTORS, values};
 }
 
+export function setBuybakRefreshScroll(value) { 
+    return {type: SET_BUYBAK_REFRESH_SCROLL, value};
+}

@@ -117,6 +117,7 @@ const initialState = {
   cdata: [0, 100, 175, 333, 500, 555, 689, 876, 989, 1000, 1103],
   predictions: [],
   forecastors: [],
+  refreshScroll: false,
   map_store_to_quotes: new I.Map({
     'Alsace':   new CustomerRetailFSOP( 
                     new Customer('', '', '', '', '', ''), 
@@ -381,6 +382,7 @@ const modalQRCodeReducer = (state = initialState, action) => {
             map_store_to_mobile_messages: mmap,
             list_store_to_mobile_messages: mlist,
             alertCount: count,
+            refreshScroll: true
         };
     }
     case actionTypes.SET_BUYBAK_PREDICTIONS: {
@@ -401,6 +403,13 @@ const modalQRCodeReducer = (state = initialState, action) => {
         return {
             ...state,
             forecastors: forecastors
+        };
+    }
+    case actionTypes.SET_BUYBAK_REFRESH_SCROLL: {
+        console.log( 'Inside SET_BUYBAK_REFRESH_SCROLL: ' + action.value);
+        return {
+            ...state,
+            refreshScroll: action.value
         };
     }
 
