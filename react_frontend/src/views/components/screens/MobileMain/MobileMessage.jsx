@@ -54,8 +54,8 @@ export const  MobileMessage = (props) => {
 
     const currentUser = 'sameer';
     const bgc = ((props.estimuli === "LiveMarketEvent") || (props.estimuli === "CompareMarketEvent")) ? "white" : "cornsilk";
-    const nbgc = ((props.estimuli === "GetUserEvent") || (props.estimuli === "BuyOrSellEvent")) ? "#FFDDDD" : bgc;
-    const fbgc = (props.estimuli === "ForecastEvent") ? "#CCF" : nbgc;
+    const nbgc = ((props.estimuli === "GetUserEvent") || (props.estimuli === "BuyOrSellEvent")) ? "#DDFFDD" : bgc;
+    const fbgc = (props.estimuli === "ForecastEvent") ? "#FFC" : nbgc;
 
     useEffect(() => {
         if ( props.outline && props.msg && props.outline === "BUY")
@@ -79,16 +79,15 @@ export const  MobileMessage = (props) => {
                     <ColorSubCard
                       padding={1}
                       spacing={0}
-                      border={'red'}
-                      background={'blue'}
+                      border={'#FDD'}
                       align-items="right"
                       md={8}
                       aria-label="main mailbox folders"
-                      sx={{ boxShadow: '0px 0px 0px #000', border: '2px solid', borderRadius: '30px', background: "lightblue" }}
+                      sx={{ boxShadow: '0px 0px 0px #000', border: '2px solid', borderRadius: '15px', background: "#FDD" }}
                     >
                                     <span 
                                         className="px-2 py-2 rounded-lg inline-block max-w-sm break-all float-right rounded-br-none bg-blue-600 text-white "
-                                        style={{color: 'black'}}
+                                        style={{ fontFamily: 'tiempos-headline,Lucida,Georgia,serif', fontWeight: 'bold', fontSize: "1.2rem", color: 'black'}}
                                         dangerouslySetInnerHTML={{ __html: props.msg}}
                                         > 
                                     </span> <br/>
@@ -103,12 +102,12 @@ export const  MobileMessage = (props) => {
                         <ColorSubCard
                           padding={1}
                           spacing={0}
-                          border={'red'}
-                          background={'blue'}
+                          border={fbgc}
+                          background={fbgc}
                           align-items="left"
                           md={8}
                           aria-label="main mailbox folders"
-                          sx={{ boxShadow: '0px 0px 0px #000', border: '1px solid', borderRadius: '30px', background: fbgc}}
+                          sx={{ boxShadow: '0px 0px 0px #000', border: '1px solid', borderRadius: '15px', background: fbgc}}
                         >
                                     <span 
                                         className="px-4 py-2 rounded-lg inline-block max-w-sm break-all rounded-bl-none bg-gray-800 text-gray-100"

@@ -263,26 +263,26 @@ export const MobileIndexQuery = () => {
             value = {tabsValue}
             onChange={handleChangeTab}
             aria-label="ant example"
-            sx={{width:'100%'}}
+            sx={{backgroundImage: '/images/wallpaper_1.png',width:'100%'}}
           >
                 <Tab
-                    sx={{background: 'cornsilk', color: 'red'}}
+                    sx={{backgroundImage: '/images/wallpaper_1.png', color: 'red'}}
                     label={'Italy'}
                 />
                 <Tab
-                    sx={{background: 'cornsilk', color: 'red'}}
+                    sx={{backgroundImage: '/images/wallpaper_2.png', color: 'red'}}
                     label={'France'}
                 />
                 <Tab
-                    sx={{background: 'cornsilk', color: 'red'}}
+                    sx={{backgroundImage: '/images/wallpaper_3.png',  color: 'red'}}
                     label={'Argentina'}
                 />
                 <Tab
-                    sx={{background: 'cornsilk', color: 'red'}}
+                    sx={{backgroundImage: '/images/wallpaper_1.png', color: 'red'}}
                     label={'Germany'}
                 />
         </Tabs>
-    <Grid container >
+    <Grid container backgroundImage="/images/wallpaper_1.png" >
       <Grid item align="left" >
         <TextField
             sx={{ m: 2, width: '90ch' }}
@@ -298,7 +298,7 @@ export const MobileIndexQuery = () => {
         ></TextField>
       </Grid>
 
-            <TableContainer ref={tableContainerRef} sx={{ width: '100%', height: '750px' }}>
+            <TableContainer ref={tableContainerRef} sx={{ backgroundImage: `url('/images/wallpaper_5.jpg')`,width: '100%', height: '750px' }}>
                 <MobileWineCard index={tabsValue} />
                 {/*
                 <MobileChart
