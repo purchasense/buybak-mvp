@@ -263,18 +263,18 @@ export const MobileIndexQuery = () => {
             value = {tabsValue}
             onChange={handleChangeTab}
             aria-label="ant example"
-            sx={{backgroundImage: '/images/wallpaper_1.png',width:'100%'}}
+            sx={{backgroundImage: `url('/images/wallpaper_5.jpg')`,width:'100%'}}
           >
                 <Tab
-                    sx={{backgroundImage: '/images/wallpaper_1.png', color: 'red'}}
+                    sx={{color: 'red'}}
                     label={'Italy'}
                 />
                 <Tab
-                    sx={{backgroundImage: '/images/wallpaper_2.png', color: 'red'}}
+                    sx={{color: 'red'}}
                     label={'France'}
                 />
                 <Tab
-                    sx={{backgroundImage: '/images/wallpaper_3.png',  color: 'red'}}
+                    sx={{color: 'red'}}
                     label={'Argentina'}
                 />
                 <Tab
@@ -282,21 +282,6 @@ export const MobileIndexQuery = () => {
                     label={'Germany'}
                 />
         </Tabs>
-    <Grid container backgroundImage="/images/wallpaper_1.png" >
-      <Grid item align="left" >
-        <TextField
-            sx={{ m: 2, width: '90ch' }}
-            id="standard-basic" label="Start" variant="standard" 
-            onKeyDown={handleQuery}
-        ></TextField>
-      </Grid>
-      <Grid item align="left" >
-        <TextField
-            sx={{ m: 2, width: '90ch' }}
-            id="standard-basic" label="User-Input" variant="standard" 
-            onKeyDown={handleUserInputQuery}
-        ></TextField>
-      </Grid>
 
             <TableContainer ref={tableContainerRef} sx={{ backgroundImage: `url('/images/wallpaper_5.jpg')`,width: '100%', height: '750px' }}>
                 <MobileWineCard index={tabsValue} />
@@ -315,6 +300,22 @@ export const MobileIndexQuery = () => {
                     })
                 }
             </TableContainer>
+
+    <Grid container sx={{backgroundImage: `url("/images/wallpaper_5.jpg")`}} >
+      <Grid item background="white" align="left" >
+        <TextField
+            sx={{ background: 'white', m: 2, width: '90ch' }}
+            id="standard-basic" label="Start" variant="standard" 
+            onKeyDown={handleQuery}
+        ></TextField>
+      </Grid>
+      <Grid item align="left" >
+        <TextField
+            sx={{ background: 'white', m: 2, width: '90ch' }}
+            id="standard-basic" label="User-Input" variant="standard" 
+            onKeyDown={handleUserInputQuery}
+        ></TextField>
+      </Grid>
 
     </Grid>
     </>
