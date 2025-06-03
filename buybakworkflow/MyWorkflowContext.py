@@ -377,7 +377,7 @@ class MyWorkflowContext():
 
         await self.generate_stream_event(ctx, ev, 
                 "agent",
-                "ForecastEvent",
+                "MLStartEvent",
                 "forecast_state",
                 "outline",
                 "Starting MLForecastor"

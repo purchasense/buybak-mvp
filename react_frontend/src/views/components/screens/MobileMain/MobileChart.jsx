@@ -118,20 +118,16 @@ let chartData = {
 
 let cd_data = [
     {
-      name: "Predictions",
-      data: [159.91353, 159.91353, 162.44794, 161.24452, 157.94542, 166.76558, 160.91374, 157.94542, 157.94542, 159.91353, 158.04843]
-    },
-    {
-      name: "Forecastors",
-      data: [164.27565059931024, 163.64161088130706, 163.51398769833057, 162.67782529379727, 161.94058563595763, 161.17340857674023, 160.40623151752283, 159.82062979168805, 159.20826673198033, 158.1375598295967, 157.74369845011444, 157.06055326456507, 156.47160842118893, 155.8826635778128, 154.96341642072696]
+      name: "Forecast",
+      data: [166.76558, 160.91374, 157.94542, 157.94542, 159.91353, 158.04843]
     },
 ];
 
-export const  MobileChart = (props) => {
-    // cd_data[0].data = props.predictions;
-    // cd_data[1].data = props.forecastors;
-    console.log( props.predictions);
-    console.log( props.forecastors);
+const  MobileChart = (props) => {
+    cd_data[0].data = props.data;
+    console.log( 'CD_DATA---- MobileChart');
+    console.log( {props});
+    console.log( cd_data[0].data);
 
     return (
         <div className="mx-4">
@@ -168,3 +164,4 @@ export const  MobileChart = (props) => {
     )
 };
 
+export default MobileChart;
