@@ -49,7 +49,94 @@ const formatDate = date => {
 };
 
 
-let chartData = {
+var chartDataOptions = {
+  chart: {
+    height: 350,
+    type: "line",
+    stacked: false
+  },
+  dataLabels: {
+    enabled: false
+  },
+  colors: ["#FF1654", "#247BA0"],
+  series: [
+    {
+      name: "Series A",
+      data: [1.4, 2, 2.5, 1.5, 2.5, 2.8, 3.8, 4.6]
+    },
+    {
+      name: "Series B",
+      data: [20, 29, 37, 36, 44, 45, 50, 58]
+    }
+  ],
+  stroke: {
+    width: [4, 4]
+  },
+  plotOptions: {
+    bar: {
+      columnWidth: "20%"
+    }
+  },
+  xaxis: {
+    categories: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016]
+  },
+  yaxis: [
+    {
+      axisTicks: {
+        show: true
+      },
+      axisBorder: {
+        show: true,
+        color: "#FF1654"
+      },
+      labels: {
+        style: {
+          colors: "#FF1654"
+        }
+      },
+      title: {
+        text: "Series A",
+        style: {
+          color: "#FF1654"
+        }
+      }
+    },
+    {
+      opposite: true,
+      axisTicks: {
+        show: true
+      },
+      axisBorder: {
+        show: true,
+        color: "#247BA0"
+      },
+      labels: {
+        style: {
+          colors: "#247BA0"
+        }
+      },
+      title: {
+        text: "Series B",
+        style: {
+          color: "#247BA0"
+        }
+      }
+    }
+  ],
+  tooltip: {
+    shared: false,
+    intersect: true,
+    x: {
+      show: false
+    }
+  },
+  legend: {
+    horizontalAlign: "left",
+    offsetX: 40
+  }
+};
+
+let chartData2 = {
   type: "area",
   height: 80,
   width: '100%',
@@ -59,14 +146,14 @@ let chartData = {
       sparkline: {
         enabled: true,
       },
-      background: "#aaa",
+      background: "#333",
     },
-    colors: ["#FFF"],
+    colors: ["#0F0"],
     dataLabels: {
       enabled: false,
     },
     fill: {
-        type: "gradient",
+        type: "solid",
         gradient: {
             shadeIntensity: 1,
             opacityFrom: 0.5,
@@ -228,12 +315,20 @@ export const  MobileMessage = (props) => {
             }
             <Grid xs="12">
              {isChart === true ? (
+                <>
+                    <Grid item spacing={2} padding={2} xs="9" >
                    <Chart
-                        type="area"
+                        type="line"
+                        padding={2}
+                        spacing={2}
                         height={100}
-                        options={chartData.options}
+                        width={'100%'}
+                        options={chartData2.options}
                         series={cseries}
                     />                
+                    </Grid>
+                    <Grid item xs="3" />
+                </>
              ) : ('')}
              </Grid>
             </Grid>
