@@ -235,7 +235,7 @@ export const  MobileMarketData = (props) => {
         }
     }, []);
 
-    console.log('isLiveMD: ' + isLiveMD);
+    // TMD console.log('isLiveMD: ' + isLiveMD);
     let message = liveMD["wine"] + ": " + liveMD["quantity"] + " @ $" + Number(liveMD["price"] / 10000.0).toFixed(2);
     return (
         <div className="mx-4">

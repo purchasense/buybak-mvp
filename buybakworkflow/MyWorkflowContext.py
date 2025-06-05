@@ -318,16 +318,16 @@ class MyWorkflowContext():
     async def armTimer(self, ctx: Context, ev: Event, timer: str, msg: str):
         print(f"Inside armTimer {timer}, {msg}")
         await asyncio.sleep(int(timer))
-        quantity = random.randint(11, 60);
-        purchase = "{\"action\": \"Buy\", \"wine\": \"Champagne\", \"quantity\": " + str(quantity) + ", \"price\": 9622000}"
 
+        '''
         await self.generate_stream_event(ctx, ev, 
                 "timer",
                 "WfTimerEvent",
                 "TimerState",
-                "BUY",
+                "outline",
                 purchase
             )
+        '''
 
 
     async def suneels_action_function(self,ctx: Context, ev: Event, msg: str):
@@ -354,6 +354,8 @@ class MyWorkflowContext():
             print(f"conditional_three_action_1() Got user response: {user_response}")
 
         # Process user_response, which should be a JSON string
+        
+        '''
         await self.generate_stream_event(ctx, ev, 
                 "agent",
                 "END_FutureEvent",
@@ -361,6 +363,7 @@ class MyWorkflowContext():
                 "outline",
                 user_response
             )
+        '''
         if "AI" in user_response:
             return 0, user_response
         elif "wines" in user_response:
@@ -390,6 +393,7 @@ class MyWorkflowContext():
 
         """Forecast Time Series using the agent workflow"""
 
+        """
         await self.generate_stream_event(ctx, ev, 
                 "agent",
                 "MLStartEvent",
@@ -397,6 +401,7 @@ class MyWorkflowContext():
                 "outline",
                 "Starting MLForecastor"
             )
+        """
         print(query)
 
         query_prompt = "Query using the buybaktools, forecast time series for next 15 days, and strictly print the LGBMRegressor column as comma separated CSV array"
@@ -523,7 +528,7 @@ class MyWorkflowContext():
                                         
                                     <tr>
                                         <td><img align="top" style={{position:"relative",right:"1px",top:"-30px"}} width="55px" alt={"BuyBak.io"} src={buybak_images_str[self.live_market_index]} /></td>
-                                        <td>${self.live_market_data} < forecast by {round((wine_forecast[self.live_market_index][5] - self.live_market_data), 2)} !!!, </td>
+                                        <td>${self.live_market_data} < forecast by ${round((wine_forecast[self.live_market_index][5] - self.live_market_data), 2)} !!!, </td>
                                     </tr>
                                     <tr>
                                         <td><img align="top" style={{position:"relative",right:"1px",top:"-30px"}} width="55px" alt={"BuyBak.io"} src="/images/BuyBakGreenLogoPitchDeck.png" /></td>
@@ -540,7 +545,7 @@ class MyWorkflowContext():
                     )
                     return True, compared
             else:
-                    compared = f'{(self.live_market_data)} Greater than FC by {round((wine_forecast[self.live_market_index][5] - self.live_market_data), 2)}, next... '
+                    compared = f'{(self.live_market_data)} Greater than FC by {round((wine_forecast[self.live_market_index][5] - self.live_market_data), 2)}, <span>&nbsp;&nbsp;&nbsp;</span>ignoring... '
                     await self.generate_stream_event(ctx, ev, 
                         "agent",
                         "CompareMarketEvent",
@@ -561,14 +566,16 @@ class MyWorkflowContext():
             print(f"waiting for user_input...")
             user_response = await user_input_future
             print(f"conditional_buy_or_sell() Got {user_response}")
+        
+        resp = f'<html><body>User decided to <font style="fontWeight: \"bold\", color: \"blue\" ">{user_response}</font></body></html>'
 
         # Process user_response, which should be a JSON string
         await self.generate_stream_event(ctx, ev, 
                 "agent",
-                "END_FutureEvent",
+                "DecisionEvent",
                 "user_input_state",
                 "outline",
-                user_response
+                resp
             )
 
         price = int(10000 * round(self.live_market_data, 2))

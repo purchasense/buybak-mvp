@@ -265,7 +265,7 @@ export const  MobileMessage = (props) => {
             console.log( cData);
             cseries[0].data = cData;
         }
-        console.log('isChart: ' + isChart);
+        // console.log('isChart: ' + isChart);
     return (
         <div className="mx-4">
             <Grid container spacing={1} padding={1} >

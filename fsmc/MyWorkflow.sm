@@ -74,7 +74,7 @@
                 "state":        "step_one", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [{"stimulus": "StartEvent", "actions": [
-                                                        {"action": "generate_stream_event", "args":["agent", "StartEvent", "step_one", "outline", "One Message"]}, 
+                                                        {"action": "generate_stream_event", "args":["agent", "StartEvent", "step_one", "outline", "First Action on Start"]}, 
                                                         {"action": "one_action_1", "args":["call action_1"]},
                                                         {"action": "suneels_action_function", "args":["I am Suneel!"]}
                                                         ] 
@@ -85,7 +85,7 @@
                 "state":        "start_timer_state", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [{"stimulus": "FirstEvent", "actions": [
-                                                        {"action": "generate_stream_event", "args":["agent", "FirstEvent", "step_two", "outline", "Two Message"]}, 
+                                                        {"action": "generate_stream_event", "args":["agent", "FirstEvent", "step_two", "outline", "first_actcion"]}, 
                                                         {"action": "two_action_1", "args":["call action_1"]}
                                                         ] 
                                   }], 
@@ -95,7 +95,7 @@
                 "state":        "wf_timer_state", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [{"stimulus": "WfTimerEvent", "actions": [
-                                                        {"action": "generate_stream_event", "args":["agent", "WfTimerEvent", "step_timer", "outline", "Waitime for Timer"]}, 
+                                                        {"action": "generate_stream_event", "args":["agent", "WfTimerEvent", "step_timer", "outline", "armed, Waitime for Timer"]}, 
                                                         {"action": "armTimer", "args":["1", "state::step_timer"]}
                                                         ] 
                                   }], 
@@ -105,7 +105,7 @@
                 "state":        "end_timer_state", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [{"stimulus": "TimerFiredEvent", "actions": [
-                                                        {"action": "generate_stream_event", "args":["input", "SecondEvent", "step_three", "outline", "Two Message"]}, 
+                                                        {"action": "generate_stream_event", "args":["input", "SecondEvent", "step_three", "outline", "Timer Popped!"]}, 
                                                         {"action": "two_action_1", "args":["call action_2"]}
                                                         ] 
                                   }], 
@@ -115,7 +115,7 @@
                 "state":        "user_input_state", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [{"stimulus": "GetUserEvent", "actions": [
-                                                        {"action": "generate_stream_event", "args":["agent", "GetUserEvent", "step_four", "outline", "AI? or Market?"]}, 
+                                                        {"action": "generate_stream_event", "args":["agent", "GetUserEvent", "step_four", "outline", "U can ask AI (forecast, describe, or Live-Market). Query?"]}, 
                                                         {"action": "conditional_fore_wine_live", "args":["ev.msg"]}
                                                         ] 
                                   }], 
@@ -125,7 +125,6 @@
                 "state":        "forecast_state", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [{"stimulus": "ForecastEvent", "actions": [
-                                                        {"action": "generate_stream_event", "args":["agent", "SetAIEvent", "step_five", "outline", "Four Message"]}, 
                                                         {"action": "conditional_forecast_ema", "args":["ev.query"]}
                                                         ] 
                                   }], 
@@ -135,7 +134,6 @@
                 "state":        "lookup_french_wines_state", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [{"stimulus": "FrenchWinesEvent", "actions": [
-                                                        {"action": "generate_stream_event", "args":["agent", "FrenchWinesEvent", "step_5.5", "outline", "5.5 Message"]}, 
                                                         {"action": "buybak_french_wines_action", "args":["ev.query"]}
                                                         ] 
                                   }], 
@@ -168,7 +166,7 @@
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [
                                     {"stimulus": "BuyOrSellEvent", "actions": [
-                                            {"action": "generate_stream_event", "args":["agent", "BuyOrSellEvent", "buy_sell_state", "outline", "Buy or Not?"]}, 
+                                            {"action": "generate_stream_event", "args":["agent", "BuyOrSellEvent", "buy_sell_state", "outline", "Choose Buy, Not, or Exit?"]}, 
                                             {"action": "conditional_buy_or_sell_action", "args":["ev.md"]}
                                         ] 
                                     }

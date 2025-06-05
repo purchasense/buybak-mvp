@@ -62,7 +62,7 @@ class MyWorkflow(Workflow):
     @step
     async def step_one(self,ctx: Context, ev:  StartEvent) ->  FirstEvent:
         print("Inside step_one")
-        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'StartEvent', 'step_one', 'outline', 'One Message')
+        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'StartEvent', 'step_one', 'outline', 'First Action on Start')
         await self.fsmc.one_action_1(ctx, ev, 'call action_1')
         await self.fsmc.suneels_action_function(ctx, ev, 'I am Suneel!')
         
@@ -72,7 +72,7 @@ class MyWorkflow(Workflow):
     @step
     async def start_timer_state(self,ctx: Context, ev:  FirstEvent) ->  WfTimerEvent:
         print("Inside start_timer_state")
-        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'FirstEvent', 'step_two', 'outline', 'Two Message')
+        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'FirstEvent', 'step_two', 'outline', 'first_actcion')
         await self.fsmc.two_action_1(ctx, ev, 'call action_1')
         
         return WfTimerEvent(timer="5",name="timer_5")
@@ -81,7 +81,7 @@ class MyWorkflow(Workflow):
     @step
     async def wf_timer_state(self,ctx: Context, ev:  WfTimerEvent) ->  TimerFiredEvent:
         print("Inside wf_timer_state")
-        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'WfTimerEvent', 'step_timer', 'outline', 'Waitime for Timer')
+        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'WfTimerEvent', 'step_timer', 'outline', 'armed, Waitime for Timer')
         await self.fsmc.armTimer(ctx, ev, '1', 'state::step_timer')
         
         return TimerFiredEvent(timer="5",name="timer_fired")
@@ -90,7 +90,7 @@ class MyWorkflow(Workflow):
     @step
     async def end_timer_state(self,ctx: Context, ev:  TimerFiredEvent) ->  GetUserEvent:
         print("Inside end_timer_state")
-        await self.fsmc.generate_stream_event(ctx, ev, 'input', 'SecondEvent', 'step_three', 'outline', 'Two Message')
+        await self.fsmc.generate_stream_event(ctx, ev, 'input', 'SecondEvent', 'step_three', 'outline', 'Timer Popped!')
         await self.fsmc.two_action_1(ctx, ev, 'call action_2')
         
         return GetUserEvent(msg="Hello World")
@@ -99,7 +99,7 @@ class MyWorkflow(Workflow):
     @step
     async def user_input_state(self,ctx: Context, ev:  GetUserEvent) ->  ForecastEvent |  FrenchWinesEvent |  LiveMarketEvent:
         print("Inside user_input_state")
-        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'GetUserEvent', 'step_four', 'outline', 'AI? or Market?')
+        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'GetUserEvent', 'step_four', 'outline', 'U can ask AI (forecast, desc.) or Live-Market. Query?')
         ret_val, user_response = await self.fsmc.conditional_fore_wine_live(ctx, ev, self.user_input_future, ev.msg)
         await self.reset_user_input_future()
         
@@ -114,7 +114,6 @@ class MyWorkflow(Workflow):
     @step
     async def forecast_state(self,ctx: Context, ev:  ForecastEvent) ->  GetUserEvent |  StopEvent:
         print("Inside forecast_state")
-        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'SetAIEvent', 'step_five', 'outline', 'Four Message')
         ret_val, user_response = await self.fsmc.conditional_forecast_ema(ctx, ev, self.user_input_future, ev.query)
         await self.reset_user_input_future()
         
@@ -127,7 +126,6 @@ class MyWorkflow(Workflow):
     @step
     async def lookup_french_wines_state(self,ctx: Context, ev:  FrenchWinesEvent) ->  GetUserEvent:
         print("Inside lookup_french_wines_state")
-        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'FrenchWinesEvent', 'step_5.5', 'outline', '5.5 Message')
         await self.fsmc.buybak_french_wines_action(ctx, ev, ev.query)
         
         return GetUserEvent(msg="Sameer")
@@ -160,7 +158,7 @@ class MyWorkflow(Workflow):
     @step
     async def buy_sell_state(self,ctx: Context, ev:  BuyOrSellEvent) ->  ShoppingCartEvent |  LiveMarketEvent |  StopEvent:
         print("Inside buy_sell_state")
-        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'BuyOrSellEvent', 'buy_sell_state', 'outline', 'Buy or Not?')
+        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'BuyOrSellEvent', 'buy_sell_state', 'outline', 'Choose Buy, Not, or Exit?')
         ret_val, user_response = await self.fsmc.conditional_buy_or_sell_action(ctx, ev, self.user_input_future, ev.md)
         await self.reset_user_input_future()
         

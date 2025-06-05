@@ -239,7 +239,7 @@ export const MobileIndexQuery = () => {
     });
 
     const refreshScroll = useSelector((state) => {return state.qrcode.refreshScroll;});
-    console.log( 'RefreshScroll: ' + refreshScroll);
+    // TMD console.log( 'RefreshScroll: ' + refreshScroll);
 
     useEffect(() => {
             scrollToBottom(tableContainerRef);
