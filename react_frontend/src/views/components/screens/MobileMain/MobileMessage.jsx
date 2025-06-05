@@ -218,6 +218,7 @@ export const  MobileMessage = (props) => {
 
     const dispatch = useDispatch();
     let [cData, setCData] = useState([]);
+    let [liveMD, setLiveMD] = useState({});
 
     const currentUser = 'sameer';
     const bgc = ((props.estimuli === "LiveMarketEvent") || (props.estimuli === "CompareMarketEvent")) ? "white" : "cornsilk";
@@ -225,6 +226,7 @@ export const  MobileMessage = (props) => {
     const fbgc = (props.estimuli === "ForecastEvent") ? "#FFC" : nbgc;
 
     let isChart = false;
+    let isLiveMD = false;
 
     useEffect(() => {
         if ( props.outline && props.msg && props.outline === "BUY")
@@ -245,6 +247,15 @@ export const  MobileMessage = (props) => {
                 console.log(cData);
                 isChart = true;
             });
+        }
+        else if ( props.estimuli && props.msg && (props.estimuli === "LiveMarketEvent"))
+        {
+            const values = JSON.parse(props.msg);
+            console.log('------------- LiveMarketEvent -------------')
+
+            console.log({values})
+            setLiveMD(values);
+            isLiveMD = true;
         }
     }, []);
 
@@ -307,7 +318,7 @@ export const  MobileMessage = (props) => {
                                     <small style={{color: 'gray'}}>&nbsp;{props.etype}{': '}</small>
                                     <small style={{color: 'black'}}>&nbsp;{props.estate}</small>
                                     <small style={{color: 'red'}}>{'( '}{props.estimuli}&nbsp;{')'}</small>
-                    </ColorSubCard>
+                        </ColorSubCard>
                     </Grid>
                     <Grid item xs="3" />
                     </>

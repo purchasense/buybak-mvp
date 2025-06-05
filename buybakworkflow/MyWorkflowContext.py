@@ -151,6 +151,18 @@ def generateEvent(etype: str, estate: str, stimuli: str, outline: str, message: 
 ###############
 wine_forecast_args: tuple[int, int] = 0,15
 
+buybak_images_str = [
+    '/images/Alsace.png',
+    '/images/Bordauex-3.jpg',
+    '/images/Burgundy-4.png',
+    '/images/Champagne-3.png',
+    '/images/Corsican.png',
+    '/images/SouthWestFrench.png'
+    '/images/SouthWestFrench.png'
+    '/images/Jura-3.png',
+    '/images/Savoy-3.jpg'
+]
+
 buybak_wines_str = [
     "Alsace",
     "Bordeaux",
@@ -220,6 +232,7 @@ class MyWorkflowContext():
 
     live_market_count: int = Field(..., description="Count of live market data events, then stop")
     live_market_data: float = Field(..., description="live market data ")
+    live_market_buy: float = Field(..., description="BuyBak Purchase Quantity")
     my_proconq_started: bool = Field(..., description="ProConQ started")
     my_queue: asyncio.Queue
     my_producers: Any
@@ -305,7 +318,8 @@ class MyWorkflowContext():
     async def armTimer(self, ctx: Context, ev: Event, timer: str, msg: str):
         print(f"Inside armTimer {timer}, {msg}")
         await asyncio.sleep(int(timer))
-        purchase = "{\"action\": \"Buy\", \"wine\": \"Bordeaux\", \"quantity\": 25, \"price\": 9622000}"
+        quantity = random.randint(11, 60);
+        purchase = "{\"action\": \"Buy\", \"wine\": \"Champagne\", \"quantity\": " + str(quantity) + ", \"price\": 9622000}"
 
         await self.generate_stream_event(ctx, ev, 
                 "timer",
@@ -318,7 +332,8 @@ class MyWorkflowContext():
 
     async def suneels_action_function(self,ctx: Context, ev: Event, msg: str):
         print(f"suneels_action_function one_action_1 {msg}")
-        purchase = "{\"action\": \"Buy\", \"wine\": \"Champagne\", \"quantity\": 25, \"price\": 5295900}"
+        quantity = random.randint(1, 6) * 100;
+        purchase = "{\"action\": \"Buy\", \"wine\": \"Champagne\", \"quantity\": " + str(quantity) + ", \"price\": 5295900}"
         await self.generate_stream_event(ctx, ev, 
                 "agent",
                 "ShoppingCart",
@@ -446,7 +461,7 @@ class MyWorkflowContext():
         self.live_market_data = float(price)
         self.live_market_index = windex
 
-        quantity = 1.00 * 100
+        quantity = random.randint(1, 6) * 100;
         price = int(10000 * round(self.live_market_data, 2))
 
         price_dict = {
@@ -490,7 +505,8 @@ class MyWorkflowContext():
         return True, consumed
 
     async def conditional_compare_market_action(self, ctx: Context, ev: Event, live_market_future: asyncio.Future, md: str) -> tuple[bool, Any]:
-        global wine_forecast
+        global wine_forecast, buybak_images_str, buybak_wines_str
+
         """Compare Market Event"""
 
         await asyncio.sleep(2)
@@ -498,9 +514,23 @@ class MyWorkflowContext():
         compared = f'No Comparison Found with {self.live_market_data}'
         try:
             print(f'Comparing wine[{self.live_market_index}] at {(self.live_market_data)} with {(wine_forecast[self.live_market_index])}')
+            self.live_market_buy = random.randint(5,28);
+            self.live_buybak_alloc = self.live_market_buy * self.live_market_data / 100.0
 
             if ((self.live_market_data != 0) and (wine_forecast[self.live_market_index][5] - self.live_market_data)) > 0:
-                    compared = f'{self.live_market_data} Less Than Forecast by {((wine_forecast[self.live_market_index][5] - self.live_market_data))}!!!'
+                    compared = f'''
+                                <table>
+                                        
+                                    <tr>
+                                        <td><img align="top" style={{position:"relative",right:"1px",top:"-30px"}} width="55px" alt={"BuyBak.io"} src={buybak_images_str[self.live_market_index]} /></td>
+                                        <td>${self.live_market_data} < forecast by {round((wine_forecast[self.live_market_index][5] - self.live_market_data), 2)} !!!, </td>
+                                    </tr>
+                                    <tr>
+                                        <td><img align="top" style={{position:"relative",right:"1px",top:"-30px"}} width="55px" alt={"BuyBak.io"} src="/images/BuyBakGreenLogoPitchDeck.png" /></td>
+                                        <td>BuyBak Alloc {self.live_market_buy/100.0} for ${round(self.live_buybak_alloc, 2)}</td>
+                                    </tr>
+                                </table>'''
+
                     await self.generate_stream_event(ctx, ev, 
                         "agent",
                         "CompareMarketEvent",
@@ -510,7 +540,7 @@ class MyWorkflowContext():
                     )
                     return True, compared
             else:
-                    compared = f'{(self.live_market_data)} Greater than FC by {((wine_forecast[self.live_market_index][5] - self.live_market_data))}, next... '
+                    compared = f'{(self.live_market_data)} Greater than FC by {round((wine_forecast[self.live_market_index][5] - self.live_market_data), 2)}, next... '
                     await self.generate_stream_event(ctx, ev, 
                         "agent",
                         "CompareMarketEvent",
@@ -542,11 +572,10 @@ class MyWorkflowContext():
             )
 
         price = int(10000 * round(self.live_market_data, 2))
-        quantity = 0.25 * 100
         item_dict = {
             "action": "Buy", 
             "wine": buybak_wines_str[self.live_market_index], 
-            "quantity": quantity,
+            "quantity": self.live_market_buy,
             "price": price
         }
         item_json_str = json.dumps(item_dict)

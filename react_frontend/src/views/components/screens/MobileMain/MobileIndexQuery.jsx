@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import classNames from 'classnames';
 import queryIndex, {queryUserInputIndex, queryStreamingIndex, getPredictions, getForecastors, ResponseSources } from '../../../../apis/queryIndex';
 import {MobileMessage} from './MobileMessage';
+import {MobileMarketData} from './MobileMarketData';
 import {MobileChart} from './MobileChart';
 import {MobileWineCard} from './MobileWineCard';
 import ColorSubCard from "ui-component/cards/ColorSubCard";
@@ -291,12 +292,14 @@ export const MobileIndexQuery = () => {
                     forecastors={forecastorsText}
                 />
                 */}
-                {
+                { 
                     list_messages.map(message => {
-                        // TMD console.log({message});
-                        return (
-                            <MobileMessage key={message.id} user={message.user} etype={message.event_type} estate={message.event_state} estimuli={message.event_stimuli} outline={message.outline} msg={message.msg} />
-                    );
+                        if ( message.event_stimuli !== "LiveMarketEvent")
+                        {
+                            return (<MobileMessage key={message.id} user={message.user} etype={message.event_type} estate={message.event_state} estimuli={message.event_stimuli} outline={message.outline} msg={message.msg} />);
+                        } else {
+                            return (<MobileMarketData key={message.id} user={message.user} etype={message.event_type} estate={message.event_state} estimuli={message.event_stimuli} outline={message.outline} msg={message.msg} />);
+                        }
                     })
                 }
             </TableContainer>

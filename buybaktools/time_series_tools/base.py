@@ -253,8 +253,14 @@ class BuyBakTimeSeriesToolSpec(BaseToolSpec):
         X[BuyBakWines.Alsace] = np.array(lf[BuyBakWines.Alsace]).tolist()
         y[BuyBakWines.Alsace] = np.array(df_ohlcv[BuyBakWines.Alsace]['ema']).tolist()
 
-        self.ml_id[BuyBakWines.Alsace] = np.repeat(['id_00', 'id_01'], 105)
-        self.ml_ds[BuyBakWines.Alsace] = pd.date_range('2000-01-01', periods=210, freq='D')
+        # let's drop the last
+        Alsace_len = len(y[BuyBakWines.Alsace])
+        if Alsace_len % 2 == 1:
+            y[BuyBakWines.Alsace].pop()
+            Alsace_len = Alsace_len - 1
+
+        self.ml_id[BuyBakWines.Alsace] = np.repeat(['id_00', 'id_01'], Alsace_len/2)
+        self.ml_ds[BuyBakWines.Alsace] = pd.date_range('2000-01-01', periods=Alsace_len, freq='D')
         self.ml_y[BuyBakWines.Alsace] = df_ohlcv[BuyBakWines.Alsace]['ema']
         print(f'[Alsace] len {len(y[BuyBakWines.Alsace])}, {len(self.ml_id[BuyBakWines.Alsace])} , {len(self.ml_ds[BuyBakWines.Alsace])} , {len(self.ml_y[BuyBakWines.Alsace])} ')
         self.ml_series[BuyBakWines.Alsace] = pd.DataFrame({
