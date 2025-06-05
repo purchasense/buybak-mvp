@@ -629,7 +629,7 @@ class MyWorkflowContext():
 
         """ Shopping Cart """
 
-        outcome = f'S-Cart {item}'
+        outcome = f'<img align="top" style={{position:"relative",right:"1px",top:"-30px"}} width="55px" alt={"BuyBak.io"} src={"/images/ShoppingCartIcon.png"} /> {item}'
         print(outcome)
 
         await self.generate_stream_event(ctx, ev, 

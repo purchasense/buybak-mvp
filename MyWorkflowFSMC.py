@@ -99,7 +99,7 @@ class MyWorkflow(Workflow):
     @step
     async def user_input_state(self,ctx: Context, ev:  GetUserEvent) ->  ForecastEvent |  FrenchWinesEvent |  LiveMarketEvent:
         print("Inside user_input_state")
-        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'GetUserEvent', 'step_four', 'outline', 'U can ask AI (forecast, desc.) or Live-Market. Query?')
+        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'GetUserEvent', 'step_four', 'outline', 'U can ask AI (forecast, describe, or Live-Market). Query?')
         ret_val, user_response = await self.fsmc.conditional_fore_wine_live(ctx, ev, self.user_input_future, ev.msg)
         await self.reset_user_input_future()
         

@@ -219,6 +219,7 @@ export const  MobileMessage = (props) => {
     const dispatch = useDispatch();
     let [cData, setCData] = useState([]);
     let [liveMD, setLiveMD] = useState({});
+    let [prefix, setPrefix] = useState("");
 
     const currentUser = 'sameer';
     const bgc = ((props.estimuli === "LiveMarketEvent") || (props.estimuli === "CompareMarketEvent")) ? "white" : "cornsilk";
@@ -229,12 +230,16 @@ export const  MobileMessage = (props) => {
     let isLiveMD = false;
 
     useEffect(() => {
+        setPrefix(props.msg);
         if ( props.outline && props.msg && props.outline === "BUY")
         {
             const values = JSON.parse(props.msg);
             console.log('------------- BUY -------------')
             console.log({values})
             dispatch(setModalQRCodeScan(values.wine, values.quantity, values.price));
+            const fix = '<html><body><img align="top" style={{position:"relative",right:"1px",top:"-30px"}} width="35px" src="/images/ShoppingCartIcon.png" /> &nbsp;&nbsp; Bought ' + values["wine"] + ' ' + Number(values["quantity"]/100.0) + ' @ $' + Number(values["price"] / 10000.0).toFixed(2) + '</body></html>';
+            setPrefix(fix);
+            console.log(fix);
         }
         else if ( props.estimuli && props.msg && (props.estimuli === "ForecastEvent"))
         {
@@ -259,13 +264,13 @@ export const  MobileMessage = (props) => {
         }
     }, []);
 
-        if ( cData.length > 0)
-        {
-            isChart = true;
-            console.log( cData);
-            cseries[0].data = cData;
-        }
-        // console.log('isChart: ' + isChart);
+    if ( cData.length > 0)
+    {
+        isChart = true;
+        console.log( cData);
+        cseries[0].data = cData;
+    }
+    // console.log('isChart: ' + isChart);
     return (
         <div className="mx-4">
             <Grid container spacing={1} padding={1} >
@@ -287,7 +292,7 @@ export const  MobileMessage = (props) => {
                                     <span 
                                         className="px-2 py-2 rounded-lg inline-block max-w-sm break-all float-right rounded-br-none bg-blue-600 text-white "
                                         style={{ fontFamily: 'tiempos-headline,Lucida,Georgia,serif', fontWeight: 'bold', fontSize: "1.2rem", color: 'black'}}
-                                        dangerouslySetInnerHTML={{ __html: props.msg}}
+                                        dangerouslySetInnerHTML={{ __html: prefix}}
                                         > 
                                     </span> <br/>
                                         {/* props.user || "Guest User" } - {formatDate(new Date())*/}
@@ -311,7 +316,7 @@ export const  MobileMessage = (props) => {
                                     <span 
                                         className="px-4 py-2 rounded-lg inline-block max-w-sm break-all rounded-bl-none bg-gray-800 text-gray-100"
                                         style={{color: 'black', fontSize: '1.1rem'}}
-                                        dangerouslySetInnerHTML={{ __html: props.msg}}
+                                        dangerouslySetInnerHTML={{ __html: prefix}}
                                     >
                                     </span> <br/>
                                     <small style={{color: 'blue'}}>{ props.user || "Guest User"  }</small>
