@@ -595,6 +595,13 @@ class MyWorkflowContext():
             # we continue with more
             return 1, item_json_str
         else:
+            await self.generate_stream_event(ctx, ev, 
+                    "agent",
+                    "StopEvent",
+                    "user_input_stop",
+                    "outline",
+                    "Agent completion 2"
+                )
             return 2, item_json_str
 
     async def buybak_french_wines_action(self,ctx: Context, ev: Event, query: str):

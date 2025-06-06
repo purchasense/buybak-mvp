@@ -134,7 +134,7 @@ export const MobileIndexQuery = () => {
 
     const tableContainerRef = useRef(null);
 
-    const [isLoading, setLoading] = useState(false);
+    const [isStarted, setStarted] = useState(false);
     const [responseText, setResponseText] = useState('```HTML <table> <tr> <th>Departure</th> <th>Total Time</th> <th>Airport Codes</th> <th>Price</th> </tr> <tr> <td>7:20 pm</td> <td>20h 25m</td> <td>ORD-GOX</td> <td>1917.0</td> </tr> <tr> <td>4:10 am</td> <td>21h 50m</td> <td>GOX-ORD</td> <td>1430.0</td> </tr> <tr> <td>7:20 pm</td> <td>20h 25m</td> <td>ORD-GOX</td> <td>1921.0</td> </tr> <tr> <td>4:10 am</td> <td>21h 50m</td> <td>GOX-ORD</td> <td>1919.0</td> </tr> </table> ```');
     let [predictionsText, setPredictionsText] = useState({});
     let [forecastorsText, setForecastorsText] = useState({});
@@ -147,18 +147,17 @@ export const MobileIndexQuery = () => {
     // TMD console.log( 'Fore: ' + forecastorsText);
 
     const handleQuery = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key == 'Enter') {
-          setLoading(true);
-          console.log('Query: ' + e.target.value);
+          setStarted(true);
+          // console.log('Query: ' + e.target.value);
           console.log(e);
-          const msg = JSON.stringify({"event_type": "user", "event_state": "init", "event_stimuli": "AgenticEvent", "event_content": { "outline": "", "message": e.target.value}});
+          const msg = JSON.stringify({"event_type": "user", "event_state": "init", "event_stimuli": "AgenticEvent", "event_content": { "outline": "", "message": "Start"}});
           dispatch(setBuybakMobileMessage(Date.now(), 'sameer', msg));
-          queryStreamingIndex(e.target.value)
+          queryStreamingIndex("Start")
           .then(response => {
-          if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.body.getReader();
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.body.getReader();
           })
           .then(reader => {
             return new ReadableStream({
@@ -190,18 +189,15 @@ export const MobileIndexQuery = () => {
           .catch(error => {
             console.error('Error during streaming:', error);
           });
-        }
     };
 
     const handleUserInputQuery = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key == 'Enter') {
-          setLoading(true);
           console.log('UserInputQuery: ' + e.target.value);
           console.log(e);
           const msg = JSON.stringify({"event_type": "submit", "event_state": "user", "event_stimuli": "SubmitEvent", "event_content": { "outline": "", "message": e.target.value}});
           dispatch(setBuybakMobileMessage(Date.now(), 'sameer', msg));
           queryUserInputIndex(e.target.value).then((response) => {
-            setLoading(false);
             setResponseText(response.text);
             console.log("UserInputQuery: ", response.text);
             // dispatch(setBuybakMobileMessage(Date.now(), 'GPT', response.text));
@@ -284,6 +280,14 @@ export const MobileIndexQuery = () => {
                 />
         </Tabs>
 
+            <Grid container sx={{backgroundImage: `url("/images/wallpaper_5.jpg")`}} >
+                <Grid item spacing={2} padding={2}>
+                     <Button color="primary" variant="contained" fullWidth onClick={handleQuery}>
+                        Start BuyBak Agent-that-is-Alive!
+                     </Button>
+                </Grid>
+            </Grid>
+
             <TableContainer ref={tableContainerRef} sx={{ backgroundImage: `url('/images/wallpaper_5.jpg')`,width: '100%', height: '750px' }}>
                 <MobileWineCard index={tabsValue} />
                 {/*
@@ -300,26 +304,32 @@ export const MobileIndexQuery = () => {
                         } else {
                             return (<MobileMarketData key={message.id} user={message.user} etype={message.event_type} estate={message.event_state} estimuli={message.event_stimuli} outline={message.outline} msg={message.msg} />);
                         }
+
+                        if ( message.event_stimuli !== "StopEvent")
+                        {
+                            setStarted(false);
+                        }
                     })
                 }
             </TableContainer>
 
     <Grid container sx={{backgroundImage: `url("/images/wallpaper_5.jpg")`}} >
-      <Grid item background="white" align="left" >
-        <TextField
-            sx={{ background: 'white', m: 2, width: '90ch' }}
-            id="standard-basic" label="Start" variant="standard" 
-            onKeyDown={handleQuery}
-        ></TextField>
-      </Grid>
-      <Grid item align="left" >
-        <TextField
-            sx={{ background: 'white', m: 2, width: '90ch' }}
-            id="standard-basic" label="User-Input" variant="standard" 
-            onKeyDown={handleUserInputQuery}
-        ></TextField>
-      </Grid>
-
+            {/*
+          <Grid item background="white" align="left" >
+            <TextField
+                sx={{ background: 'white', m: 2, width: '90ch' }}
+                id="standard-basic" label="Start" variant="standard" 
+                onKeyDown={handleQuery}
+            ></TextField>
+          </Grid>
+            */}
+          <Grid item align="left" >
+            <TextField
+                sx={{ background: 'white', m: 2, width: '90ch' }}
+                id="standard-basic" label="User-Input" variant="standard" 
+                onKeyDown={handleUserInputQuery}
+            ></TextField>
+          </Grid>
     </Grid>
     </>
   );
