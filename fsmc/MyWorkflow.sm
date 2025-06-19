@@ -71,11 +71,10 @@
                 "emits":      []
             },
             {
-                "state":        "step_one", 
+                "state":        "generic_q_state", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [{"stimulus": "StartEvent", "actions": [
-                                                        {"action": "generate_stream_event", "args":["agent", "StartEvent", "step_one", "outline", "First Action on Start"]}, 
-                                                        {"action": "one_action_1", "args":["call action_1"]},
+                                                        {"action": "what_is_action", "args":["What are the wines I can query, in HTML Table"]},
                                                         {"action": "suneels_action_function", "args":["I am Suneel!"]}
                                                         ] 
                                   }], 
@@ -85,7 +84,6 @@
                 "state":        "start_timer_state", 
                 "args":         ["self", "ctx: Context"],
                 "stimuli":      [{"stimulus": "FirstEvent", "actions": [
-                                                        {"action": "generate_stream_event", "args":["agent", "FirstEvent", "step_two", "outline", "first_actcion"]}, 
                                                         {"action": "two_action_1", "args":["call action_1"]}
                                                         ] 
                                   }], 

@@ -312,8 +312,15 @@ class MyWorkflowContext():
             loop.close()
         return obj
 
-    async def one_action_1(self,ctx: Context, ev: Event, msg: str):
-        print(f"Inside one_action_1 {msg}")
+    async def what_is_action(self,ctx: Context, ev: Event, msg: str):
+        print(f"Inside what_is_action {msg}")
+        await self.generate_stream_event(ctx, ev, 
+                "agent",
+                "StartEvent",
+                "generic_q_state",
+                "outline",
+                msg
+            )
 
     async def armTimer(self, ctx: Context, ev: Event, timer: str, msg: str):
         print(f"Inside armTimer {timer}, {msg}")

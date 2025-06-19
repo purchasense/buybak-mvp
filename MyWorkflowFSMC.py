@@ -60,10 +60,9 @@ class MyWorkflow(Workflow):
         self.live_market_future = self.loop.create_future()
  
     @step
-    async def step_one(self,ctx: Context, ev:  StartEvent) ->  FirstEvent:
-        print("Inside step_one")
-        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'StartEvent', 'step_one', 'outline', 'First Action on Start')
-        await self.fsmc.one_action_1(ctx, ev, 'call action_1')
+    async def generic_q_state(self,ctx: Context, ev:  StartEvent) ->  FirstEvent:
+        print("Inside generic_q_state")
+        await self.fsmc.what_is_action(ctx, ev, 'What are the wines I can query, in HTML Table')
         await self.fsmc.suneels_action_function(ctx, ev, 'I am Suneel!')
         
         return FirstEvent(first_output="First step complete.")
@@ -72,7 +71,6 @@ class MyWorkflow(Workflow):
     @step
     async def start_timer_state(self,ctx: Context, ev:  FirstEvent) ->  WfTimerEvent:
         print("Inside start_timer_state")
-        await self.fsmc.generate_stream_event(ctx, ev, 'agent', 'FirstEvent', 'step_two', 'outline', 'first_actcion')
         await self.fsmc.two_action_1(ctx, ev, 'call action_1')
         
         return WfTimerEvent(timer="5",name="timer_5")
