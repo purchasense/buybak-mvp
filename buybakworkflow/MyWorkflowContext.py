@@ -73,7 +73,9 @@ from llama_index.core.tools import FunctionTool
 from llama_index.core.agent.workflow import FunctionAgent
 
 from buybaktools.time_series_tools import BuyBakTimeSeriesToolSpec, BuyBakLineItemAndIndicators, BuyBakTimeSeries
+from buybaktools.german_time_series_tools import BuyBakGermanTimeSeriesToolSpec, BuyBakGermanLineItemAndIndicators, BuyBakGermanTimeSeries
 from buybaktools.french_wines_tools import BuyBakFrenchWinesToolSpec
+from buybaktools.german_wines_tools import BuyBakGermanWinesToolSpec
 
 
 predictions = {"list_items": []}
@@ -94,36 +96,60 @@ print(f'LLAMA  {llama_cloud_api_key}')
 print(f'OPENAI {openai_api_key}')
 print(f'TAVILY {tavily_api_key}')
 
-system_prompt = f"""You are now connected to the BuyBakTimeSeries Tools, that 1. predicts the EMA values for a live array of [['open','high','low','close']], and 2. forecasts future EMA using the MLForecaster.
+system_prompt_time_series = f"""You are now connected to the BuyBakTimeSeries Tools, that 1. predicts the EMA values for a live array of [['open','high','low','close']], and 2. forecasts future EMA using the MLForecaster.
 Only enter details that the user has explicitly provided. Return the value from the tools provided for the predict method.
 Do not make up any details.
 """
 buybak_time_series_tools = BuyBakTimeSeriesToolSpec().to_tool_list()
 buybak_ts_agent = FunctionAgent(
     name="BuyBakTimeSeriesAgent",
-    description="Booking agent that predicts the next EMA values from a time series AND Provides info about wines from different region in France",
+    description="Booking agent that predicts the next EMA values from a time series AND Provides info about wines from different region in France ",
     tools=buybak_time_series_tools,
     llm=OpenAI(model="gpt-4.1"),
-    system_prompt=system_prompt,
+    system_prompt=system_prompt_time_series,
     verbose=True,
 )
 
-system_prompt_french_wines = f"""You are now connected to the BuyBakFrenchWines Tools, that uses storage for 10 different wines, and invokes the list of query_tool, one per wine district, to answer user queries. Return the value strictly as an HTML output.
+system_prompt_german_time_series = f"""You are now connected to the BuyBakGermanTimeSeries Tools, that 1. predicts the EMA values for a live array of [['open','high','low','close']], and 2. forecasts future EMA using the MLForecaster.
+Only enter details that the user has explicitly provided. Return the value from the tools provided for the predict method.
 Do not make up any details.
 """
+buybak_german_time_series_tools = BuyBakGermanTimeSeriesToolSpec().to_tool_list()
+buybak_german_ts_agent = FunctionAgent(
+    name="BuyBakGermanTimeSeriesAgent",
+    description="Booking agent that predicts the next EMA values from a time series AND Provides info about wines from different region in Germany",
+    tools=buybak_german_time_series_tools,
+    llm=OpenAI(model="gpt-4.1"),
+    system_prompt=system_prompt_german_time_series,
+    verbose=True,
+)
+
+system_prompt_french_wines = f"""You are now connected to the BuyBakFrenchWines Tools, that uses storage for 10 different wines, and invokes the list of query_tool, one per wine district, to answer user queries. Return the value strictly as an HTML output.  Do not make up any details.  """
+system_prompt_german_wines = f"""You are now connected to the BuyBakGermanWines Tools, that uses storage for 10 different wines, and invokes the list of query_tool, one per wine district, to answer user queries. Return the value strictly as an HTML output.  Do not make up any details.  """
+
 buybak_french_wines_tools = BuyBakFrenchWinesToolSpec().to_tool_list()
 buybak_french_wines_agent = FunctionAgent(
     name="BuyBakFrenchWinesAgent",
-    description="Agent that tablulates French Wines from the toolspec query_engine_tool loaded from the storage",
+    description="Agent that tablulates French Wines from the toolspec query_engine_tool loaded from the BuyBakFrenchWinesToolSpec storage",
     tools=buybak_french_wines_tools,
     llm=OpenAI(model="gpt-4.1"),
     system_prompt=system_prompt_french_wines,
     verbose=True,
 )
 
+buybak_german_wines_tools = BuyBakGermanWinesToolSpec().to_tool_list()
+buybak_german_wines_agent = FunctionAgent(
+    name="BuyBakGermanWinesAgent",
+    description="Agent that tablulates German Wines from the toolspec query_engine_tool loaded from the BuyBakGermanWinesToolSpec storage",
+    tools=buybak_german_wines_tools,
+    llm=OpenAI(model="gpt-4.1"),
+    system_prompt=system_prompt_german_wines,
+    verbose=True,
+)
+
 agent_workflow = AgentWorkflow(
-    agents=[buybak_ts_agent, buybak_french_wines_agent],
-    root_agent=buybak_ts_agent.name,
+    agents=[buybak_ts_agent, buybak_german_ts_agent, buybak_german_wines_agent, buybak_french_wines_agent],
+    root_agent=buybak_german_ts_agent.name,
     initial_state={
     },
     verbose=True,
