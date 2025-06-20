@@ -10,6 +10,7 @@ from MyWorkflowFSMC import MyWorkflow
 from fastapi.middleware.cors import CORSMiddleware
 from buybakworkflow.models import ResearchTopic
 from buybakworkflow.MyWorkflowContext import *
+from buybakworkflow.rabbitmq import RabbitMQ
 
 import os
 from pathlib import Path
@@ -94,6 +95,20 @@ async def submit_user_input(topic: ResearchTopic):
         raise HTTPException(
             status_code=404, detail="Workflow not found or future not initialized"
         )
+
+def callback(ch, method, properties, body) -> str:
+    print(f"Received {method}, {properties}, {body} ")
+    return body
+
+@app.post("/submit-rabbitmq")
+async def submit_rabbitmq(topic: ResearchTopic):
+    user_input = topic.query
+    print(f'submit_rabbitmq: {user_input}')
+    rabbitmq = RabbitMQ()
+    rabbitmq.publish('buybak', user_input)
+    print(f'Sent message: {user_input}')
+    response = rabbitmq.consume('buybak_response', callback)
+    return {'status': response}
 
 
 @app.get("/arm_timer")
