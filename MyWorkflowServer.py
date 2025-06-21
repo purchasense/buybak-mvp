@@ -48,6 +48,7 @@ async def run_workflow_endpoint(topic: ResearchTopic):
     wines_json = json.loads(topic.query)
     print(wines_json["region"])
 
+    """
     if not 'french' in workflows:
         print('Adding "french" in workflows...........................->')
         fsmc = MyWorkflowContext(region=wines_json["region"])
@@ -56,7 +57,11 @@ async def run_workflow_endpoint(topic: ResearchTopic):
         print('Adding "german" in workflows...........................->')
         fsmc = MyWorkflowContext(region=wines_json["region"])
         workflows[wines_json["region"]] = MyWorkflow(region=wines_json["region"], fsmc=fsmc, timeout=2000, verbose=True)
+    """
 
+    print(f'Adding {wines_json["region"]}  in workflows...........................->')
+    fsmc = MyWorkflowContext(region=wines_json["region"])
+    workflows[wines_json["region"]] = MyWorkflow(region=wines_json["region"], fsmc=fsmc, timeout=2000, verbose=True)
     wf = workflows[wines_json["region"]]
 
     async def event_generator():

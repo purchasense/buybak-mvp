@@ -271,6 +271,7 @@ export const  MobileMessage = (props) => {
         cseries[0].data = cData;
     }
     // console.log('isChart: ' + isChart);
+    console.log( props.user + ' ' + currentUser);
     return (
         <div className="mx-4">
             <Grid container spacing={1} padding={1} >

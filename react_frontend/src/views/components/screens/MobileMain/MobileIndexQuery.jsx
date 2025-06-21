@@ -157,9 +157,9 @@ export const MobileIndexQuery = () => {
           setStarted(true);
           // console.log('Query: ' + e.target.value);
           console.log(e);
-          const msg = JSON.stringify({"event_type": "user", "event_state": "init", "event_stimuli": "AgenticEvent", "event_content": { "outline": "", "message": "Start"}});
+          const msg = JSON.stringify({"event_type": wineLabels[tabsValue], "event_state": "init", "event_stimuli": "AgenticEvent", "event_content": { "outline": "", "message": "Start"}});
           dispatch(setBuybakMobileMessage(Date.now(), 'sameer', msg));
-          let query = (tabsValue === 0 || tabsValue === 1) ? '{"region": "french"}' : '{"region": "german"}';
+          let query = '{"region": "' + wineLabels[tabsValue] + '"}';
           queryStreamingIndex(query)
           .then(response => {
                 if (!response.ok) {
@@ -203,8 +203,8 @@ export const MobileIndexQuery = () => {
         if (e.key == 'Enter') {
           console.log('UserInputQuery: ' + e.target.value);
           console.log(e);
-          let query = (tabsValue === 0 || tabsValue === 1) ? JSON.stringify({"region": "french", "user_input": e.target.value}) : JSON.stringify({"region": "german", "user_input": e.target.value });
-          const msg = JSON.stringify({"event_type": "submit", "event_state": "user", "event_stimuli": "SubmitEvent", "event_content": { "outline": "", "message": query}});
+          let query = JSON.stringify({"region": wineLabels[tabsValue], "user_input": e.target.value});
+          const msg = JSON.stringify({"event_type": wineLabels[tabsValue], "event_state": "user", "event_stimuli": "SubmitEvent", "event_content": { "outline": "", "message": query}});
           dispatch(setBuybakMobileMessage(Date.now(), 'sameer', msg));
           queryUserInputIndex(query).then((response) => {
             setResponseText(response.text);
@@ -240,7 +240,7 @@ export const MobileIndexQuery = () => {
     ********************************************************/
 
     const list_messages = useSelector((state) => {
-        let region = (tabsValue === 0 || tabsValue === 1) ? "french" : "german";
+        let region = wineLabels[tabsValue];
         let list = [];
         state.qrcode.list_store_to_mobile_messages.map((message) => {
             if (message.event_type === region)
