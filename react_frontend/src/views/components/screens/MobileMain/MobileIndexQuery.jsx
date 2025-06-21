@@ -240,7 +240,15 @@ export const MobileIndexQuery = () => {
     ********************************************************/
 
     const list_messages = useSelector((state) => {
-        return state.qrcode.list_store_to_mobile_messages;
+        let region = (tabsValue === 0 || tabsValue === 1) ? "french" : "german";
+        let list = [];
+        state.qrcode.list_store_to_mobile_messages.map((message) => {
+            if (message.event_type === region)
+            {
+                list = [...list, message];
+            }
+        });
+        return list;
     });
 
     const refreshScroll = useSelector((state) => {return state.qrcode.refreshScroll;});
