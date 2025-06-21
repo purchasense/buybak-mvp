@@ -129,6 +129,13 @@ const scrollToBottom = (tableContainerRef) => {
      }
 };
 
+const wineLabels = [
+    "Italian",
+    "French",
+    "Argentinian",
+    "German",
+];
+
 export const MobileIndexQuery = () => {
 
 
@@ -152,7 +159,8 @@ export const MobileIndexQuery = () => {
           console.log(e);
           const msg = JSON.stringify({"event_type": "user", "event_state": "init", "event_stimuli": "AgenticEvent", "event_content": { "outline": "", "message": "Start"}});
           dispatch(setBuybakMobileMessage(Date.now(), 'sameer', msg));
-          queryStreamingIndex("Start")
+          let query = (tabsValue === 0 || tabsValue === 1) ? '{"region": "french"}' : '{"region": "german"}';
+          queryStreamingIndex(query)
           .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -195,9 +203,10 @@ export const MobileIndexQuery = () => {
         if (e.key == 'Enter') {
           console.log('UserInputQuery: ' + e.target.value);
           console.log(e);
-          const msg = JSON.stringify({"event_type": "submit", "event_state": "user", "event_stimuli": "SubmitEvent", "event_content": { "outline": "", "message": e.target.value}});
+          let query = (tabsValue === 0 || tabsValue === 1) ? JSON.stringify({"region": "french", "user_input": e.target.value}) : JSON.stringify({"region": "german", "user_input": e.target.value });
+          const msg = JSON.stringify({"event_type": "submit", "event_state": "user", "event_stimuli": "SubmitEvent", "event_content": { "outline": "", "message": query}});
           dispatch(setBuybakMobileMessage(Date.now(), 'sameer', msg));
-          queryUserInputIndex(e.target.value).then((response) => {
+          queryUserInputIndex(query).then((response) => {
             setResponseText(response.text);
             console.log("UserInputQuery: ", response.text);
             // dispatch(setBuybakMobileMessage(Date.now(), 'GPT', response.text));
@@ -283,7 +292,7 @@ export const MobileIndexQuery = () => {
             <Grid container sx={{backgroundImage: `url("/images/wallpaper_5.jpg")`}} >
                 <Grid item spacing={2} padding={2}>
                      <Button color="primary" variant="contained" fullWidth onClick={handleQuery}>
-                        Start BuyBak Agent-that-is-Alive!
+                        Start {wineLabels[tabsValue]} Agent-that-is-Alive!
                      </Button>
                 </Grid>
             </Grid>

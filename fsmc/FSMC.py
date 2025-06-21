@@ -170,10 +170,11 @@ class FSMCWorkflow(Workflow):
             args = delimiter.join(steps["args"])
             if steps["state"] == "__init__":
                 
-                print(f'    def __init__(self, fsmc: {self.state_machine["fsmc"]["name"]}Context, *args, **kwargs):')
+                print(f'    def __init__(self, region: str, fsmc: {self.state_machine["fsmc"]["name"]}Context, *args, **kwargs):')
                 print(f'        print(\"Inside {steps["state"]}\")')
                 print(f'        super().__init__(*args, **kwargs)')
                 print(f'        # initialize the Future')
+                print(f'        self.region = region')
                 print(f'        self.fsmc = fsmc')
                 print(f'        # user_input for FSMC asking qustions (AI or not to AI)')
                 print(f'        self.user_input_future = asyncio.Future()')

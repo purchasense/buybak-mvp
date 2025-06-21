@@ -263,19 +263,21 @@ class MyWorkflowContext():
     my_queue: asyncio.Queue
     my_producers: Any
     my_consumers: Any
+    region: str
 
 
-    def __init__(self,*args,**kwargs):
+    def __init__(self,region: str, *args,**kwargs):
         print("Inside __init__")
         random.seed(444)
         self.live_market_count = 0
         self.live_market_data = 0
         self.my_proconq_started = False
+        self.region = region
 
     async def generate_stream_event(self, ctx: Context, ev: Event, etype: str, stimulus: str, estate: str, outline: str, msg: str):
         print('generateEvent...')
         ctx.write_event_to_stream( generateEvent(
-                etype, 
+                self.region, 
                 estate, 
                 stimulus,
                 outline,

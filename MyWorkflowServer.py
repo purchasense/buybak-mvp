@@ -44,10 +44,20 @@ app.add_middleware(
 @app.post("/run-buybak-workflow")
 async def run_workflow_endpoint(topic: ResearchTopic):
 
-    print(topic)
-    fsmc = MyWorkflowContext()
-    wf = MyWorkflow(fsmc=fsmc, timeout=2000, verbose=True)
-    workflows["0"] = wf  # Store the workflow instance
+    print(topic.query)
+    wines_json = json.loads(topic.query)
+    print(wines_json["region"])
+
+    if not 'french' in workflows:
+        print('Adding "french" in workflows...........................->')
+        fsmc = MyWorkflowContext(region=wines_json["region"])
+        workflows[wines_json["region"]] = MyWorkflow(region=wines_json["region"], fsmc=fsmc, timeout=2000, verbose=True)
+    elif not 'german' in workflows:
+        print('Adding "german" in workflows...........................->')
+        fsmc = MyWorkflowContext(region=wines_json["region"])
+        workflows[wines_json["region"]] = MyWorkflow(region=wines_json["region"], fsmc=fsmc, timeout=2000, verbose=True)
+
+    wf = workflows[wines_json["region"]]
 
     async def event_generator():
         loop = asyncio.get_running_loop()
@@ -80,8 +90,15 @@ async def run_workflow_endpoint(topic: ResearchTopic):
 
 @app.post("/submit-user-input")
 async def submit_user_input(topic: ResearchTopic):
-    user_input = topic.query
-    wf = workflows.get("0")
+    print(topic)
+    print(topic.query)
+    payload_json = json.loads(topic.query)
+    print(payload_json)
+    print(payload_json["region"])
+    print(payload_json["user_input"])
+    user_input = payload_json["user_input"]
+
+    wf = workflows.get(payload_json["region"])
     if wf and wf.user_input_future:
         loop = wf.user_input_future.get_loop()  # Get the loop from the future
         print(f"submit_user_input: wf.user_input_future loop id {id(loop)}")

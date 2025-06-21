@@ -39,10 +39,11 @@ class MyWorkflow(Workflow):
     sameer_here:   str = Field(..., description="placeholder")
     fsmc:   MyWorkflowContext = Field(..., description="Action Functions")
 
-    def __init__(self, fsmc: MyWorkflowContext, *args, **kwargs):
+    def __init__(self, region: str, fsmc: MyWorkflowContext, *args, **kwargs):
         print("Inside __init__")
         super().__init__(*args, **kwargs)
         # initialize the Future
+        self.region = region
         self.fsmc = fsmc
         # user_input for FSMC asking qustions (AI or not to AI)
         self.user_input_future = asyncio.Future()
