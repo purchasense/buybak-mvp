@@ -102,7 +102,14 @@ const map_store_to_images = new I.Map({
 	'Corsican':  '/images/Corsican.png',
 	'Jura':  '/images/Jura-3.png',
 	'Savoy':  '/images/Savoy-3.jpg',
-	'SouthWestFrench':  '/images/SouthWestFrench.png'
+	'SouthWestFrench':  '/images/SouthWestFrench.png',
+    'Ahr':  '/images/Alsace.png',
+	'Baden':  '/images/Bordauex-3.jpg',
+	'Franconia':  '/images/Burgundy-4.png',
+	'Hessische':  '/images/Champagne-3.png',
+	'Kaiserstuhl':  '/images/Corsican.png',
+	'German':  '/images/Jura-3.png',
+	'Rheinhessen':  '/images/Savoy-3.jpg'
 });
 
 const initialState = {

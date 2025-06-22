@@ -36,6 +36,9 @@ pika                                     = "1.3.2"
 markdown-it-py                           = "3.0.0"
 Markdown                                 = "3.8"
 MarkupSafe                               = "3.0.2"
+dict                                     = "2018.11.19"
+frozendict                               = "2.4.6"
+multidict                                = "6.2.0"
 
 
 

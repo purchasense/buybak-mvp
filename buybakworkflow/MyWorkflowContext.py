@@ -191,17 +191,13 @@ buybak_images_str = [
     '/images/Savoy-3.jpg'
 ]
 
-buybak_wines_str = [
-    "Alsace",
-    "Bordeaux",
-    "Burgundy",
-    "Champagne",
-    "Corsican",
-    "French",
-    "SouthWestFrench",
-    "Jura",
-    "Savoy"
-]
+my_dict = dict([("key_a", 10), ("key_b", 20)])
+buybak_wines_str = {
+    "Italian": [ "Alsace", "Bordeaux", "Burgundy", "Champagne", "Corsican", "French", "SouthWestFrench", "Jura", "Savoy" ],
+    "French": [ "Alsace", "Bordeaux", "Burgundy", "Champagne", "Corsican", "French", "SouthWestFrench", "Jura", "Savoy" ],
+    "Argentinian": [ "Ahr", "Baden", "Franconia", "Hessische", "Kaiserstuhl", "Mosel", "Rheinhessen"],
+    "German": [ "Ahr", "Baden", "Franconia", "Hessische", "Kaiserstuhl", "Mosel", "Rheinhessen"]
+}
 
 wine_forecast =[
     [164.27, 163.64, 163.51, 162.67, 161.94, 161.17, 160.40, 159.82, 159.20, 158.13, 157.74, 157.06, 156.47, 155.88, 154.96],
@@ -449,11 +445,16 @@ class MyWorkflowContext():
         print(f'result: {result}')
         print(f'type: {type(response)}')
         print(f'response.tool_calls: {response.tool_calls}')
-        for i in response.tool_calls: 
-            if i.tool_kwargs != {}:
-                    print(f'---------------> ToolCallResult( {i.tool_kwargs["index"]} {i.tool_kwargs["argin"]})')
-                    wine_forecast_args = i.tool_kwargs["index"], i.tool_kwargs["argin"]
-                    print(f'wine_forecast_args ---------> {wine_forecast_args}')
+
+        try:
+            for i in response.tool_calls: 
+                if i.tool_kwargs != {}:
+                        print(f'---------------> ToolCallResult( {i.tool_kwargs["index"]} {i.tool_kwargs["argin"]})')
+                        wine_forecast_args = i.tool_kwargs["index"], i.tool_kwargs["argin"]
+                        print(f'wine_forecast_args ---------> {wine_forecast_args}')
+        except Exception as e: 
+            print(f'ToolCall failed with {e}')
+
         print(f'response: {str(response)}')
 
         await self.generate_stream_event(ctx, ev, 
@@ -505,9 +506,17 @@ class MyWorkflowContext():
         quantity = random.randint(1, 6) * 100;
         price = int(10000 * round(self.live_market_data, 2))
 
+        rindex = 0
+        if self.region == "French":
+            rindex = 1
+        elif self.region == "Argentinian":
+            rindex = 2
+        elif self.region == "German":
+            rindex = 3
+
         price_dict = {
             "action": "MD", 
-            "wine": buybak_wines_str[self.live_market_index], 
+            "wine": buybak_wines_str[self.region][self.live_market_index], 
             "quantity": quantity,
             "price": price
         }
@@ -568,7 +577,7 @@ class MyWorkflowContext():
                                     </tr>
                                     <tr>
                                         <td><img align="top" style={{position:"relative",right:"1px",top:"-30px"}} width="55px" alt={"BuyBak.io"} src="/images/BuyBakGreenLogoPitchDeck.png" /></td>
-                                        <td>BuyBak Alloc {self.live_market_buy/100.0} for ${round(self.live_buybak_alloc, 2)}</td>
+                                        <td>BuyBak {buybak_wines_str[self.region][self.live_market_index]}  {self.live_market_buy/100.0} for ${round(self.live_buybak_alloc, 2)}</td>
                                     </tr>
                                 </table>'''
 
@@ -615,9 +624,18 @@ class MyWorkflowContext():
             )
 
         price = int(10000 * round(self.live_market_data, 2))
+
+        rindex = 0
+        if self.region == "French":
+            rindex = 1
+        elif self.region == "Argentinian":
+            rindex = 2
+        elif self.region == "German":
+            rindex = 3
+
         item_dict = {
             "action": "Buy", 
-            "wine": buybak_wines_str[self.live_market_index], 
+            "wine": buybak_wines_str[self.region][self.live_market_index], 
             "quantity": self.live_market_buy,
             "price": price
         }
