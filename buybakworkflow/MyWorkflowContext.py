@@ -15,6 +15,8 @@ import re
 import string
 import csv
 import os
+import markdown
+from markdown import Markdown
 
 from typing import Optional, Any, Literal, Dict
 from pydantic import BaseModel, Field
@@ -438,11 +440,12 @@ class MyWorkflowContext():
             )
         """
         print(query)
+        adv_query = f" {query}. Print response as JSON with attributes forecast_days, region, predicted_ema"
 
-        query_prompt = "Query using the buybaktools, forecast time series for next 15 days, and strictly print the LGBMRegressor column as comma separated CSV array"
+        print(f'Now querying..................................... {adv_query}')
 
         timestamp = time.time()
-        result, response = self.__iter_over_async_forecaster(query)
+        result, response = self.__iter_over_async_forecaster(adv_query)
         print(f'result: {result}')
         print(f'type: {type(response)}')
         print(f'response.tool_calls: {response.tool_calls}')
@@ -453,26 +456,24 @@ class MyWorkflowContext():
                     print(f'wine_forecast_args ---------> {wine_forecast_args}')
         print(f'response: {str(response)}')
 
+        await self.generate_stream_event(ctx, ev, 
+                "agent",
+                "ForecastEvent",
+                "forecast_state",
+                "outline",
+                str(response)
+        )
+
+
         try:
-            nospecial = re.sub(r'[^,0-9\.]', '', str(response))
-            print(f'nospecial: {nospecial}')
-            sdata = nospecial.split(",")
-            print(f'sdata: {sdata}')
-            float_list = [round(float(num),2) for num in sdata]
+            respjson = json.loads(str(response))
+            print('-----------JSON---------------')
+            print(respjson)
+            float_list = [round(float(num),2) for num in respjson["predicted_ema"]]
             print(f'float_list: {float_list}')
             wine_forecast[wine_forecast_args[0]] = float_list
-            for wf in wine_forecast: 
-                print(f'-----> ----> ----> : {wf}')
-
-            await self.generate_stream_event(ctx, ev, 
-                    "agent",
-                    "ForecastEvent",
-                    "forecast_state",
-                    "outline",
-                    str(response)
-                )
         except Exception as e:
-            print(e)
+            print(f'Exception {e}')
 
         return True, f'DONE MLForecastor'
 
