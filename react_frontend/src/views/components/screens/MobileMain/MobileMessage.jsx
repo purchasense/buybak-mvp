@@ -284,11 +284,11 @@ export const  MobileMessage = (props) => {
                     <ColorSubCard
                       padding={1}
                       spacing={0}
-                      border={'#FDD'}
+                      border={'#000'}
                       align-items="right"
                       md={8}
                       aria-label="main mailbox folders"
-                      sx={{ boxShadow: '0px 0px 0px #000', border: '2px solid', borderRadius: '15px', background: "#FDD" }}
+                      sx={{ boxShadow: '0px 0px 0px #000', border: '2px solid', borderRadius: '15px 0px 15px 15px', background: "#FDD" }}
                     >
                                     <span 
                                         className="px-2 py-2 rounded-lg inline-block max-w-sm break-all float-right rounded-br-none bg-blue-600 text-white "
@@ -307,12 +307,12 @@ export const  MobileMessage = (props) => {
                         <ColorSubCard
                           padding={1}
                           spacing={0}
-                          border={fbgc}
+                          border={'#888'}
                           background={fbgc}
                           align-items="left"
                           md={8}
                           aria-label="main mailbox folders"
-                          sx={{ boxShadow: '0px 0px 0px #000', border: '1px solid', borderRadius: '15px', background: fbgc}}
+                          sx={{ boxShadow: '0px 0px 0px #000', border: '1px solid', borderRadius: '15px 15px 15px 0px', background: fbgc}}
                         >
                                     <span 
                                         className="px-4 py-2 rounded-lg inline-block max-w-sm break-all rounded-bl-none bg-gray-800 text-gray-100"

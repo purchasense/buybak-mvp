@@ -39,6 +39,8 @@ MarkupSafe                               = "3.0.2"
 dict                                     = "2018.11.19"
 frozendict                               = "2.4.6"
 multidict                                = "6.2.0"
+huggingface-hub                          = "0.29.3"
+llama-index-embeddings-huggingface       = "0.5.2"
 
 
 

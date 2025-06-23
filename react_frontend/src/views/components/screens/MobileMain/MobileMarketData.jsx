@@ -246,11 +246,11 @@ export const  MobileMarketData = (props) => {
                     <ColorSubCard
                       padding={1}
                       spacing={0}
-                      border={'#000'}
+                      border={'#888'}
                       align-items="right"
                       md={8}
                       aria-label="main mailbox folders"
-                      sx={{ boxShadow: '0px 0px 0px #000', border: '2px solid', borderRadius: '15px', background: "#d7e3ef" }}
+                      sx={{ boxShadow: '0px 0px 0px #000', border: '1px solid', borderRadius: '15px 15px 15px 0px', background: "#d7e3ef" }}
                     >
                         <span 
                             className="px-4 py-2 rounded-lg inline-block max-w-sm break-all rounded-bl-none bg-gray-800 text-gray-100"
