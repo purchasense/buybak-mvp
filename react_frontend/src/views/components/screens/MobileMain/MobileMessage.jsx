@@ -243,15 +243,21 @@ export const  MobileMessage = (props) => {
         }
         else if ( props.estimuli && props.msg && (props.estimuli === "ForecastEvent"))
         {
-            const values = JSON.parse(props.msg);
             console.log('------------- WineForecast -------------')
-            console.log({values})
-            Object.keys(values).map((key: string) => {
-                console.log( values[key]);
-                setCData(values[key]);
-                console.log(cData);
-                isChart = true;
-            });
+            console.log(props.msg);
+            try {
+                const values = JSON.parse(props.msg);
+                console.log({values})
+                Object.keys(values).map((key: string) => {
+                    console.log( values[key]);
+                    setCData(values[key]);
+                    console.log(cData);
+                    isChart = true;
+                });
+            } catch(e ) {
+                console.log(e);
+            }
+
         }
         else if ( props.estimuli && props.msg && (props.estimuli === "LiveMarketEvent"))
         {
@@ -271,7 +277,6 @@ export const  MobileMessage = (props) => {
         cseries[0].data = cData;
     }
     // console.log('isChart: ' + isChart);
-    console.log( props.user + ' ' + currentUser);
     return (
         <div className="mx-4">
             <Grid container spacing={1} padding={1} >
