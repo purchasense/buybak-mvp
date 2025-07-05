@@ -310,7 +310,7 @@ export const MobileIndexQuery = () => {
 
       {/* Region Tabs */}
       <Paper elevation={1} sx={{ 
-        backgroundColor: '#34495e',
+        backgroundColor: '#5a6c7d',
         borderRadius: 0
       }}>
         <Tabs
@@ -326,7 +326,7 @@ export const MobileIndexQuery = () => {
               minHeight: 48,
               '&.Mui-selected': {
                 color: '#3498db',
-                backgroundColor: '#2c3e50'
+                backgroundColor: '#4a5a6a'
               }
             },
             '& .MuiTabs-indicator': {

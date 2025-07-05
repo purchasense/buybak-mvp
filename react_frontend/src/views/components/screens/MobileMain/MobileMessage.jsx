@@ -270,7 +270,8 @@ export const  MobileMessage = (props) => {
                 borderRadius: '18px 18px 4px 18px',
                 marginLeft: 'auto',
                 marginRight: '8px',
-                maxWidth: '85%',
+                maxWidth: '95%',
+                width: '100%',
                 wordWrap: 'break-word'
             };
         } else if (isBotMessage) {
@@ -280,7 +281,8 @@ export const  MobileMessage = (props) => {
                 borderRadius: '18px 18px 18px 4px',
                 marginRight: 'auto',
                 marginLeft: '8px',
-                maxWidth: '85%',
+                maxWidth: '95%',
+                width: '100%',
                 wordWrap: 'break-word',
                 border: '1px solid #d5dbdb'
             };
@@ -290,7 +292,8 @@ export const  MobileMessage = (props) => {
                 color: 'white',
                 borderRadius: '12px',
                 margin: '8px auto',
-                maxWidth: '90%',
+                maxWidth: '95%',
+                width: '100%',
                 wordWrap: 'break-word',
                 textAlign: 'center'
             };
@@ -349,11 +352,11 @@ export const  MobileMessage = (props) => {
     };
 
     return (
-        <Box sx={{ mb: 2, px: 1 }}>
+        <Box sx={{ mb: 2, px: 0.5 }}>
             <Box sx={{ 
                 display: 'flex', 
                 alignItems: 'flex-end',
-                gap: 1,
+                gap: 0.5,
                 flexDirection: isUserMessage ? 'row-reverse' : 'row'
             }}>
                 {/* Avatar */}
@@ -361,7 +364,8 @@ export const  MobileMessage = (props) => {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    gap: 0.5
+                    gap: 0.5,
+                    flexShrink: 0
                 }}>
                     {getAvatar()}
                     {getTimestamp()}
@@ -371,7 +375,8 @@ export const  MobileMessage = (props) => {
                 <Box sx={{ 
                     display: 'flex',
                     flexDirection: 'column',
-                    maxWidth: '75%'
+                    maxWidth: '90%',
+                    flex: 1
                 }}>
                     <Paper
                         elevation={1}
@@ -448,12 +453,13 @@ export const  MobileMessage = (props) => {
                 <Fade in={true} timeout={500}>
                     <Box sx={{ 
                         mt: 1, 
-                        ml: 5,
-                        mr: 1,
+                        ml: isUserMessage ? 1 : 5,
+                        mr: isUserMessage ? 5 : 1,
                         backgroundColor: 'white',
                         borderRadius: '12px',
                         p: 2,
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                        maxWidth: '95%'
                     }}>
                         <Box sx={{ 
                             display: 'flex', 
