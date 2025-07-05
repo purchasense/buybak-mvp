@@ -9,6 +9,8 @@ import buybak_logo from "../../../../assets/images/BuyBakGreenLogoPitchDeck.png"
 import {MobileStocks} from './MobileStocks';
 import {MobilePortfolio} from './MobilePortfolio';
 import {MobileIndexQuery} from './MobileIndexQuery';
+import MobileSettings from './MobileSettings';
+import MobileProfile from './MobileProfile';
 
 // {'Up by '}{'7%'}{' from last month'}
 
@@ -126,6 +128,8 @@ export const MobileMain = () => {
     const pnl = (total_curr - total_fsop);
     const alertCount = useSelector((state) => {return state.qrcode.alertCount});
 
+    // Import the MobileSettings and MobileProfile components
+
   return (
     <>
 
@@ -142,28 +146,60 @@ export const MobileMain = () => {
 
                 <Grid container >
                     <Grid item xs="8.5" align="right">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-settings" width="24" height="24" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#000" fill="none" strokeLinecap="round" strokeLinejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" />
-  <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
-</svg>
+                        <IconButton 
+                            onClick={() => setTabsValue(3)}
+                            sx={{ 
+                                cursor: 'pointer',
+                                '&:hover': {
+                                    backgroundColor: 'rgba(0,0,0,0.04)',
+                                    borderRadius: '50%'
+                                }
+                            }}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-settings" width="24" height="24" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#000" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" />
+                                <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
+                            </svg>
+                        </IconButton>
                     </Grid>
                     <Grid item xs="1.5" sx={{marginLeft: "0px"}} align="right">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-user-circle" width="24" height="24" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#000" fill="none" strokeLinecap="round" strokeLinejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-  <path d="M12 10m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
-  <path d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855" />
-</svg>
+                        <IconButton 
+                            onClick={() => setTabsValue(4)}
+                            sx={{ 
+                                cursor: 'pointer',
+                                '&:hover': {
+                                    backgroundColor: 'rgba(0,0,0,0.04)',
+                                    borderRadius: '50%'
+                                }
+                            }}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-user-circle" width="24" height="24" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#000" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                                <path d="M12 10m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+                                <path d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855" />
+                            </svg>
+                        </IconButton>
                     </Grid>
-                    <Grid item xs="1.5" sx={{marginTop: "-8px", marginLeft: "0px" }} align="right">
-                        <IconButton onClick={handleResetAlertCount} aria-label="cart">
+                    <Grid item xs="1.5" sx={{marginLeft: "0px"}} align="right">
+                        <IconButton 
+                            onClick={handleResetAlertCount} 
+                            aria-label="notifications"
+                            sx={{ 
+                                cursor: 'pointer',
+                                '&:hover': {
+                                    backgroundColor: 'rgba(0,0,0,0.04)',
+                                    borderRadius: '50%'
+                                }
+                            }}
+                        >
                             <CustomizedBadge badgeContent={alertCount} color="error">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-bell" width="24" height="24" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#000" fill="none" strokeLinecap="round" strokeLinejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
-  <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
-</svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-bell" width="24" height="24" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#000" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
+                                    <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
+                                </svg>
                             </CustomizedBadge>
                         </IconButton>
                     </Grid>
@@ -178,13 +214,15 @@ export const MobileMain = () => {
                     <font style={{ fontFamily: 'Abhaya Libre ExtraBold', fontWeight: 'bold', fontSize: '2.6rem', color: '#243F7F'}} >Bak</font>
                 </div>
             </Grid>
-            <Grid item align="right" xs="3" />
-            <Grid item align="right" xs="5" >
+            <Grid item align="right" xs="1" />
+            <Grid item align="left" xs="7" >
                 <Tabs
                     value = {tabsValue}
                     onChange={handleChangeTab}
                     aria-label="ant example"
-                    sx={{width:'400px'}}
+                    sx={{width:'100%'}}
+                    variant="scrollable"
+                    scrollButtons="auto"
                   >
                         <Tab
                             sx={{color: 'black', fontWeight: 'bold', background: '#fff'}}
@@ -198,6 +236,14 @@ export const MobileMain = () => {
                             sx={{color: 'black', fontWeight: 'bold', background: '#FFF'}}
                             label={'Query'}
                         />
+                        <Tab
+                            sx={{color: 'black', fontWeight: 'bold', background: '#FFF'}}
+                            label={'Settings'}
+                        />
+                        <Tab
+                            sx={{color: 'black', fontWeight: 'bold', background: '#FFF'}}
+                            label={'Profile'}
+                        />
                 </Tabs>
             </Grid>
         </Grid>
@@ -206,6 +252,8 @@ export const MobileMain = () => {
         {tabsValue === 0 && <MobileStocks />}
         {tabsValue === 1 && <MobilePortfolio />}
         {tabsValue === 2 && <MobileIndexQuery />}
+        {tabsValue === 3 && <MobileSettings />}
+        {tabsValue === 4 && <MobileProfile />}
     </>
   );
 };

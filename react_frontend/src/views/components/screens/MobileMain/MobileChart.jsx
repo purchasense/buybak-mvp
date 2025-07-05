@@ -1,34 +1,16 @@
 import { formatRelative } from 'date-fns';
 import React, { useContext } from 'react';
-import ColorSubCard from "ui-component/cards/ColorSubCard";
 import Chart from 'react-apexcharts';
 import {
+  Box,
+  Typography,
   Card,
   CardContent,
-  Grid,
-  Button,
-  useMediaQuery,
 } from '@mui/material';
 import {
-  Badge,
-  Divider,
-  InputAdornment,
-  OutlinedInput,
-  InputLabel,
-  IconButton,
-  Chip,
-  Fab,
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableSortLabel,
-  TableRow,
-  TextField,
-  Typography,
-} from '@mui/material';
+  TrendingUp as TrendingUpIcon,
+  ShowChart as ChartIcon,
+} from '@mui/icons-material';
 
 const formatDate = date => {
   let formattedDate = '';
@@ -45,20 +27,21 @@ const formatDate = date => {
   return formattedDate;
 };
 
-
 let chartData = {
   type: "area",
-  height: '100%',
+  height: 200,
   width: '100%',
-  offsetX: 0,
   options: {
     chart: {
       sparkline: {
-        enabled: true,
+        enabled: false,
       },
-      background: "#aaa",
+      background: "transparent",
+      toolbar: {
+        show: false
+      }
     },
-    colors: ["#FFF"],
+    colors: ["#3498db"],
     dataLabels: {
       enabled: false,
     },
@@ -66,46 +49,47 @@ let chartData = {
         type: "gradient",
         gradient: {
             shadeIntensity: 1,
-            opacityFrom: 0.5,
-            opacityTo: 0.9,
-            stops: [0, 90, 100]
+            opacityFrom: 0.7,
+            opacityTo: 0.3,
+            stops: [0, 90, 100],
+            colorStops: [
+                {
+                    offset: 0,
+                    color: "#3498db",
+                    opacity: 0.7
+                },
+                {
+                    offset: 100,
+                    color: "#3498db",
+                    opacity: 0.1
+                }
+            ]
         }
     },
     stroke: {
       curve: "smooth",
       width: 3,
+      colors: ["#3498db"]
+    },
+    grid: {
+      show: false
     },
     yaxis: {
-        show: "true",
-        offsetY: 40
-  },
-    legend: {
-        position: 'bottom',
+        show: false
     },
     xaxis: {
-      offsetX: -10,
-      categories: [],
-      show: "false",
-      title: {
-        text: "Weekly",
-      },
-      labels: {
-         formatter: function (value) {
-            return value;
-         }
-      },
+      show: false
     },
     tooltip: {
       theme: "dark",
-      fixed: {
-        enabled: true,
-      },
       x: {
         show: false,
       },
       y: {
-        title: "FSOP",
-        show: "false",
+        title: "Value",
+        formatter: function (value) {
+          return "$" + value.toLocaleString();
+        }
       },
       marker: {
         show: false,
@@ -113,55 +97,65 @@ let chartData = {
     },
   },
   series: [
-  ],
-};
-
-let cd_data = [
     {
       name: "Forecast",
       data: [166.76558, 160.91374, 157.94542, 157.94542, 159.91353, 158.04843]
     },
-];
+  ],
+};
 
-const  MobileChart = (props) => {
-    cd_data[0].data = props.data;
-    console.log( 'CD_DATA---- MobileChart');
-    console.log( {props});
-    console.log( cd_data[0].data);
+const MobileChart = (props) => {
+    chartData.series[0].data = props.data;
+    console.log('CD_DATA---- MobileChart');
+    console.log({props});
+    console.log(chartData.series[0].data);
 
     return (
-        <div className="mx-4">
-            <Grid container spacing={2} padding={2} >
-            {
-                (
-                    <>
-                    <Grid item xs="9">
-                    <ColorSubCard
-                      padding={0}
-                      spacing={0}
-                      border={'red'}
-                      background={'blue'}
-                      align-items="left"
-                      aria-label="main mailbox folders"
-                      sx={{ boxShadow: '0px 0px 0px #000', border: '3px solid', borderRadius: '30px', background: "lightyellow" }}
-                    >
-                       <Chart
+        <Box sx={{ mb: 2 }}>
+            <Card sx={{ 
+                borderRadius: 3,
+                overflow: 'hidden',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+            }}>
+                <CardContent sx={{ p: 0 }}>
+                    <Box sx={{ 
+                        p: 3, 
+                        backgroundColor: '#ecf0f1',
+                        borderBottom: '1px solid #d5dbdb'
+                    }}>
+                        <Box sx={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: 1,
+                            mb: 1
+                        }}>
+                            <TrendingUpIcon sx={{ color: '#27ae60', fontSize: 20 }} />
+                            <Typography variant="h6" sx={{ 
+                                color: '#2c3e50',
+                                fontWeight: 600
+                            }}>
+                                Price Forecast
+                            </Typography>
+                        </Box>
+                        <Typography variant="body2" sx={{ 
+                            color: '#7f8c8d'
+                        }}>
+                            Historical price trends and predictions
+                        </Typography>
+                    </Box>
+                    <Box sx={{ p: 2 }}>
+                        <Chart
                             type="area"
+                            height={200}
                             width="100%"
-                            height="100%"
-                            sx={{boxShadow: '0px 0px 0px #000', border: '3px solid', borderRadius: '30px', background: "lightyellow"}}
                             options={chartData.options}
-                            series={cd_data}
+                            series={chartData.series}
                         />
-                    </ColorSubCard>
-                    </Grid>
-                    <Grid item xs="3" />
-                    </>
-                )
-            }
-            </Grid>
-        </div>
-    )
+                    </Box>
+                </CardContent>
+            </Card>
+        </Box>
+    );
 };
 
 export default MobileChart;
