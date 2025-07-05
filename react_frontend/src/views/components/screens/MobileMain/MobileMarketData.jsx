@@ -1,35 +1,20 @@
 import { formatRelative } from 'date-fns';
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useState, useEffect, useContext } from 'react';
-import ColorSubCard from "ui-component/cards/ColorSubCard";
 import Chart from 'react-apexcharts';
 import {
-  Card,
-  CardContent,
-  Grid,
-  Button,
-  useMediaQuery,
+  Box,
+  Typography,
+  Avatar,
+  Paper,
+  Fade,
+  Chip,
 } from '@mui/material';
 import {
-  Badge,
-  Divider,
-  InputAdornment,
-  OutlinedInput,
-  InputLabel,
-  IconButton,
-  Chip,
-  Fab,
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableSortLabel,
-  TableRow,
-  TextField,
-  Typography,
-} from '@mui/material';
+  TrendingUp as TrendingUpIcon,
+  ShowChart as ChartIcon,
+  AttachMoney as MoneyIcon,
+} from '@mui/icons-material';
 
 import {setModalQRCodeStatus, setModalQRCodeLoadingExecutionStatus, setModalQRCodeLoadingStatus, setModalQRCodeScan, setModalQRCodeSell, CustomerRetailFSOP} from 'store/actions';
 
@@ -215,60 +200,135 @@ let  cseries = [
 ];
 
 export const  MobileMarketData = (props) => {
-
     const dispatch = useDispatch();
-    let [liveMD, setLiveMD] = useState({});
-
-    const fbgc = 'white';
-
-    let isLiveMD = false;
+    const [liveMD, setLiveMD] = useState({});
 
     useEffect(() => {
-        if ( props.estimuli && props.msg && (props.estimuli === "LiveMarketEvent"))
-        {
+        if (props.estimuli && props.msg && (props.estimuli === "LiveMarketEvent")) {
             const values = JSON.parse(props.msg);
             console.log('------------- LiveMarketEvent -------------')
-
             console.log({values})
             setLiveMD(values);
-            isLiveMD = true;
         }
-    }, []);
+    }, [props.estimuli, props.msg]);
 
-    // TMD console.log('isLiveMD: ' + isLiveMD);
-    let message = liveMD["wine"] + ": " + liveMD["quantity"] + " @ $" + Number(liveMD["price"] / 10000.0).toFixed(2);
     return (
-        <div className="mx-4">
-            <Grid container spacing={1} padding={1} >
-            {
-            <>
-                <Grid item xs="9">
-                    <ColorSubCard
-                      padding={1}
-                      spacing={0}
-                      border={'#888'}
-                      align-items="right"
-                      md={8}
-                      aria-label="main mailbox folders"
-                      sx={{ boxShadow: '0px 0px 0px #000', border: '1px solid', borderRadius: '15px 15px 15px 0px', background: "#d7e3ef" }}
+        <Box sx={{ mb: 2, px: 1 }}>
+            <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'flex-end',
+                gap: 1
+            }}>
+                {/* Avatar */}
+                <Box sx={{ 
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 0.5
+                }}>
+                    <Avatar sx={{ 
+                        bgcolor: '#e74c3c',
+                        width: 32,
+                        height: 32
+                    }}>
+                        <MoneyIcon sx={{ fontSize: 18 }} />
+                    </Avatar>
+                    <Typography 
+                        variant="caption" 
+                        sx={{ 
+                            color: '#7f8c8d',
+                            fontSize: '0.7rem',
+                            mt: 0.5,
+                            display: 'block'
+                        }}
                     >
-                        <span 
-                            className="px-4 py-2 rounded-lg inline-block max-w-sm break-all rounded-bl-none bg-gray-800 text-gray-100"
-                            style={{color: 'black', fontSize: '1.1rem'}}
-                            dangerouslySetInnerHTML={{ __html: message}}
-                        >
-                        </span> <br/>
-                        <small style={{color: 'blue'}}>{ props.user || "Guest User"  }</small>
-                        <small style={{color: 'gray'}}>&nbsp;{props.etype}{': '}</small>
-                        <small style={{color: 'black'}}>&nbsp;{props.estate}</small>
-                        <small style={{color: 'red'}}>{'( '}{props.estimuli}&nbsp;{')'}</small>
-                    </ColorSubCard>
-                </Grid>
-                <Grid item xs="3" />
-            </>
-            }
-            </Grid>
-        </div>
-    )
+                        {formatDate(new Date())}
+                    </Typography>
+                </Box>
+
+                {/* Market Data Content */}
+                <Box sx={{ 
+                    display: 'flex',
+                    flexDirection: 'column',
+                    maxWidth: '75%'
+                }}>
+                    <Paper
+                        elevation={1}
+                        sx={{
+                            p: 2,
+                            backgroundColor: '#fff3cd',
+                            color: '#856404',
+                            borderRadius: '18px 18px 18px 4px',
+                            marginRight: 'auto',
+                            marginLeft: '8px',
+                            maxWidth: '85%',
+                            wordWrap: 'break-word',
+                            border: '1px solid #ffeaa7'
+                        }}
+                    >
+                        <Box sx={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: 1, 
+                            mb: 1 
+                        }}>
+                            <TrendingUpIcon sx={{ color: '#e74c3c', fontSize: 20 }} />
+                            <Typography variant="subtitle2" sx={{ 
+                                fontWeight: 600,
+                                color: '#856404'
+                            }}>
+                                Live Market Data
+                            </Typography>
+                        </Box>
+                        
+                        <Box
+                            dangerouslySetInnerHTML={{ __html: props.msg }}
+                            sx={{
+                                fontSize: '0.95rem',
+                                lineHeight: 1.5,
+                                '& table': {
+                                    width: '100%',
+                                    borderCollapse: 'collapse',
+                                    fontSize: '0.85rem',
+                                    backgroundColor: 'white',
+                                    borderRadius: '8px',
+                                    overflow: 'hidden'
+                                },
+                                '& th, & td': {
+                                    border: '1px solid #ddd',
+                                    padding: '8px',
+                                    textAlign: 'left'
+                                },
+                                '& th': {
+                                    backgroundColor: '#f8f9fa',
+                                    fontWeight: 'bold',
+                                    color: '#495057'
+                                },
+                                '& td': {
+                                    color: '#495057'
+                                }
+                            }}
+                        />
+                    </Paper>
+
+                    {/* Event Type Badge */}
+                    <Chip
+                        label={`${props.etype}: ${props.estate} (${props.estimuli})`}
+                        size="small"
+                        sx={{
+                            mt: 0.5,
+                            fontSize: '0.7rem',
+                            height: '20px',
+                            backgroundColor: '#e74c3c',
+                            color: 'white',
+                            '& .MuiChip-label': {
+                                px: 1
+                            }
+                        }}
+                    />
+                </Box>
+            </Box>
+        </Box>
+    );
 };
 

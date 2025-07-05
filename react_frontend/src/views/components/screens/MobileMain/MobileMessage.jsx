@@ -1,37 +1,23 @@
 import { formatRelative } from 'date-fns';
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useState, useEffect, useContext } from 'react';
-import ColorSubCard from "ui-component/cards/ColorSubCard";
 import Chart from 'react-apexcharts';
 import {
-  Card,
-  CardContent,
-  Grid,
-  Button,
-  useMediaQuery,
+  Box,
+  Typography,
+  Avatar,
+  Paper,
+  Fade,
+  Chip,
 } from '@mui/material';
 import {
-  Badge,
-  Divider,
-  InputAdornment,
-  OutlinedInput,
-  InputLabel,
-  IconButton,
-  Chip,
-  Fab,
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableSortLabel,
-  TableRow,
-  TextField,
-  Typography,
-} from '@mui/material';
+  Person as PersonIcon,
+  SmartToy as BotIcon,
+  TrendingUp as TrendingUpIcon,
+  WineBar as WineIcon,
+} from '@mui/icons-material';
 
-import {setModalQRCodeStatus, setModalQRCodeLoadingExecutionStatus, setModalQRCodeLoadingStatus, setModalQRCodeScan, setModalQRCodeSell, CustomerRetailFSOP} from 'store/actions';
+import {setModalQRCodeScan} from 'store/actions';
 
 const formatDate = date => {
   let formattedDate = '';
@@ -215,16 +201,15 @@ let  cseries = [
 ];
 
 export const  MobileMessage = (props) => {
-
     const dispatch = useDispatch();
     let [cData, setCData] = useState([]);
     let [liveMD, setLiveMD] = useState({});
     let [prefix, setPrefix] = useState("");
 
     const currentUser = 'sameer';
-    const bgc = ((props.estimuli === "LiveMarketEvent") || (props.estimuli === "CompareMarketEvent")) ? "white" : "cornsilk";
-    const nbgc = ((props.estimuli === "GetUserEvent") || (props.estimuli === "BuyOrSellEvent")) ? "#DDFFDD" : bgc;
-    const fbgc = (props.estimuli === "ForecastEvent") ? "#FFC" : nbgc;
+    const isUserMessage = props.user === currentUser;
+    const isBotMessage = props.user === 'GPT';
+    const isSystemMessage = !isUserMessage && !isBotMessage;
 
     let isChart = false;
     let isLiveMD = false;
@@ -248,7 +233,7 @@ export const  MobileMessage = (props) => {
             try {
                 const values = JSON.parse(props.msg);
                 console.log({values})
-                Object.keys(values).map((key: string) => {
+                Object.keys(values).map((key) => {
                     console.log( values[key]);
                     setCData(values[key]);
                     console.log(cData);
@@ -276,85 +261,225 @@ export const  MobileMessage = (props) => {
         console.log( cData);
         cseries[0].data = cData;
     }
-    // console.log('isChart: ' + isChart);
+
+    const getMessageStyle = () => {
+        if (isUserMessage) {
+            return {
+                backgroundColor: '#3498db',
+                color: 'white',
+                borderRadius: '18px 18px 4px 18px',
+                marginLeft: 'auto',
+                marginRight: '8px',
+                maxWidth: '85%',
+                wordWrap: 'break-word'
+            };
+        } else if (isBotMessage) {
+            return {
+                backgroundColor: '#ecf0f1',
+                color: '#2c3e50',
+                borderRadius: '18px 18px 18px 4px',
+                marginRight: 'auto',
+                marginLeft: '8px',
+                maxWidth: '85%',
+                wordWrap: 'break-word',
+                border: '1px solid #d5dbdb'
+            };
+        } else {
+            return {
+                backgroundColor: '#f39c12',
+                color: 'white',
+                borderRadius: '12px',
+                margin: '8px auto',
+                maxWidth: '90%',
+                wordWrap: 'break-word',
+                textAlign: 'center'
+            };
+        }
+    };
+
+    const getAvatar = () => {
+        if (isUserMessage) {
+            return (
+                <Avatar sx={{ 
+                    bgcolor: '#3498db',
+                    width: 32,
+                    height: 32,
+                    fontSize: '0.9rem'
+                }}>
+                    <PersonIcon sx={{ fontSize: 18 }} />
+                </Avatar>
+            );
+        } else if (isBotMessage) {
+            return (
+                <Avatar sx={{ 
+                    bgcolor: '#2c3e50',
+                    width: 32,
+                    height: 32
+                }}>
+                    <BotIcon sx={{ fontSize: 18 }} />
+                </Avatar>
+            );
+        } else {
+            return (
+                <Avatar sx={{ 
+                    bgcolor: '#f39c12',
+                    width: 28,
+                    height: 28
+                }}>
+                    <WineIcon sx={{ fontSize: 16 }} />
+                </Avatar>
+            );
+        }
+    };
+
+    const getTimestamp = () => {
+        return (
+            <Typography 
+                variant="caption" 
+                sx={{ 
+                    color: isUserMessage ? '#bdc3c7' : '#7f8c8d',
+                    fontSize: '0.7rem',
+                    mt: 0.5,
+                    display: 'block'
+                }}
+            >
+                {formatDate(new Date())}
+            </Typography>
+        );
+    };
+
     return (
-        <div className="mx-4">
-            <Grid container spacing={1} padding={1} >
-            {
-                // If the user who sent the message is the currentUser
-                props.user === currentUser ? (
-                    <>
-                    <Grid item xs="3" />
-                    <Grid item xs="9">
-                    <ColorSubCard
-                      padding={1}
-                      spacing={0}
-                      border={'#000'}
-                      align-items="right"
-                      md={8}
-                      aria-label="main mailbox folders"
-                      sx={{ boxShadow: '0px 0px 0px #000', border: '2px solid', borderRadius: '15px 0px 15px 15px', background: "#FDD" }}
+        <Box sx={{ mb: 2, px: 1 }}>
+            <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'flex-end',
+                gap: 1,
+                flexDirection: isUserMessage ? 'row-reverse' : 'row'
+            }}>
+                {/* Avatar */}
+                <Box sx={{ 
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 0.5
+                }}>
+                    {getAvatar()}
+                    {getTimestamp()}
+                </Box>
+
+                {/* Message Content */}
+                <Box sx={{ 
+                    display: 'flex',
+                    flexDirection: 'column',
+                    maxWidth: '75%'
+                }}>
+                    <Paper
+                        elevation={1}
+                        sx={{
+                            p: 2,
+                            ...getMessageStyle(),
+                            '& pre': {
+                                backgroundColor: isUserMessage ? 'rgba(255,255,255,0.1)' : '#f8f9fa',
+                                borderRadius: '8px',
+                                padding: '12px',
+                                overflow: 'auto',
+                                fontSize: '0.85rem',
+                                fontFamily: 'monospace',
+                                margin: '8px 0'
+                            },
+                            '& code': {
+                                backgroundColor: isUserMessage ? 'rgba(255,255,255,0.1)' : '#f8f9fa',
+                                padding: '2px 4px',
+                                borderRadius: '4px',
+                                fontSize: '0.85rem',
+                                fontFamily: 'monospace'
+                            },
+                            '& table': {
+                                width: '100%',
+                                borderCollapse: 'collapse',
+                                fontSize: '0.85rem'
+                            },
+                            '& th, & td': {
+                                border: '1px solid #ddd',
+                                padding: '8px',
+                                textAlign: 'left'
+                            },
+                            '& th': {
+                                backgroundColor: isUserMessage ? 'rgba(255,255,255,0.1)' : '#f8f9fa',
+                                fontWeight: 'bold'
+                            }
+                        }}
                     >
-                                    <span 
-                                        className="px-2 py-2 rounded-lg inline-block max-w-sm break-all float-right rounded-br-none bg-blue-600 text-white "
-                                        style={{ fontFamily: 'tiempos-headline,Lucida,Georgia,serif', fontWeight: 'bold', fontSize: "1.2rem", color: 'black'}}
-                                        dangerouslySetInnerHTML={{ __html: prefix}}
-                                        > 
-                                    </span> <br/>
-                                        {/* props.user || "Guest User" } - {formatDate(new Date())*/}
-                                    <Typography style={{ color: "gray", fontFamily: 'tiempos-headline,Lucida,Georgia,serif', fontWeight: 'normal', fontSize: "0.9rem" }}><small style={{color: 'blue'}}>{ props.user || "Guest User"  }</small>&nbsp;{props.etype}{': '}&nbsp;{props.estate}{'( '}{props.estimuli}&nbsp;{')'}</Typography>
-                    </ColorSubCard>
-                    </Grid>
-                    </>
-                ) : (
-                    <>
-                    <Grid item xs="9">
-                        <ColorSubCard
-                          padding={1}
-                          spacing={0}
-                          border={'#888'}
-                          background={fbgc}
-                          align-items="left"
-                          md={8}
-                          aria-label="main mailbox folders"
-                          sx={{ boxShadow: '0px 0px 0px #000', border: '1px solid', borderRadius: '15px 15px 15px 0px', background: fbgc}}
-                        >
-                                    <span 
-                                        className="px-4 py-2 rounded-lg inline-block max-w-sm break-all rounded-bl-none bg-gray-800 text-gray-100"
-                                        style={{color: 'black', fontSize: '1.1rem'}}
-                                        dangerouslySetInnerHTML={{ __html: prefix}}
-                                    >
-                                    </span> <br/>
-                                    <small style={{color: 'blue'}}>{ props.user || "Guest User"  }</small>
-                                    <small style={{color: 'gray'}}>&nbsp;{props.etype}{': '}</small>
-                                    <small style={{color: 'black'}}>&nbsp;{props.estate}</small>
-                                    <small style={{color: 'red'}}>{'( '}{props.estimuli}&nbsp;{')'}</small>
-                        </ColorSubCard>
-                    </Grid>
-                    <Grid item xs="3" />
-                    </>
-                )
-            }
-            <Grid xs="12">
-             {isChart === true ? (
-                <>
-                    <Grid item spacing={2} padding={2} xs="9" >
-                   <Chart
-                        type="line"
-                        padding={2}
-                        spacing={2}
-                        height={100}
-                        width={'100%'}
-                        options={chartData2.options}
-                        series={cseries}
-                    />                
-                    </Grid>
-                    <Grid item xs="3" />
-                </>
-             ) : ('')}
-             </Grid>
-            </Grid>
-        </div>
-    )
+                        <Box
+                            dangerouslySetInnerHTML={{ __html: prefix }}
+                            sx={{
+                                fontSize: '0.95rem',
+                                lineHeight: 1.5,
+                                '& img': {
+                                    maxWidth: '100%',
+                                    height: 'auto'
+                                }
+                            }}
+                        />
+                    </Paper>
+
+                    {/* Event Type Badge */}
+                    {!isUserMessage && (
+                        <Chip
+                            label={`${props.etype}: ${props.estate} (${props.estimuli})`}
+                            size="small"
+                            sx={{
+                                mt: 0.5,
+                                fontSize: '0.7rem',
+                                height: '20px',
+                                backgroundColor: isBotMessage ? '#34495e' : '#f39c12',
+                                color: 'white',
+                                '& .MuiChip-label': {
+                                    px: 1
+                                }
+                            }}
+                        />
+                    )}
+                </Box>
+            </Box>
+
+            {/* Chart Display */}
+            {isChart && (
+                <Fade in={true} timeout={500}>
+                    <Box sx={{ 
+                        mt: 1, 
+                        ml: 5,
+                        mr: 1,
+                        backgroundColor: 'white',
+                        borderRadius: '12px',
+                        p: 2,
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                    }}>
+                        <Box sx={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: 1, 
+                            mb: 1 
+                        }}>
+                            <TrendingUpIcon sx={{ color: '#27ae60', fontSize: 20 }} />
+                            <Typography variant="subtitle2" sx={{ 
+                                color: '#2c3e50',
+                                fontWeight: 600
+                            }}>
+                                Price Forecast
+                            </Typography>
+                        </Box>
+                        <Chart
+                            type="line"
+                            height={120}
+                            width="100%"
+                            options={chartData2.options}
+                            series={cseries}
+                        />
+                    </Box>
+                </Fade>
+            )}
+        </Box>
+    );
 };
 

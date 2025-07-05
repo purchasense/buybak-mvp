@@ -37,8 +37,22 @@ import {
   TextField,
   Typography,
   Tabs,
-  Tab
+  Tab,
+  Paper,
+  Container,
+  AppBar,
+  Toolbar,
+  Avatar,
+  CircularProgress,
+  Fade,
 } from '@mui/material';
+import {
+  Send as SendIcon,
+  PlayArrow as PlayIcon,
+  WineBar as WineIcon,
+  Chat as ChatIcon,
+  SmartToy as BotIcon,
+} from '@mui/icons-material';
 
 import {
   setBuybakMobileMessage,
@@ -124,7 +138,7 @@ const scrollToBottom = (tableContainerRef) => {
      if (tableContainerRef.current) {
        tableContainerRef.current.scrollTo({
          top: tableContainerRef.current.scrollHeight,
-         behavior: 'smooth', // Optional: for smooth scrolling
+         behavior: 'smooth',
        });
      }
 };
@@ -136,12 +150,20 @@ const wineLabels = [
     "German",
 ];
 
+const wineIcons = [
+    "🇮🇹",
+    "🇫🇷", 
+    "🇦🇷",
+    "🇩🇪",
+];
+
 export const MobileIndexQuery = () => {
-
-
     const tableContainerRef = useRef(null);
+    const inputRef = useRef(null);
 
     const [isStarted, setStarted] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [userInput, setUserInput] = useState('');
     const [responseText, setResponseText] = useState('```HTML <table> <tr> <th>Departure</th> <th>Total Time</th> <th>Airport Codes</th> <th>Price</th> </tr> <tr> <td>7:20 pm</td> <td>20h 25m</td> <td>ORD-GOX</td> <td>1917.0</td> </tr> <tr> <td>4:10 am</td> <td>21h 50m</td> <td>GOX-ORD</td> <td>1430.0</td> </tr> <tr> <td>7:20 pm</td> <td>20h 25m</td> <td>ORD-GOX</td> <td>1921.0</td> </tr> <tr> <td>4:10 am</td> <td>21h 50m</td> <td>GOX-ORD</td> <td>1919.0</td> </tr> </table> ```');
     let [predictionsText, setPredictionsText] = useState({});
     let [forecastorsText, setForecastorsText] = useState({});
@@ -150,13 +172,9 @@ export const MobileIndexQuery = () => {
 
     const dispatch = useDispatch();
 
-    // TMD console.log( 'Pred: ' + predictionsText);
-    // TMD console.log( 'Fore: ' + forecastorsText);
-
-    const handleQuery = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleQuery = () => {
           setStarted(true);
-          // console.log('Query: ' + e.target.value);
-          console.log(e);
+          setIsLoading(true);
           const msg = JSON.stringify({"event_type": wineLabels[tabsValue], "event_state": "init", "event_stimuli": "AgenticEvent", "event_content": { "outline": "", "message": "Start"}});
           dispatch(setBuybakMobileMessage(Date.now(), 'sameer', msg));
           let query = '{"region": "' + wineLabels[tabsValue] + '"}';
@@ -175,15 +193,16 @@ export const MobileIndexQuery = () => {
                     const { done, value } = await reader.read();
                     if (done) {
                       controller.close();
+                      setIsLoading(false);
                       break;
                     }
                     const s = String.fromCharCode.apply(null, value);
-                    // TMD console.log(s);
                     dispatch(setBuybakMobileMessage(Date.now(), 'GPT', s));
                     controller.enqueue(value);
                   }
                 } catch (error) {
                   controller.error(error);
+                  setIsLoading(false);
                 }
               }
             });
@@ -191,26 +210,31 @@ export const MobileIndexQuery = () => {
             .then(stream => new Response(stream))
             .then(response => response.text())
             .then(result => {
-              // Process the data
-              // TMD console.log(result);
+              setIsLoading(false);
             })
           .catch(error => {
             console.error('Error during streaming:', error);
+            setIsLoading(false);
           });
     };
 
-    const handleUserInputQuery = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key == 'Enter') {
-          console.log('UserInputQuery: ' + e.target.value);
-          console.log(e);
-          let query = JSON.stringify({"region": wineLabels[tabsValue], "user_input": e.target.value});
+    const handleUserInputQuery = (e) => {
+        if (e.key === 'Enter' && userInput.trim()) {
+          console.log('UserInputQuery: ' + userInput);
+          let query = JSON.stringify({"region": wineLabels[tabsValue], "user_input": userInput});
           const msg = JSON.stringify({"event_type": wineLabels[tabsValue], "event_state": "user", "event_stimuli": "SubmitEvent", "event_content": { "outline": "", "message": query}});
           dispatch(setBuybakMobileMessage(Date.now(), 'sameer', msg));
           queryUserInputIndex(query).then((response) => {
             setResponseText(response.text);
             console.log("UserInputQuery: ", response.text);
-            // dispatch(setBuybakMobileMessage(Date.now(), 'GPT', response.text));
           });
+          setUserInput('');
+        }
+    };
+
+    const handleSendMessage = () => {
+        if (userInput.trim()) {
+            handleUserInputQuery({ key: 'Enter' });
         }
     };
 
@@ -223,21 +247,8 @@ export const MobileIndexQuery = () => {
         state.qrcode.map_store_to_wines.forEach((item) => {
             list.push(item);
         });
-        // TMD console.log( 'list.length: ' + list.length);
         return list;
     });
-
-    /*********************************************************
-    const list_messages = useSelector((state) => {
-            let list_msgs = [];
-            let mapmsgs = state.qrcode.map_store_to_mobile_messages;
-            mapmsgs.map((msg, index) => {
-                console.log(msg);
-                list_msgs = [...list_msgs, msg];
-            })
-            return list_msgs;
-    });
-    ********************************************************/
 
     const list_messages = useSelector((state) => {
         let region = wineLabels[tabsValue];
@@ -252,102 +263,249 @@ export const MobileIndexQuery = () => {
     });
 
     const refreshScroll = useSelector((state) => {return state.qrcode.refreshScroll;});
-    // TMD console.log( 'RefreshScroll: ' + refreshScroll);
 
     useEffect(() => {
             scrollToBottom(tableContainerRef);
-            console.log( 'scrollToBottom....................');
             const value = false;
             dispatch(setBuybakRefreshScroll(value));
-
     }, [refreshScroll]);
 
-    /**
     useEffect(() => {
-        setTimeout( function doSomething() {
-            scrollToBottom(tableContainerRef);
-            setTimeout(doSomething, 2000); // every 5 seconds
-        }, 2000);
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
     }, []);
-    **/
 
   return (
-    <>
-          <Tabs
-            value = {tabsValue}
-            onChange={handleChangeTab}
-            aria-label="ant example"
-            sx={{backgroundImage: `url('/images/wallpaper_5.jpg')`,width:'100%'}}
-          >
-                <Tab
-                    sx={{color: 'red'}}
-                    label={'Italy'}
-                />
-                <Tab
-                    sx={{color: 'red'}}
-                    label={'France'}
-                />
-                <Tab
-                    sx={{color: 'red'}}
-                    label={'Argentina'}
-                />
-                <Tab
-                    sx={{backgroundImage: '/images/wallpaper_1.png', color: 'red'}}
-                    label={'Germany'}
-                />
+    <Box sx={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      height: '100vh',
+      backgroundColor: '#f5f5f5'
+    }}>
+      {/* Header */}
+      <AppBar position="static" elevation={0} sx={{ 
+        backgroundColor: '#2c3e50',
+        borderBottom: '1px solid #34495e'
+      }}>
+        <Toolbar sx={{ minHeight: '60px !important' }}>
+          <BotIcon sx={{ mr: 2, color: '#3498db' }} />
+          <Typography variant="h6" component="div" sx={{ 
+            flexGrow: 1, 
+            color: '#ecf0f1',
+            fontWeight: 600,
+            fontSize: '1.1rem'
+          }}>
+            {wineIcons[tabsValue]} {wineLabels[tabsValue]} Wine Assistant
+          </Typography>
+          <Avatar sx={{ 
+            bgcolor: '#3498db',
+            width: 32,
+            height: 32
+          }}>
+            <WineIcon sx={{ fontSize: 18 }} />
+          </Avatar>
+        </Toolbar>
+      </AppBar>
+
+      {/* Region Tabs */}
+      <Paper elevation={1} sx={{ 
+        backgroundColor: '#34495e',
+        borderRadius: 0
+      }}>
+        <Tabs
+          value={tabsValue}
+          onChange={handleChangeTab}
+          variant="scrollable"
+          scrollButtons="auto"
+          sx={{
+            '& .MuiTab-root': {
+              color: '#bdc3c7',
+              fontWeight: 500,
+              fontSize: '0.9rem',
+              minHeight: 48,
+              '&.Mui-selected': {
+                color: '#3498db',
+                backgroundColor: '#2c3e50'
+              }
+            },
+            '& .MuiTabs-indicator': {
+              backgroundColor: '#3498db',
+              height: 3
+            }
+          }}
+        >
+          {wineLabels.map((label, index) => (
+            <Tab
+              key={index}
+              label={`${wineIcons[index]} ${label}`}
+              sx={{ minWidth: 'auto', px: 2 }}
+            />
+          ))}
         </Tabs>
+      </Paper>
 
-            <Grid container sx={{backgroundImage: `url("/images/wallpaper_5.jpg")`}} >
-                <Grid item spacing={2} padding={2}>
-                     <Button color="primary" variant="contained" fullWidth onClick={handleQuery}>
-                        Start {wineLabels[tabsValue]} Agent-that-is-Alive!
-                     </Button>
-                </Grid>
-            </Grid>
+      {/* Start Button */}
+      <Box sx={{ 
+        p: 2, 
+        backgroundColor: '#ecf0f1',
+        borderBottom: '1px solid #bdc3c7'
+      }}>
+        <Button
+          variant="contained"
+          fullWidth
+          onClick={handleQuery}
+          disabled={isLoading}
+          startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <PlayIcon />}
+          sx={{
+            backgroundColor: '#3498db',
+            color: 'white',
+            fontWeight: 600,
+            py: 1.5,
+            borderRadius: 2,
+            textTransform: 'none',
+            fontSize: '1rem',
+            '&:hover': {
+              backgroundColor: '#2980b9'
+            },
+            '&:disabled': {
+              backgroundColor: '#95a5a6'
+            }
+          }}
+        >
+          {isLoading ? 'Starting Agent...' : `Start ${wineLabels[tabsValue]} Wine Agent`}
+        </Button>
+      </Box>
 
-            <TableContainer ref={tableContainerRef} sx={{ backgroundImage: `url('/images/wallpaper_5.jpg')`,width: '100%', height: '750px' }}>
-                <MobileWineCard index={tabsValue} />
-                {/*
-                <MobileChart
-                    predictions={predictionsText} 
-                    forecastors={forecastorsText}
+      {/* Chat Messages Container */}
+      <Box
+        ref={tableContainerRef}
+        sx={{
+          flex: 1,
+          overflowY: 'auto',
+          backgroundColor: '#f8f9fa',
+          p: 1,
+          '&::-webkit-scrollbar': {
+            width: '6px'
+          },
+          '&::-webkit-scrollbar-track': {
+            backgroundColor: '#f1f1f1'
+          },
+          '&::-webkit-scrollbar-thumb': {
+            backgroundColor: '#c1c1c1',
+            borderRadius: '3px'
+          }
+        }}
+      >
+        <Container maxWidth="md" sx={{ py: 1 }}>
+          <MobileWineCard index={tabsValue} />
+          
+          {list_messages.map(message => {
+            if (message.event_stimuli !== "LiveMarketEvent") {
+              return (
+                <MobileMessage 
+                  key={message.id} 
+                  user={message.user} 
+                  etype={message.event_type} 
+                  estate={message.event_state} 
+                  estimuli={message.event_stimuli} 
+                  outline={message.outline} 
+                  msg={message.msg} 
                 />
-                */}
-                { 
-                    list_messages.map(message => {
-                        if ( message.event_stimuli !== "LiveMarketEvent")
-                        {
-                            return (<MobileMessage key={message.id} user={message.user} etype={message.event_type} estate={message.event_state} estimuli={message.event_stimuli} outline={message.outline} msg={message.msg} />);
-                        } else {
-                            return (<MobileMarketData key={message.id} user={message.user} etype={message.event_type} estate={message.event_state} estimuli={message.event_stimuli} outline={message.outline} msg={message.msg} />);
-                        }
+              );
+            } else {
+              return (
+                <MobileMarketData 
+                  key={message.id} 
+                  user={message.user} 
+                  etype={message.event_type} 
+                  estate={message.event_state} 
+                  estimuli={message.event_stimuli} 
+                  outline={message.outline} 
+                  msg={message.msg} 
+                />
+              );
+            }
+          })}
 
-                        if ( message.event_stimuli !== "StopEvent")
-                        {
-                            setStarted(false);
-                        }
-                    })
+          {/* Welcome Message */}
+          {list_messages.length === 0 && (
+            <Box sx={{ 
+              textAlign: 'center', 
+              py: 4,
+              color: '#7f8c8d'
+            }}>
+              <ChatIcon sx={{ fontSize: 48, mb: 2, color: '#bdc3c7' }} />
+              <Typography variant="h6" sx={{ mb: 1, fontWeight: 500 }}>
+                Welcome to {wineLabels[tabsValue]} Wine Assistant
+              </Typography>
+              <Typography variant="body2">
+                Click "Start {wineLabels[tabsValue]} Wine Agent" to begin your wine consultation
+              </Typography>
+            </Box>
+          )}
+        </Container>
+      </Box>
+
+      {/* Input Area */}
+      <Paper elevation={3} sx={{ 
+        backgroundColor: 'white',
+        borderTop: '1px solid #e0e0e0',
+        p: 2
+      }}>
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center',
+          gap: 1
+        }}>
+          <TextField
+            ref={inputRef}
+            fullWidth
+            variant="outlined"
+            placeholder="Ask about wines, prices, recommendations..."
+            value={userInput}
+            onChange={(e) => setUserInput(e.target.value)}
+            onKeyDown={handleUserInputQuery}
+            disabled={!isStarted}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 3,
+                backgroundColor: '#f8f9fa',
+                '& fieldset': {
+                  borderColor: '#e0e0e0'
+                },
+                '&:hover fieldset': {
+                  borderColor: '#3498db'
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: '#3498db'
                 }
-            </TableContainer>
-
-    <Grid container sx={{backgroundImage: `url("/images/wallpaper_5.jpg")`}} >
-            {/*
-          <Grid item background="white" align="left" >
-            <TextField
-                sx={{ background: 'white', m: 2, width: '90ch' }}
-                id="standard-basic" label="Start" variant="standard" 
-                onKeyDown={handleQuery}
-            ></TextField>
-          </Grid>
-            */}
-          <Grid item align="left" >
-            <TextField
-                sx={{ background: 'white', m: 2, width: '90ch' }}
-                id="standard-basic" label="User-Input" variant="standard" 
-                onKeyDown={handleUserInputQuery}
-            ></TextField>
-          </Grid>
-    </Grid>
-    </>
+              },
+              '& .MuiInputBase-input': {
+                fontSize: '0.95rem'
+              }
+            }}
+          />
+          <IconButton
+            onClick={handleSendMessage}
+            disabled={!userInput.trim() || !isStarted}
+            sx={{
+              backgroundColor: '#3498db',
+              color: 'white',
+              width: 48,
+              height: 48,
+              '&:hover': {
+                backgroundColor: '#2980b9'
+              },
+              '&:disabled': {
+                backgroundColor: '#bdc3c7'
+              }
+            }}
+          >
+            <SendIcon />
+          </IconButton>
+        </Box>
+      </Paper>
+    </Box>
   );
 };
