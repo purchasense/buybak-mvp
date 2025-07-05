@@ -115,8 +115,22 @@ export const MobileMain = () => {
 
 
     const [tabsValue, setTabsValue] = React.useState(0);
+    const [wineAgentStates, setWineAgentStates] = React.useState({
+        Italian: { isStarted: false, isLoading: false },
+        French: { isStarted: false, isLoading: false },
+        Argentinian: { isStarted: false, isLoading: false },
+        German: { isStarted: false, isLoading: false }
+    });
+
     const handleChangeTab = (event, newValue) => {
         setTabsValue(newValue);
+    };
+
+    const updateWineAgentState = (wineType, updates) => {
+        setWineAgentStates(prev => ({
+            ...prev,
+            [wineType]: { ...prev[wineType], ...updates }
+        }));
     };
 
     const handleResetAlertCount  = () => {
@@ -251,7 +265,7 @@ export const MobileMain = () => {
 
         {tabsValue === 0 && <MobileStocks />}
         {tabsValue === 1 && <MobilePortfolio />}
-        {tabsValue === 2 && <MobileIndexQuery />}
+        {tabsValue === 2 && <MobileIndexQuery wineAgentStates={wineAgentStates} updateWineAgentState={updateWineAgentState} />}
         {tabsValue === 3 && <MobileSettings />}
         {tabsValue === 4 && <MobileProfile />}
     </>

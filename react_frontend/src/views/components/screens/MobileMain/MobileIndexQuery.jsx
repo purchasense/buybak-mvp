@@ -52,6 +52,7 @@ import {
   WineBar as WineIcon,
   Chat as ChatIcon,
   SmartToy as BotIcon,
+  Refresh as RefreshIcon,
 } from '@mui/icons-material';
 
 import {
@@ -157,12 +158,10 @@ const wineIcons = [
     "🇩🇪",
 ];
 
-export const MobileIndexQuery = () => {
+export const MobileIndexQuery = ({ wineAgentStates, updateWineAgentState }) => {
     const tableContainerRef = useRef(null);
     const inputRef = useRef(null);
 
-    const [isStarted, setStarted] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
     const [userInput, setUserInput] = useState('');
     const [responseText, setResponseText] = useState('```HTML <table> <tr> <th>Departure</th> <th>Total Time</th> <th>Airport Codes</th> <th>Price</th> </tr> <tr> <td>7:20 pm</td> <td>20h 25m</td> <td>ORD-GOX</td> <td>1917.0</td> </tr> <tr> <td>4:10 am</td> <td>21h 50m</td> <td>GOX-ORD</td> <td>1430.0</td> </tr> <tr> <td>7:20 pm</td> <td>20h 25m</td> <td>ORD-GOX</td> <td>1921.0</td> </tr> <tr> <td>4:10 am</td> <td>21h 50m</td> <td>GOX-ORD</td> <td>1919.0</td> </tr> </table> ```');
     let [predictionsText, setPredictionsText] = useState({});
@@ -170,11 +169,15 @@ export const MobileIndexQuery = () => {
     let [tabsValue, setTabsValue] = useState(0);
     let [listLen, setListLen] = useState(0);
 
+    // Use props for state that needs to persist across tab switches
+    const currentWineStarted = wineAgentStates[wineLabels[tabsValue]]?.isStarted || false;
+    const currentWineLoading = wineAgentStates[wineLabels[tabsValue]]?.isLoading || false;
+
     const dispatch = useDispatch();
 
     const handleQuery = () => {
-          setStarted(true);
-          setIsLoading(true);
+          const currentWine = wineLabels[tabsValue];
+          updateWineAgentState(currentWine, { isStarted: true, isLoading: true });
           const msg = JSON.stringify({"event_type": wineLabels[tabsValue], "event_state": "init", "event_stimuli": "AgenticEvent", "event_content": { "outline": "", "message": "Start"}});
           dispatch(setBuybakMobileMessage(Date.now(), 'sameer', msg));
           let query = '{"region": "' + wineLabels[tabsValue] + '"}';
@@ -193,7 +196,7 @@ export const MobileIndexQuery = () => {
                     const { done, value } = await reader.read();
                     if (done) {
                       controller.close();
-                      setIsLoading(false);
+                      updateWineAgentState(currentWine, { isLoading: false });
                       break;
                     }
                     const s = String.fromCharCode.apply(null, value);
@@ -202,7 +205,7 @@ export const MobileIndexQuery = () => {
                   }
                 } catch (error) {
                   controller.error(error);
-                  setIsLoading(false);
+                  updateWineAgentState(currentWine, { isLoading: false });
                 }
               }
             });
@@ -210,12 +213,20 @@ export const MobileIndexQuery = () => {
             .then(stream => new Response(stream))
             .then(response => response.text())
             .then(result => {
-              setIsLoading(false);
+              updateWineAgentState(currentWine, { isLoading: false });
             })
           .catch(error => {
             console.error('Error during streaming:', error);
-            setIsLoading(false);
+            updateWineAgentState(currentWine, { isLoading: false });
           });
+    };
+
+    const handleResetChat = () => {
+        const currentWine = wineLabels[tabsValue];
+        updateWineAgentState(currentWine, { isStarted: false, isLoading: false });
+        setUserInput('');
+        // Clear messages for this specific wine region
+        // Note: You might want to add a Redux action to clear messages for specific region
     };
 
     const handleUserInputQuery = (e) => {
@@ -240,6 +251,8 @@ export const MobileIndexQuery = () => {
 
     const handleChangeTab = (event, newValue) => {
         setTabsValue(newValue);
+        // Don't reset the isStarted state when switching tabs
+        // Each tab should maintain its own state independently
     };
 
     const list_tab_items = useSelector((state) => {
@@ -275,6 +288,8 @@ export const MobileIndexQuery = () => {
             inputRef.current.focus();
         }
     }, []);
+
+
 
   return (
     <Box sx={{ 
@@ -345,36 +360,66 @@ export const MobileIndexQuery = () => {
         </Tabs>
       </Paper>
 
-      {/* Start Button */}
+      {/* Action Buttons */}
       <Box sx={{ 
         p: 2, 
         backgroundColor: '#ecf0f1',
         borderBottom: '1px solid #bdc3c7'
       }}>
-        <Button
-          variant="contained"
-          fullWidth
-          onClick={handleQuery}
-          disabled={isLoading}
-          startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <PlayIcon />}
-          sx={{
-            backgroundColor: '#3498db',
-            color: 'white',
-            fontWeight: 600,
-            py: 1.5,
-            borderRadius: 2,
-            textTransform: 'none',
-            fontSize: '1rem',
-            '&:hover': {
-              backgroundColor: '#2980b9'
-            },
-            '&:disabled': {
-              backgroundColor: '#95a5a6'
-            }
-          }}
-        >
-          {isLoading ? 'Starting Agent...' : `Start ${wineLabels[tabsValue]} Wine Agent`}
-        </Button>
+        <Grid container spacing={2}>
+          <Grid item xs={currentWineStarted ? 6 : 12}>
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={handleQuery}
+              disabled={currentWineLoading}
+              startIcon={currentWineLoading ? <CircularProgress size={20} color="inherit" /> : <PlayIcon />}
+              sx={{
+                backgroundColor: '#3498db',
+                color: 'white',
+                fontWeight: 600,
+                py: 1.5,
+                borderRadius: 2,
+                textTransform: 'none',
+                fontSize: '1rem',
+                '&:hover': {
+                  backgroundColor: '#2980b9'
+                },
+                '&:disabled': {
+                  backgroundColor: '#95a5a6'
+                }
+              }}
+            >
+              {currentWineLoading ? 'Starting Agent...' : `Start ${wineLabels[tabsValue]} Wine Agent`}
+            </Button>
+          </Grid>
+          {currentWineStarted && (
+            <Grid item xs={6}>
+              <Button
+                variant="outlined"
+                fullWidth
+                onClick={handleResetChat}
+                startIcon={<RefreshIcon />}
+                sx={{
+                  borderColor: '#e74c3c',
+                  color: '#e74c3c',
+                  fontWeight: 600,
+                  py: 1.5,
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  fontSize: '1rem',
+                  '&:hover': {
+                    backgroundColor: '#e74c3c',
+                    color: 'white',
+                    borderColor: '#e74c3c'
+                  }
+                }}
+              >
+                Reset Chat
+              </Button>
+            </Grid>
+          )}
+        </Grid>
       </Box>
 
       {/* Chat Messages Container */}
@@ -466,7 +511,7 @@ export const MobileIndexQuery = () => {
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
             onKeyDown={handleUserInputQuery}
-            disabled={!isStarted}
+            disabled={!currentWineStarted}
             sx={{
               '& .MuiOutlinedInput-root': {
                 borderRadius: 3,
@@ -488,7 +533,7 @@ export const MobileIndexQuery = () => {
           />
           <IconButton
             onClick={handleSendMessage}
-            disabled={!userInput.trim() || !isStarted}
+            disabled={!userInput.trim() || !currentWineStarted}
             sx={{
               backgroundColor: '#3498db',
               color: 'white',
