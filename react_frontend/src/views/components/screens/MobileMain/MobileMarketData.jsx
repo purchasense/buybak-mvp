@@ -311,7 +311,7 @@ export const  MobileMarketData = (props) => {
                         />
                     </Paper>
 
-                    {/* Event Type Badge */}
+                    {/* Event Type Badge 
                     <Chip
                         label={`${props.etype}: ${props.estate} (${props.estimuli})`}
                         size="small"
@@ -325,7 +325,7 @@ export const  MobileMarketData = (props) => {
                                 px: 1
                             }
                         }}
-                    />
+                    />*/}
                 </Box>
             </Box>
         </Box>

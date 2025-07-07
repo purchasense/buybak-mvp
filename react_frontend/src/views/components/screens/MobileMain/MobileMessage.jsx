@@ -429,22 +429,6 @@ export const  MobileMessage = (props) => {
                     </Paper>
 
                     {/* Event Type Badge */}
-                    {!isUserMessage && (
-                        <Chip
-                            label={`${props.etype}: ${props.estate} (${props.estimuli})`}
-                            size="small"
-                            sx={{
-                                mt: 0.5,
-                                fontSize: '0.7rem',
-                                height: '20px',
-                                backgroundColor: isBotMessage ? '#34495e' : '#f39c12',
-                                color: 'white',
-                                '& .MuiChip-label': {
-                                    px: 1
-                                }
-                            }}
-                        />
-                    )}
                 </Box>
             </Box>
 
