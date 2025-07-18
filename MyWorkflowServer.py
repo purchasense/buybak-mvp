@@ -1,6 +1,8 @@
 import sys
 
 from fastapi import FastAPI, HTTPException, Body
+import uvicorn
+
 import asyncio
 from fastapi.responses import StreamingResponse
 import uuid
@@ -141,3 +143,7 @@ async def arm_timer():
 @app.get("/")
 async def read_root():
     return {"Hello": "World"}
+
+# You can also run it programmatically (more control, but not always necessary for simple cases)
+if __name__ == "__main__":
+    uvicorn.run("MyWorkflowServer:app", host="0.0.0.0", port=8080)

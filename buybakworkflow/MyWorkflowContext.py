@@ -15,14 +15,11 @@ import re
 import string
 import csv
 import os
-import markdown
-from markdown import Markdown
 
 from typing import Optional, Any, Literal, Dict
 from pydantic import BaseModel, Field
 
 from llama_index.llms.openai import OpenAI
-from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, Settings
 from llama_index.core.workflow import InputRequiredEvent, HumanResponseEvent
 from llama_index.core import (
@@ -69,7 +66,6 @@ from llama_index.core import (
     StorageContext,
     load_index_from_storage,
 )
-from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.llms.openai import OpenAI
 from llama_index.core.tools import FunctionTool
 from llama_index.core.agent.workflow import FunctionAgent
@@ -336,6 +332,7 @@ class MyWorkflowContext():
                     break
         finally:
             loop.close()
+
         return obj
 
     async def what_is_action(self,ctx: Context, ev: Event, msg: str):
@@ -441,7 +438,8 @@ class MyWorkflowContext():
         print(f'Now querying..................................... {adv_query}')
 
         timestamp = time.time()
-        result, response = self.__iter_over_async_forecaster(adv_query)
+        # result, response = self.__iter_over_async_forecaster(adv_query)
+        result, response = await self.slow_forecast_time_series(adv_query)
         print(f'result: {result}')
         print(f'type: {type(response)}')
         print(f'response.tool_calls: {response.tool_calls}')
@@ -674,7 +672,8 @@ class MyWorkflowContext():
         # query_prompt = "What are the different regions of french wines? Print result strictly as HTML Table"
 
         timestamp = time.time()
-        result, response = self.__iter_over_async_forecaster(query)
+        # result, response = self.__iter_over_async_forecaster(query)
+        result, response = await self.slow_forecast_time_series(query)
         print(f'result: {result}')
         print(f'response: {response}')
 
